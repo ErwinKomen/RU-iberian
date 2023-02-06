@@ -1,0 +1,38 @@
+{% extends 'saints/base.html' %}
+
+{% block main_content %}
+    <h2>Region list</h2>
+    <table class="table table-borderless">
+        <thead class="border-bottom font-weight-bold">
+            <tr>
+                <th scope="col">City</th>
+                <th scope="col">Region number</th>
+                <th scope="col">Extent shapefile</th>
+                <td>
+                    <a href="{% url 'saints:region-insert'%}" class="btn btn-outline-success" > <i class="fa fa-plus"></i> Add New</a>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for region in region_list %}
+            <tr>
+                <td>{{region.city}}</td>
+                <td>{{region.region_number}}</td>
+                <td>{{region.extent_shapefile.name}}</td>
+                <td>
+                    <a href="{% url 'saints:region-update' region.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a>
+                    <form action="{% url 'saints:region-delete' region.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn" onclick="return confirm('Are you sure you want to delete all entities connected to this from the database?')">
+<!--                        <button type="submit" class="btn">-->
+                        <i class="fa fa-trash fa-lg text-danger float-right"></i>
+                        </button>
+                    </form>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

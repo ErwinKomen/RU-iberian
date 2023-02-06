@@ -1,0 +1,39 @@
+{% extends 'saints/base.html' %}
+{% block main_content %}
+  <div class="container">
+    <div class="jumbotron">
+      <h1>Please Login</h1>
+
+        <form method="post" action="{% url 'saints:user_login' %}">
+          {% csrf_token %}
+          {# A more "HTML" way of creating the login form#}
+            <table>
+                <tr>
+                    <td width="40%">
+                        <label for="username">Username:</label>
+                    </td>
+                    <td width="60%">
+                        <input type="text" name="username" placeholder="Username">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="40%">
+                        <label for="password">Password</label>
+                    </td>
+                    <td width="60%">
+                        <input type="password" name="password">
+                    </td>
+                </tr>
+            </table>
+            <p>
+
+            </p>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Login</button>
+                <a href="{% url 'saints:home' %}" class="btn btn-default">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+  </div>
+{% endblock %}

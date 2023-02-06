@@ -1,0 +1,38 @@
+<table class="table table-borderless" >
+    <tr class="d-flex">
+        <th class="col-2">Name</th>
+        <td class="col-8">{{form.name}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Feast day</th>
+        <td class="col-8">{{form.feast_day}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Death date</th>
+        <td class="col-8">{{form.death_date}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Death place</th>
+        <td class="col-8">{{form.death_place}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Type</th>
+        <td class="col-8">{{form.type}}</td>
+        <td><a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+           href ="{% url 'saints:sainttype-insert' %}"
+           role="button"><i class="fa fa-plus"></i></a>
+        </td>
+    </tr>
+<!--    <tr class="d-flex">-->
+<!--        <th class="col-2">External link</th>-->
+<!--        <td class="col-8">{{form.external_link}}</td>-->
+<!--    </tr>-->
+    <tr class="d-flex">
+        <th class="col-2">Description</th>
+        <td class="col-8">{{form.description}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Status (Completed)</th>
+        <td class="col-1" align="left">{{form.status}}</td>
+    </tr>
+</table>

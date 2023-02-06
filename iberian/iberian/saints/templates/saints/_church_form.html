@@ -1,0 +1,71 @@
+<table class="table table-borderless" >
+    <tr class="d-flex">
+        <th class="col-2">Church name</th>
+        <td class="col-8">{{form.name}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Date</th>
+        <td class="col-4">{{form.date_lower}}</td>
+        <td class="col-4">{{form.date_upper}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Coordinates</th>
+        <td class="col-4">{{form.coordinates_latitude}}</td>
+        <td class="col-4">{{form.coordinates_longitude}}</td>
+    </tr>
+
+    <tr class="d-flex">
+        <th class="col-2">City</th>
+        <td class="col-8">{{form.city}}</td>
+        <td><a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+           href ="{% url 'saints:city-insert' %}"
+           role="button"><i class="fa fa-plus"></i></a>
+        </td>
+    </tr>
+
+    <tr class="d-flex">
+        <th class="col-2">Region</th>
+        <td class="col-8">{{form.region}}</td>
+        <td><a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+           href ="{% url 'saints:region-insert' %}"
+           role="button"><i class="fa fa-plus"></i></a>
+        </td>
+    </tr>
+
+    <tr class="d-flex">
+        <th class="col-2">Institution type</th>
+        <td class="col-8">{{form.institution_type}}</td>
+        <td><a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+           href ="{% url 'saints:institutiontype-insert' %}"
+           role="button"><i class="fa fa-plus"></i></a>
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Textual evidence</th>
+        <td class="col-8">{{form.textual_evidence}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Material evidence</th>
+        <td class="col-8">{{form.material_evidence}}</td>
+    </tr>
+<!--    <tr class="d-flex">-->
+<!--        <th class="col-2">External link</th>-->
+<!--        <td class="col-8">{{form.external_link}}</td>-->
+<!--    </tr>-->
+    <tr class="d-flex">
+        <th class="col-2">Bibliography</th>
+        <td class="col-8">{{form.bibliography_many}}</td>
+        <td><a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+           href ="{% url 'saints:bibliography-insert' %}"
+           role="button"><i class="fa fa-plus"></i></a>
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Description</th>
+        <td class="col-8">{{form.description}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Status (Completed)</th>
+        <td class="col-1" align="left">{{form.status}}</td>
+    </tr>
+</table>

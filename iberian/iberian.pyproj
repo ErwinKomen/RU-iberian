@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <Name>lila</Name>
+    <RootNamespace>lila</RootNamespace>
+    <InterpreterId>MSBuild|iberian|$(MSBuildProjectFullPath)</InterpreterId>
+    <WebBrowserPort>6900</WebBrowserPort>
+    <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
+    <SuppressPackageInstallationPrompt>True</SuppressPackageInstallationPrompt>
+    <SuppressEnvironmentCreationPrompt>True</SuppressEnvironmentCreationPrompt>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>af97499a-b4e8-4280-98a9-712da46398c8</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <ProjectTypeGuids>{5F0BE9CA-D677-4A4D-8806-6076C0FAAD37};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <StartupFile>manage.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <LaunchProvider>Web launcher</LaunchProvider>
+    <OutputPath>.</OutputPath>
+    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefaultItemExcludes>migrations/**;$(DefaultItemExcludes)</DefaultItemExcludes>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="iberian\saints\admin.py" />
+    <Compile Include="iberian\saints\apps.py" />
+    <Compile Include="iberian\saints\forms.py" />
+    <Compile Include="iberian\saints\migrations\__init__.py" />
+    <Compile Include="iberian\saints\models.py" />
+    <Compile Include="iberian\saints\tests.py" />
+    <Compile Include="iberian\saints\urls.py" />
+    <Compile Include="iberian\saints\views.py" />
+    <Compile Include="iberian\saints\__init__.py" />
+    <Compile Include="iberian\seeker\admin.py" />
+    <Compile Include="iberian\seeker\apps.py" />
+    <Compile Include="iberian\seeker\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="iberian\seeker\migrations\__init__.py" />
+    <Compile Include="iberian\seeker\models.py" />
+    <Compile Include="iberian\seeker\tests.py" />
+    <Compile Include="iberian\seeker\views.py" />
+    <Compile Include="iberian\seeker\__init__.py" />
+    <Compile Include="iberian\utilities\admin.py" />
+    <Compile Include="iberian\utilities\apps.py" />
+    <Compile Include="iberian\utilities\migrations\__init__.py" />
+    <Compile Include="iberian\utilities\models.py" />
+    <Compile Include="iberian\utilities\search.py" />
+    <Compile Include="iberian\utilities\tests.py" />
+    <Compile Include="iberian\utilities\views.py" />
+    <Compile Include="iberian\utilities\__init__.py" />
+    <Compile Include="iberian\utils\model_util.py" />
+    <Compile Include="iberian\utils\view_util.py" />
+    <Compile Include="manage.py" />
+    <Compile Include="iberian\basic\admin.py" />
+    <Compile Include="iberian\basic\apps.py" />
+    <Compile Include="iberian\basic\models.py" />
+    <Compile Include="iberian\basic\tests.py" />
+    <Compile Include="iberian\basic\utils.py" />
+    <Compile Include="iberian\basic\views.py" />
+    <Compile Include="iberian\basic\widgets.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="iberian\basic\__init__.py" />
+    <Compile Include="iberian\views.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="iberian\__init__.py" />
+    <Compile Include="iberian\settings.py" />
+    <Compile Include="iberian\urls.py" />
+    <Compile Include="iberian\wsgi.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="iberian\" />
+    <Folder Include="iberian\basic\" />
+    <Folder Include="iberian\basic\static\" />
+    <Folder Include="iberian\basic\static\basic\" />
+    <Folder Include="iberian\basic\static\basic\content\" />
+    <Folder Include="iberian\basic\static\basic\fonts\" />
+    <Folder Include="iberian\basic\static\basic\scripts\" />
+    <Folder Include="iberian\basic\templates\" />
+    <Folder Include="iberian\basic\templates\basic\" />
+    <Folder Include="iberian\saints\" />
+    <Folder Include="iberian\saints\migrations\" />
+    <Folder Include="iberian\saints\static\" />
+    <Folder Include="iberian\saints\static\saints\" />
+    <Folder Include="iberian\saints\static\saints\content\" />
+    <Folder Include="iberian\saints\templates\" />
+    <Folder Include="iberian\saints\templates\saints\" />
+    <Folder Include="iberian\seeker\" />
+    <Folder Include="iberian\seeker\migrations\" />
+    <Folder Include="iberian\seeker\templates\" />
+    <Folder Include="iberian\seeker\templates\seeker\" />
+    <Folder Include="iberian\templates\" />
+    <Folder Include="iberian\templates\admin\" />
+    <Folder Include="iberian\utilities\" />
+    <Folder Include="iberian\utilities\migrations\" />
+    <Folder Include="iberian\utilities\templates\" />
+    <Folder Include="iberian\utilities\templates\utilities\" />
+    <Folder Include="iberian\utils\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".editorconfig" />
+    <Content Include="codemeta.json">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="iberian\basic\static\basic\content\basic.css" />
+    <Content Include="iberian\basic\static\basic\content\font-awesome.min.css" />
+    <Content Include="iberian\saints\templates\saints\add_church.html" />
+    <Content Include="iberian\saints\templates\saints\add_inscription.html" />
+    <Content Include="iberian\saints\templates\saints\add_liturgicalmanuscript.html" />
+    <Content Include="iberian\saints\templates\saints\add_object.html" />
+    <Content Include="iberian\saints\templates\saints\add_saint.html" />
+    <Content Include="iberian\saints\templates\saints\base.html" />
+    <Content Include="iberian\saints\templates\saints\bibliography_form.html" />
+    <Content Include="iberian\saints\templates\saints\bibliography_list.html" />
+    <Content Include="iberian\saints\templates\saints\church_detail.html" />
+    <Content Include="iberian\saints\templates\saints\church_list.html" />
+    <Content Include="iberian\saints\templates\saints\city_form.html" />
+    <Content Include="iberian\saints\templates\saints\city_list.html" />
+    <Content Include="iberian\saints\templates\saints\feast_form.html" />
+    <Content Include="iberian\saints\templates\saints\feast_list.html" />
+    <Content Include="iberian\saints\templates\saints\footer.html" />
+    <Content Include="iberian\saints\templates\saints\header.html" />
+    <Content Include="iberian\saints\templates\saints\home.html" />
+    <Content Include="iberian\saints\templates\saints\inscription_detail.html" />
+    <Content Include="iberian\saints\templates\saints\inscription_list.html" />
+    <Content Include="iberian\saints\templates\saints\institutiontype_form.html" />
+    <Content Include="iberian\saints\templates\saints\institutiontype_list.html" />
+    <Content Include="iberian\saints\templates\saints\liturgicalmanuscript_detail.html" />
+    <Content Include="iberian\saints\templates\saints\liturgicalmanuscript_list.html" />
+    <Content Include="iberian\saints\templates\saints\login.html" />
+    <Content Include="iberian\saints\templates\saints\manuscripttype_form.html" />
+    <Content Include="iberian\saints\templates\saints\manuscripttype_list.html" />
+    <Content Include="iberian\saints\templates\saints\museum_form.html" />
+    <Content Include="iberian\saints\templates\saints\museum_list.html" />
+    <Content Include="iberian\saints\templates\saints\objecttype_form.html" />
+    <Content Include="iberian\saints\templates\saints\objecttype_list.html" />
+    <Content Include="iberian\saints\templates\saints\object_detail.html" />
+    <Content Include="iberian\saints\templates\saints\object_list.html" />
+    <Content Include="iberian\saints\templates\saints\region_form.html" />
+    <Content Include="iberian\saints\templates\saints\region_list.html" />
+    <Content Include="iberian\saints\templates\saints\registration.html" />
+    <Content Include="iberian\saints\templates\saints\rite_form.html" />
+    <Content Include="iberian\saints\templates\saints\rite_list.html" />
+    <Content Include="iberian\saints\templates\saints\sainttype_form.html" />
+    <Content Include="iberian\saints\templates\saints\sainttype_list.html" />
+    <Content Include="iberian\saints\templates\saints\saint_detail.html" />
+    <Content Include="iberian\saints\templates\saints\saint_list.html" />
+    <Content Include="iberian\saints\templates\saints\_church_form.html" />
+    <Content Include="iberian\saints\templates\saints\_inscription_form.html" />
+    <Content Include="iberian\saints\templates\saints\_liturgicalmanuscript_form.html" />
+    <Content Include="iberian\saints\templates\saints\_object_form.html" />
+    <Content Include="iberian\saints\templates\saints\_saint_form.html" />
+    <Content Include="iberian\basic\static\basic\fonts\fontawesome-webfont.eot" />
+    <Content Include="iberian\basic\static\basic\fonts\fontawesome-webfont.svg" />
+    <Content Include="iberian\basic\static\basic\fonts\fontawesome-webfont.ttf" />
+    <Content Include="iberian\basic\static\basic\fonts\fontawesome-webfont.woff" />
+    <Content Include="iberian\basic\static\basic\fonts\fontawesome-webfont.woff2" />
+    <Content Include="iberian\basic\static\basic\fonts\FontAwesome.otf" />
+    <Content Include="iberian\basic\static\basic\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="iberian\basic\static\basic\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="iberian\basic\static\basic\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="iberian\basic\static\basic\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="iberian\basic\static\basic\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="iberian\basic\static\basic\scripts\basic.js" />
+    <Content Include="iberian\basic\static\basic\scripts\html2canvas.js" />
+    <Content Include="iberian\basic\static\basic\scripts\htmlsvg2canvas.js" />
+    <Content Include="iberian\basic\static\basic\scripts\select2.js" />
+    <Content Include="iberian\basic\templates\basic\basic_details.html" />
+    <Content Include="iberian\basic\templates\basic\basic_edit.html" />
+    <Content Include="iberian\basic\templates\basic\basic_list.html" />
+    <Content Include="iberian\basic\templates\basic\filter_help.html" />
+    <Content Include="iberian\seeker\templates\seeker\index.html" />
+    <Content Include="iberian\templates\guide.html" />
+    <Content Include="iberian\templates\about.html" />
+    <Content Include="iberian\templates\admin\base.html" />
+    <Content Include="iberian\templates\technical.html" />
+    <Content Include="iberian\templates\technical_404.html" />
+    <Content Include="iberian\templates\tools.html" />
+    <Content Include="iberian\templates\breadcrumb_list.html" />
+    <Content Include="iberian\templates\contact.html" />
+    <Content Include="iberian\templates\index.html" />
+    <Content Include="iberian\templates\layout.html" />
+    <Content Include="iberian\templates\login.html" />
+    <Content Include="iberian\templates\loginpartial.html" />
+    <Content Include="iberian\templates\more.html" />
+    <Content Include="iberian\templates\nlogin.html" />
+    <Content Include="iberian\templates\pagination.html" />
+    <Content Include="iberian\templates\paginationpost.html" />
+    <Content Include="iberian\templates\signup.html" />
+    <Content Include="iberian\templates\submit_row.html" />
+    <Content Include="iberian\templates\topnav.html" />
+    <Content Include="iberian\utilities\templates\utilities\edit_minimize_tab.html" />
+    <Content Include="iberian\utilities\templates\utilities\list_search_bar.html" />
+    <Content Include="iberian\utilities\templates\utilities\tab_selector.html" />
+    <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.mht">
+      <SubType>WebBrowser</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="..\..\..\..\..\env\iberian\">
+      <Id>iberian</Id>
+      <Version>3.9</Version>
+      <Description>iberian (Python 3.9 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Django.targets" />
+  <!-- Specify pre- and post-build commands in the BeforeBuild and 
+       AfterBuild targets below. -->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <AutoAssignPort>True</AutoAssignPort>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

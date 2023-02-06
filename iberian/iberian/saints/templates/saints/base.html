@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- for icons -->
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+
+
+    <title>Iberian Saints</title>
+
+    <style>
+        input, select {width: 100%}
+    </style>
+
+    <style>
+    .Gdot {
+      height: 15px;
+      width: 15px;
+      background-color: #00ff00;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .Rdot {
+      height: 15px;
+      width: 15px;
+      background-color: #ff0000;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    </style>
+    {{ form.media.css }}
+</head>
+
+<body>
+    {% include 'saints/header.html' %}
+    <hr>
+
+    <!-- Place the jumbotron inside the <div class="container"> if you want the jumbotron to NOT extend to the edge of the screen -->
+    <div class="jumbotron jumbotron-fluid">    <!--! for the gray background! -->
+        <div class="row">
+            <div class="col-1">
+                {% block left %}
+                {% endblock %}
+            </div>
+
+{#            <div class="container-lg"> <!--! adds a  X px left and right padding to any HTML element. -->#}
+            <div class="col-10">
+                {% block main_content %}
+                <!-- Anything outside of this will be inherited if you extend!-->
+                {% endblock main_content %}
+            </div>
+
+            <div class="col-1">
+                {% block right %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    {% include 'saints/footer.html' %}
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <!-- for Select2-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"> </script>
+    <link href="{% static '/autocomplete_light/select2.css' %}" type="text/css" media="all" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+    {{ form.media.js }}
+</body>
+</html>

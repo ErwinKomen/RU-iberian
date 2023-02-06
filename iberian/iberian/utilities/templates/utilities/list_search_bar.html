@@ -1,0 +1,13 @@
+<div class="col-11">
+<form method="GET">
+  <div class="d-flex">
+	<input type="text" name="q" placeholder=Search
+		class="col-10 mb-1"
+		{% if query is not None %}
+           value="{{query}}"
+        {% endif %}>
+    <button class="btn btn-link mb-0"  type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+  </div>
+	<p class="text-secondary small ml-3" ># Entries: {{nentries}}<p>
+</form>
+</div>

@@ -1,0 +1,129 @@
+{% extends 'saints/base.html' %}
+
+{% block main_content %}
+    <table class="table table-borderless" >
+    <tr class="d-flex">
+        <h1>{{ liturgicalmanuscript.shelf_no }} <a href="{% url 'saints:liturgicalmanuscript-update' liturgicalmanuscript.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a></h1>
+
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Date:</th>
+        <td class="col-8">
+            {% if liturgicalmanuscript.date_lower and liturgicalmanuscript.date_upper %}
+                {% if liturgicalmanuscript.date_lower == liturgicalmanuscript.date_upper %}
+                    {{liturgicalmanuscript.end_date_lower}}
+                {% else %}
+                    {{liturgicalmanuscript.date_lower}} - {{liturgicalmanuscript.date_upper}}
+                {% endif %}
+            {% elif liturgicalmanuscript.date_lower %}
+                {{liturgicalmanuscript.date_lower}}
+            {% elif liturgicalmanuscript.date_upper %}
+                {{liturgicalmanuscript.date_upper}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Rite:</th>
+        <td class="col-8">
+            {% if liturgicalmanuscript.rite %}
+                {{liturgicalmanuscript.rite}}
+            {% endif %}
+        </td>
+    </tr>
+        </tr>
+        <!-- This is commented based on issue #30. But not deleted if they wanted back later-->
+<!--    <tr class="d-flex">-->
+<!--        <th class="col-2">Feast:</th>-->
+<!--        <td class="col-8">-->
+<!--            {% if liturgicalmanuscript.feast %}-->
+<!--                {{liturgicalmanuscript.feast}}-->
+<!--            {% endif %}-->
+<!--        </td>-->
+<!--    </tr>-->
+    <tr class="d-flex">
+            <th class="col-2">Type:</th>
+            <td class="col-8">
+                {% if liturgicalmanuscript.type %}
+                    {{liturgicalmanuscript.type}}
+                {% endif %}
+            </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Provenance:</th>
+        <td class="col-8">
+            {{liturgicalmanuscript.provenance}}
+        </td>
+    <tr class="d-flex">
+        <th class="col-2">External link:</th>
+        <td class="col-8">
+            {% for t in liturgicalmanuscript.litmanuscriptlinkrelation_set.all %}
+                    {% if t %}
+                        <a href="{{ t.link }}"> {{ t.link }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Bibliography:</th>
+        <td class="col-8">
+            {% for t in liturgicalmanuscript.bibliography_many.all %}
+                        {% if t %}
+                            {{ t }},
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    {% endfor %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Description:</th>
+        <td class="col-8">{{liturgicalmanuscript.description}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Status:</th>
+        <td class="col-1" align="left">
+            {% if liturgicalmanuscript.status == True %}
+                Completed
+            {% else %}
+                Uncompleted
+            {% endif %}
+
+        </td>
+    </tr>
+</table>
+    <hr>
+{# --------------------------------------------------------------------------------------------------------------------- #}
+<table class="table table-borderless">
+    <thead class="border-bottom font-weight-bold">
+        <tr>
+            <th class="col-3"><h3 style="color:limegreen">Saints</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Churches</h3></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="col-3">
+                {% for t in liturgicalmanuscript.saintlitmanuscriptrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:saint-detail' t.saint.id %}"> {{ t.saint }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in object.litmanuscriptchurchrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:church-detail' t.church.id %}"> {{ t.church }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+    <hr>
+{% endblock main_content %}

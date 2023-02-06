@@ -1,0 +1,136 @@
+{% extends 'saints/base.html' %}
+
+{% block main_content %}
+    <table class="table table-borderless" >
+    <tr class="d-flex">
+        <h1>{{ object.name }} <a href="{% url 'saints:object-update' object.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a></h1>
+
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Date:</th>
+        <td class="col-8">
+            {% if object.date_lower and object.date_upper %}
+                {% if object.date_lower == object.date_upper %}
+                    {{object.end_date_lower}}
+                {% else %}
+                    {{object.date_lower}} - {{object.date_upper}}
+                {% endif %}
+            {% elif object.date_lower %}
+                {{object.date_lower}}
+            {% elif object.date_upper %}
+                {{object.date_upper}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Original location:</th>
+        <td class="col-8">
+            {% if object.original_location %}
+                {{object.original_location}}
+            {% endif %}
+        </td>
+    </tr>
+        </tr>
+    <tr class="d-flex">
+        <th class="col-2">Current  location:</th>
+        <td class="col-8">
+            {% if object.current_location %}
+                {{object.current_location}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+            <th class="col-2">Type:</th>
+            <td class="col-8">
+                {% if object.type %}
+                    {{object.type}}
+                {% endif %}
+            </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Textual evidence:</th>
+        <td class="col-8">
+            {{object.textual_evidence}}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Material evidence:</th>
+        <td class="col-8">
+            {{object.material_evidence}}
+        </td>
+    </tr>
+
+    <tr class="d-flex">
+        <th class="col-2">External link:</th>
+        <td class="col-8">
+            {% for t in object.objectlinkrelation_set.all %}
+                    {% if t %}
+                        <a href="{{ t.link }}"> {{ t.link }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Bibliography:</th>
+        <td class="col-8">
+            {% for t in object.bibliography_many.all %}
+                        {% if t %}
+                            {{ t }},
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    {% endfor %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Description:</th>
+        <td class="col-8">{{object.description}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Status:</th>
+        <td class="col-1" align="left">
+            {% if object.status == True %}
+                Completed
+            {% else %}
+                Uncompleted
+            {% endif %}
+
+        </td>
+    </tr>
+</table>
+    <hr>
+{# --------------------------------------------------------------------------------------------------------------------- #}
+<table class="table table-borderless">
+    <thead class="border-bottom font-weight-bold">
+        <tr>
+            <th class="col-3"><h3 style="color:limegreen">Saints</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Churches</h3></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="col-3">
+                {% for t in object.saintobjectrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:saint-detail' t.saint.id %}"> {{ t.saint }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in object.objectchurchrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:church-detail' t.church.id %}"> {{ t.church }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+    <hr>
+{% endblock main_content %}

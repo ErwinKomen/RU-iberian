@@ -1,0 +1,111 @@
+{% extends 'saints/base.html' %}
+
+{% block main_content %}
+    <table class="table table-borderless" >
+    <tr class="d-flex">
+        <h1>{{ inscription.reference_no }} <a href="{% url 'saints:inscription-update' inscription.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a></h1>
+
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Date:</th>
+        <td class="col-8">
+            {% if inscription.date_lower and inscription.date_upper %}
+                {% if inscription.date_lower == inscription.date_upper %}
+                    {{inscription.end_date_lower}}
+                {% else %}
+                    {{inscription.date_lower}} - {{inscription.date_upper}}
+                {% endif %}
+            {% elif inscription.date_lower %}
+                {{inscription.date_lower}}
+            {% elif inscription.date_upper %}
+                {{inscription.date_upper}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Original location:</th>
+        <td class="col-8">
+            {% if inscription.original_location %}
+                {{inscription.original_location}}
+            {% endif %}
+        </td>
+    </tr>
+        </tr>
+    <tr class="d-flex">
+        <th class="col-2">External link:</th>
+        <td class="col-8">
+            {% for t in inscription.inscriptionlinkrelation_set.all %}
+                    {% if t %}
+                        <a href="{{ t.link }}"> {{ t.link }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Bibliography:</th>
+        <td class="col-8">
+            {% for t in inscription.bibliography_many.all %}
+                        {% if t %}
+                            {{ t }},
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    {% endfor %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Text:</th>
+        <td class="col-8">{{inscription.text}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Description:</th>
+        <td class="col-8">{{inscription.description}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Status:</th>
+        <td class="col-1" align="left">
+            {% if inscription.status == True %}
+                Completed
+            {% else %}
+                Uncompleted
+            {% endif %}
+
+        </td>
+    </tr>
+</table>
+    <hr>
+{# --------------------------------------------------------------------------------------------------------------------- #}
+<table class="table table-borderless">
+    <thead class="border-bottom font-weight-bold">
+        <tr>
+            <th class="col-3"><h3 style="color:limegreen">Saints</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Churches</h3></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="col-3">
+                {% for t in inscription.saintinscriptionrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:saint-detail' t.saint.id %}"> {{ t.saint }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in inscription.inscriptionchurchrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:church-detail' t.church.id %}"> {{ t.church }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+    <hr>
+{% endblock main_content %}

@@ -1,0 +1,11 @@
+Django==2.2.24
+django-appconf==1.0.4
+django-crispy-forms==1.9.1
+django-redis==4.11.0
+django-select2==7.1.2
+django-widget-tweaks==1.4.8
+partial-date==0.1
+psycopg2==2.8.6
+pytz==2019.3
+redis==3.3.11
+sqlparse==0.3.0

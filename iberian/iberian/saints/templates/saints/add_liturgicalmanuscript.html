@@ -1,0 +1,122 @@
+{% extends "saints/base.html" %}
+
+{% block main_content %}
+    <h2>
+        {% if not form.instance.pk %}
+            Add Liturgical manuscript
+        {% else %}
+            Update Liturgical manuscript "{{form.instance.shelf_no}}"
+        {% endif %}
+    </h2>
+
+
+<form method="post" enctype="multipart/form-data" onsubmit="dosubmit();">
+{% csrf_token %}
+
+
+<!-- Church form is defined in a separate template -->
+    {% include 'saints/_liturgicalmanuscript_form.html' %}
+
+{% if view == "inline" %}
+{% else %}
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link" id="Saintsa" data-toggle="tab" href="#Saints" role="tab" aria-controls="Saints" aria-selected="true">Saints</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="Churchesa" data-toggle="tab" href="#Churches" role="tab" aria-controls="Churches" aria-selected="false">Churches</a>
+    </li>
+	<li class="nav-item">
+        <a class="nav-link" id="Linksa" data-toggle="tab" href="#Links" role="tab" aria-controls="Links" aria-selected="false">External Links</a>
+    </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+    <!--Saints -->
+    <div class="tab-pane fade" id="Saints">
+		{{liturgicalmanuscriptsaint_formset.management_form}}
+		<table class="table table-borderless">
+		<tr class ="d-flex">
+			<th class="col-8">Saint
+			<a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+				href ="{% url 'saints:saint-insert' %}" role="button">
+				 <i class="fa fa-plus"></i></a>
+			</th>
+			<th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+		</tr>
+		{% for f in liturgicalmanuscriptsaint_formset.forms %}
+			<tr class ="d-flex">
+			<td class="col-8">{{f.saint}} {{f.saint.errors}}</td>
+			<td class="col-1" style="text-align:left">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+
+    <!--Churches -->
+    <div class="tab-pane fade" id="Churches">
+		{{liturgicalmanuscriptchurch_formset.management_form}}
+		<table class="table table-borderless">
+		<tr class ="d-flex">
+		    <th class="col-5">Church
+			<a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+				href ="{% url 'saints:church-insert' %}" role="button">
+				 <i class="fa fa-plus"></i></a>
+			</th>
+            <th class="col-3">Start date </th>
+			<th class="col-3">End date </th>
+		    <th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+		</tr>
+		{% for f in liturgicalmanuscriptchurch_formset.forms %}
+			<tr class ="d-flex">
+			<td class="col-5">{{f.church}} {{f.church.errors}}</td>
+            <td class="col-3">{{f.start_date}} {{f.start_date.errors}}</td>
+            <td class="col-3">{{f.end_date}} {{f.end_date.errors}}</td>
+			<td class="col-1" style="text-align:left">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+			<!--Links -->
+    <div class="tab-pane fade" id="Links">
+		{{litmanuscriptlink_formset.management_form}}
+		<table class="table table-borderless">
+		<tr class ="d-flex">
+		<th class="col-8">Link</th>
+		<th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+		</tr>
+		{% for f in litmanuscriptlink_formset.forms %}
+			<tr class ="d-flex">
+			<td class="col-8">{{f.link}} {{f.link.errors}}</td>
+			<td class="col-1" style="text-align:left">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+
+</div>
+
+
+{% endif %}
+
+<input type="hidden" name="navbar" id="navbar" value="" />
+<input type="hidden" name="navcontent" id="navcontent" value="" />
+<input type="hidden" name="focus" id="focus" value="" />
+<button type="submit" value="Submit" class ="btn btn-success">Save</button>
+	{% if view == "inline" %}
+		<a type="reset" value="Cancel" class ="btn btn-light"
+		href="{% url 'utilities:close' %}">Cancel</a>
+	{% else %}
+		<button type="submit" name="save" value="add_another"
+			 class ="btn btn-outline-success">Save | add another</button>
+	{% endif %}
+	{% if page_name == "Edit liturgicalmanuscript"%}
+<!--    <button type="submit" name="save" value="delete"-->
+<!--		 class ="btn btn-outline-danger">delete</button>-->
+	{% endif %}
+
+
+{% include 'utilities/tab_selector.html' %}
+</form>
+{% endblock main_content %}

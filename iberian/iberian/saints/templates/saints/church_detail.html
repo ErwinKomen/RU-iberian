@@ -1,0 +1,151 @@
+{% extends 'saints/base.html' %}
+
+{% block main_content %}
+    <table class="table table-borderless" >
+    <tr class="d-flex">
+        <h1>{{ church.name }} <a href="{% url 'saints:church-update' church.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a></h1>
+
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Date:</th>
+        <td class="col-8">
+            {% if church.date_lower and church.date_upper %}
+                {% if church.date_lower == church.date_upper %}
+                    {{church.end_date_lower}}
+                {% else %}
+                    {{church.date_lower}} - {{church.date_upper}}
+                {% endif %}
+            {% elif church.date_lower %}
+                {{church.date_lower}}
+            {% elif church.date_upper %}
+                {{church.date_upper}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Coordinates:</th>
+        <td class="col-8">
+            {% if church.coordinates_latitude %}
+                Latitude: {{church.coordinates_latitude}}
+            {% endif %}
+            {% if church.coordinates_longitude %}
+                Longitude: {{church.coordinates_longitude}}
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr class="d-flex">
+            <th class="col-2">Type:</th>
+            <td class="col-8">
+                {% if church.institution_type %}
+                    {{church.institution_type}}
+                {% endif %}
+            </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Textual evidence:</th>
+        <td class="col-8">
+            {{church.textual_evidence}}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Material evidence:</th>
+        <td class="col-8">
+            {{church.material_evidence}}
+        </td>
+    </tr>
+
+    <tr class="d-flex">
+        <th class="col-2">External link:</th>
+        <td class="col-8">
+            {% for t in church.churchlinkrelation_set.all %}
+                    {% if t %}
+                        <a href="{{ t.link }}"> {{ t.link }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Bibliography:</th>
+        <td class="col-8">
+            {% for t in church.bibliography_many.all %}
+                        {% if t %}
+                            {{ t }},
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    {% endfor %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Description:</th>
+        <td class="col-8">{{church.description}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Status:</th>
+        <td class="col-1" align="left">
+            {% if church.status == True %}
+                Completed
+            {% else %}
+                Uncompleted
+            {% endif %}
+
+        </td>
+    </tr>
+</table>
+    <hr>
+{# --------------------------------------------------------------------------------------------------------------------- #}
+<table class="table table-borderless">
+    <thead class="border-bottom font-weight-bold">
+        <tr>
+            <th class="col-3"><h3 style="color:limegreen">Saints</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Objects</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Inscriptions</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Lit. manuscripts</h3></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="col-3">
+                {% for t in church.saintchurchrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:saint-detail' t.saint.id %}"> {{ t.saint }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in church.objectchurchrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:object-detail' t.object.id %}"> {{ t.object }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in church.inscriptionchurchrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:inscription-detail' t.inscription.id %}"> {{ t.inscription }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in church.litmanuscriptchurchrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:liturgicalmanuscript-detail' t.liturgical_manuscript.id %}"> {{ t.liturgical_manuscript }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+    <hr>
+{% endblock main_content %}

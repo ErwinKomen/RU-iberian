@@ -1,0 +1,84 @@
+{% extends 'saints/base.html' %}
+{% load widget_tweaks %}
+
+{% block main_content %}
+{% include 'utilities/list_search_bar.html' %}
+
+    <h2>Liturgical Manuscript list</h2>
+    <table class="table table-borderless">
+        <thead class="border-bottom font-weight-bold">
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Shelf no
+                    <a href="?q={{query}}&order_by=shelf_no"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-shelf_no"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                </th>
+                <th scope="col">Saints
+                    <a href="?q={{query}}&order_by=saintlitmanuscriptrelation__saint"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-saintlitmanuscriptrelation__saint"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                </th>
+                <th scope="col">Provenance
+                    <a href="?q={{query}}&order_by=provenance"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-provenance"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                </th>
+                <th scope="col">Date
+                    <a href="?q={{query}}&order_by=date_upper"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-date_upper"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                </th>
+
+                <td>
+                    <a href= "{% url 'saints:liturgicalmanuscript-insert' %}"
+                       class="btn btn-outline-success"
+                       target="popup"
+                       onclick="window.open('{% url 'saints:liturgicalmanuscript-insert' %}','popup','width=600,height=600'); return false;">
+                        <i class="fa fa-plus"></i> Add New</a>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for liturgicalmanuscript in liturgicalmanuscript_list %}
+            <tr style="border-bottom:1px solid lightgrey">
+                <td>
+                    {% if liturgicalmanuscript.status %}
+                        <span class="Gdot"></span>
+                    {% else %}
+                        <span class="Rdot"></span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'saints:liturgicalmanuscript-detail' liturgicalmanuscript.id %}">  {{liturgicalmanuscript.shelf_no}} </a>
+                </td>
+                <td>
+                    {% for t in liturgicalmanuscript.saintlitmanuscriptrelation_set.all %}
+                        {% if t %}
+                            <a href="{% url 'saints:saint-detail' t.saint.id %}"> {{ t.saint }} </a><br>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% if liturgicalmanuscript.provenance %}
+                        <a href="{% url 'saints:church-detail' liturgicalmanuscript.provenance.id %}"> {{liturgicalmanuscript.provenance}} </a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if liturgicalmanuscript.date_upper %}
+                        {{liturgicalmanuscript.date_upper}}
+                    {% endif %}
+                </td>
+
+                <td>
+                    <a href="{% url 'saints:liturgicalmanuscript-update' liturgicalmanuscript.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a>
+                    <form action="{% url 'saints:liturgicalmanuscript-delete' liturgicalmanuscript.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn" onclick="return confirm('Are you sure you want to delete all entities connected to this from the database?')">
+                        <i class="fa fa-trash fa-lg text-danger float-right"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

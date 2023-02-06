@@ -1,0 +1,166 @@
+{% extends "saints/base.html" %}
+
+{% block main_content %}
+    <h2>
+        {% if not form.instance.pk %}
+            Add Saint
+        {% else %}
+            Update Saint "{{form.instance.name}}"
+        {% endif %}
+    </h2>
+
+<form method="post" enctype="multipart/form-data" onsubmit="dosubmit();">
+{% csrf_token %}
+
+
+<!-- saint form is defined in a seperate template -->
+    {% include 'saints/_saint_form.html' %}
+
+{% if view == "inline" %}
+{% else %}
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link" id="Churchesa" data-toggle="tab" href="#Churches" role="tab" aria-controls="Churches" aria-selected="true">Churches</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="Inscriptionsa" data-toggle="tab" href="#Inscriptions" role="tab" aria-controls="Inscriptions" aria-selected="false">Inscriptions</a>
+    </li>
+	<li class="nav-item">
+        <a class="nav-link" id="Objectsa" data-toggle="tab" href="#Objects" role="tab" aria-controls="Objects" aria-selected="false">Objects</a>
+    </li>
+	<li class="nav-item">
+        <a class="nav-link" id="Liturgicalmanuscriptsa" data-toggle="tab" href="#Liturgicalmanuscripts" role="tab" aria-controls="Liturgicalmanuscripts" aria-selected="false">Liturgical manuscripts</a>
+    </li>
+	<li class="nav-item">
+        <a class="nav-link" id="Linksa" data-toggle="tab" href="#Links" role="tab" aria-controls="Links" aria-selected="false">External Links</a>
+    </li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+    <!--Churches -->
+    <div class="tab-pane fade" id="Churches">
+		{{saintchurch_formset.management_form}}
+		<table class="table table-borderless">
+		<tr class ="d-flex">
+		<th class="col-8">Church
+			<a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+				href ="{% url 'saints:church-insert' %}" role="button">
+				 <i class="fa fa-plus"></i></a>
+			</th>
+		<th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+		</tr>
+		{% for f in saintchurch_formset.forms %}
+			<tr class ="d-flex">
+			<td class="col-8">{{f.church}} {{f.church.errors}}</td>
+			<td class="col-1" style="text-align:left">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+    <!--Inscriptions -->
+	<div class="tab-pane fade" id="Inscriptions">
+		{{saintinscription_formset.management_form}}
+		<table class="table table-borderless">
+		<tr class ="d-flex">
+		    <th class="col-8">Inscription
+			<a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+				href ="{% url 'saints:inscription-insert' %}" role="button">
+				 <i class="fa fa-plus"></i></a>
+			</th>
+		<th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+		</tr>
+		{{saintinscription_formset.management_form}}
+		{% for f in saintinscription_formset.forms %}
+			<tr class ="d-flex">
+			<td class="col-8">{{f.inscription}} {{f.inscription.errors}}</td>
+			<td class="col-1">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+	<!--Objects -->
+	<div class="tab-pane fade" id="Objects">
+		{{saintobject_formset.management_form}}
+		<table class="table table-borderless">
+		<tr class ="d-flex">
+		    <th class="col-8">Object
+			<a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+				href ="{% url 'saints:object-insert' %}" role="button">
+				 <i class="fa fa-plus"></i></a>
+			</th>
+		<th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+		</tr>
+		{{saintobject_formset.management_form}}
+		{% for f in saintobject_formset.forms %}
+			<tr class ="d-flex">
+			<td class="col-8">{{f.object}} {{f.object.errors}}</td>
+			<td class="col-1">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+	<!--Liturgicalmanuscripts -->
+	<div class="tab-pane fade" id="Liturgicalmanuscripts">
+		{{saintliturgicalmanuscript_formset.management_form}}
+		<table class="table table-borderless">
+		<tr class ="d-flex">
+		    <th class="col-8">Liturgical manuscripts
+			<a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+				href ="{% url 'saints:liturgicalmanuscript-insert' %}" role="button">
+				 <i class="fa fa-plus"></i></a>
+			</th>
+		<th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+		</tr>
+		{{saintliturgicalmanuscript_formset.management_form}}
+		{% for f in saintliturgicalmanuscript_formset.forms %}
+			<tr class ="d-flex">
+			<td class="col-8">{{f.liturgical_manuscript}} {{f.liturgical_manuscript.errors}}</td>
+			<td class="col-1">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+	<!--Links -->
+    <div class="tab-pane fade" id="Links">
+		{{saintlink_formset.management_form}}
+		<table class="table table-borderless">
+		<tr class ="d-flex">
+		<th class="col-8">Link</th>
+		<th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+		</tr>
+		{% for f in saintlink_formset.forms %}
+			<tr class ="d-flex">
+			<td class="col-8">{{f.link}} {{f.link.errors}}</td>
+			<td class="col-1" style="text-align:left">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+		{% endfor %}
+		</table>
+	</div>
+
+</div>
+{% endif %}
+
+<input type="hidden" name="navbar" id="navbar" value="" />
+<input type="hidden" name="navcontent" id="navcontent" value="" />
+<input type="hidden" name="focus" id="focus" value="" />
+<button type="submit" value="Submit" class ="btn btn-success">Save</button>
+	{% if view == "inline" %}
+		<a type="reset" value="Cancel" class ="btn btn-light"
+		href="{% url 'utilities:close' %}">Cancel</a>
+	{% else %}
+		<button type="submit" name="save" value="add_another"
+			 class ="btn btn-outline-success">Save | add another</button>
+	{% endif %}
+	{% if page_name == "Edit institution"%}
+    <button type="submit" name="save" value="delete"
+		 class ="btn btn-outline-danger">delete</button>
+	{% endif %}
+
+
+{% include 'utilities/tab_selector.html' %}
+</form>
+{% endblock main_content %}
+
+
+

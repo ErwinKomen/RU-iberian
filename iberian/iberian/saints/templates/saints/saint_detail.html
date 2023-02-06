@@ -1,0 +1,122 @@
+{% extends 'saints/base.html' %}
+
+{% block main_content %}
+    <table class="table table-borderless" >
+    <tr class="d-flex">
+        <h1>{{ saint.name }} <a href="{% url 'saints:saint-update' saint.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a></h1>
+
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Feast day:</th>
+        <td class="col-8">
+            {% if saint.feast_day %}
+                {{saint.feast_day}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Death date:</th>
+        <td class="col-8">
+            {% if saint.death_date %}
+                {{saint.death_date}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Death place:</th>
+        <td class="col-8">
+            {% if saint.death_place %}
+                {{saint.death_place}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Type:</th>
+        <td class="col-8">
+            {% if saint.type %}
+                {{saint.type}}
+            {% endif %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">External links:</th>
+        <td class="col-8">
+            {% for t in saint.saintlinkrelation_set.all %}
+                    {% if t %}
+                        <a href="{{ t.link }}"> {{ t.link }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Description:</th>
+        <td class="col-8">{{saint.description}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Status:</th>
+        <td class="col-1" align="left">
+            {% if saint.status == True %}
+                Completed
+            {% else %}
+                Uncompleted
+            {% endif %}
+
+        </td>
+    </tr>
+</table>
+    <hr>
+{# --------------------------------------------------------------------------------------------------------------------- #}
+<table class="table table-borderless">
+    <thead class="border-bottom font-weight-bold">
+        <tr>
+            <th class="col-3"><h3 style="color:limegreen">Churchs</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Inscriptions</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Objects</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Lit. manuscripts</h3></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="col-3">
+                {% for t in saint.saintchurchrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:church-detail' t.church.id %}"> {{ t.church }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in saint.saintinscriptionrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:inscription-detail' t.inscription.id %}"> {{ t.inscription }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in saint.saintobjectrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:object-detail' t.object.id %}"> {{ t.object }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in saint.saintlitmanuscriptrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:liturgicalmanuscript-detail' t.liturgical_manuscript.id %}"> {{ t.liturgical_manuscript }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+    <hr>
+{% endblock main_content %}
