@@ -43,7 +43,7 @@ def custom_page_not_found(request):
 
 urlpatterns = [
     # ============ STANDARD VIEWS =====================
-    # url(r'^$', iberian.saints.views.home, name='home'),
+    url(r'^$', iberian.saints.views.home, name='home'),
     path("404/", custom_page_not_found),
     url(r'^favicon\.ico$',RedirectView.as_view(url='/static/saints/content/favicon.ico')),
     
@@ -56,6 +56,7 @@ urlpatterns = [
     url(r'^select2/', include('django_select2.urls')),
 
     url(r'^definitions$', RedirectView.as_view(url='/'+pfx+'admin/'), name='definitions'),
+    url(r'^nlogin', iberian.seeker.views.nlogin, name='nlogin'),
     url(r'^signup/$', iberian.seeker.views.signup, name='signup'),
 
     url(r'^login/user/(?P<user_id>\w[\w\d_]+)$', iberian.seeker.views.login_as_user, name='login_as'),
