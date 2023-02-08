@@ -4,7 +4,7 @@ Definition of urls for iberian.
 
 from datetime import datetime
 from django.contrib.auth.decorators import login_required, permission_required
-from django.conf.urls import include, url 
+from django.conf.urls import include #, url 
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseNotFound
