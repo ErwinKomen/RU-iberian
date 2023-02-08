@@ -5,67 +5,129 @@ from .models import *
 from crispy_forms.helper import FormHelper
 from django_select2 import forms as s2forms
 
+DATA_MINIMUM_INPUT_LENGTH = 0
+
 
 # Widgets
 class SaintTypeWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
 
+    def get_queryset(self):
+        qs = Saint.objects.all().order_by('name')
+        return qs
+
 
 class SaintWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
+
+    def get_queryset(self):
+        qs = Saint.objects.all().order_by('name')
+        return qs
 
 
 class ChurchWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
 
+    def get_queryset(self):
+        qs = Church.objects.all().order_by('name')
+        return qs
+
 
 class CityWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
+
+    def get_queryset(self):
+        qs = City.objects.all().order_by('name')
+        return qs
 
 
 class RegionWidget(s2forms.ModelSelect2Widget):
     search_fields = ['city__name__icontains',
                      'region_number__icontains', ]
 
+    def get_queryset(self):
+        qs = Region.objects.all().order_by('city__name', 'region_number')
+        return qs
+
 
 class MuseumWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
+
+    def get_queryset(self):
+        qs = Museum.objects.all().order_by('name')
+        return qs
 
 
 class InscriptionWidget(s2forms.ModelSelect2Widget):
     search_fields = ['reference_no__icontains']
 
+    def get_queryset(self):
+        qs = Inscription.objects.all().order_by('reference_no')
+        return qs
+
 
 class ObjectWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
+
+    def get_queryset(self):
+        qs = Object.objects.all().order_by('name')
+        return qs
 
 
 class ObjectTypeWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
 
+    def get_queryset(self):
+        qs = ObjectType.objects.all().order_by('name')
+        return qs
+
 
 class LiturgicalManuscriptWidget(s2forms.ModelSelect2Widget):
     search_fields = ['shelf_no__icontains']
+
+    def get_queryset(self):
+        qs = LiturgicalManuscript.objects.all().order_by('shelf_no')
+        return qs
 
 
 class InstitutionTypeWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
 
+    def get_queryset(self):
+        qs = InstitutionType.objects.all().order_by('name')
+        return qs
+
 
 class RiteWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
+
+    def get_queryset(self):
+        qs = Rite.objects.all().order_by('name')
+        return qs
 
 
 class FeastWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
 
+    def get_queryset(self):
+        qs = Feast.objects.all().order_by('name')
+        return qs
+
 
 class ManuscriptTypeWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
 
+    def get_queryset(self):
+        qs = ManuscriptType.objects.all().order_by('name')
+        return qs
+
 
 class BibliographyWidget(s2forms.ModelSelect2Widget):
     search_fields = ['short_title__icontains']
+
+    def get_queryset(self):
+        qs = Bibliography.objects.all().order_by('short_title')
+        return qs
 
 
 class BibliographyWidgetMulti(s2forms.ModelSelect2MultipleWidget):
@@ -73,6 +135,10 @@ class BibliographyWidgetMulti(s2forms.ModelSelect2MultipleWidget):
         'short_title__icontains',
         'author__icontains',
     ]
+
+    def get_queryset(self):
+        qs = Bibliography.objects.all().order_by('short_title', 'author')
+        return qs
 
 
 # User form
@@ -137,7 +203,7 @@ class SaintForm(forms.ModelForm):
         widget=SaintTypeWidget(
             attrs={'data-placeholder': 'Select saint type',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
 
     description = forms.CharField(widget=forms.Textarea(
@@ -172,14 +238,14 @@ class ChurchForm(ModelForm):
         widget=CityWidget(
             attrs={'data-placeholder': 'Select City',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     region = forms.ModelChoiceField(
         queryset=Region.objects.all(),
         widget=RegionWidget(
             attrs={'data-placeholder': 'Select Region',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     institution_type = forms.ModelChoiceField(
         queryset=InstitutionType.objects.all(),
@@ -187,7 +253,7 @@ class ChurchForm(ModelForm):
         widget=InstitutionTypeWidget(
             attrs={'data-placeholder': 'Select institution type',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     #
     # bibliography = forms.ModelChoiceField(
@@ -196,14 +262,14 @@ class ChurchForm(ModelForm):
     #     widget=BibliographyWidget(
     #         attrs={'data-placeholder': 'Select bibliography',
     #                'style': 'width:100%;', 'class': 'searching',
-    #                'data-minimum-input-length': '1'}),
+    #                'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     #     required=False)
     bibliography_many = forms.ModelMultipleChoiceField(
         queryset=Bibliography.objects.all(),
         widget=BibliographyWidgetMulti(
             attrs={'data-placeholder': '',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
 
     description = forms.CharField(widget=forms.Textarea(
@@ -232,42 +298,42 @@ class ObjectForm(ModelForm):
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select Church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     original_location_city = forms.ModelChoiceField(
         queryset=City.objects.all(),
         widget=CityWidget(
             attrs={'data-placeholder': 'Select City',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     original_location_region = forms.ModelChoiceField(
         queryset=Region.objects.all(),
         widget=RegionWidget(
             attrs={'data-placeholder': 'Select Region',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     current_location = forms.ModelChoiceField(
         queryset=Church.objects.all(),
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select Church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     current_location_museum = forms.ModelChoiceField(
         queryset=Museum.objects.all(),
         widget=MuseumWidget(
             attrs={'data-placeholder': 'Select Museum',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     type = forms.ModelChoiceField(
         queryset=ObjectType.objects.all().order_by('name'),
         widget=ObjectTypeWidget(
             attrs={'data-placeholder': 'Select object type',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
 
     bibliography = forms.ModelChoiceField(
@@ -275,14 +341,14 @@ class ObjectForm(ModelForm):
         widget=BibliographyWidget(
             attrs={'data-placeholder': 'Select bibliography',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     bibliography_many = forms.ModelMultipleChoiceField(
         queryset=Bibliography.objects.all(),
         widget=BibliographyWidgetMulti(
             attrs={'data-placeholder': '',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     description = forms.CharField(widget=forms.Textarea(
         attrs={'style': 'width:100%', 'rows': 3}),
@@ -309,35 +375,35 @@ class InscriptionForm(ModelForm):
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select Church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     original_location_city = forms.ModelChoiceField(
         queryset=City.objects.all(),
         widget=CityWidget(
             attrs={'data-placeholder': 'Select City',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     original_location_region = forms.ModelChoiceField(
         queryset=Region.objects.all(),
         widget=RegionWidget(
             attrs={'data-placeholder': 'Select Region',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     current_location = forms.ModelChoiceField(
         queryset=Church.objects.all(),
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select Church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     current_location_museum = forms.ModelChoiceField(
         queryset=Museum.objects.all(),
         widget=MuseumWidget(
             attrs={'data-placeholder': 'Select Museum',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
 
     bibliography = forms.ModelChoiceField(
@@ -345,14 +411,14 @@ class InscriptionForm(ModelForm):
         widget=BibliographyWidget(
             attrs={'data-placeholder': 'Select bibliography',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     bibliography_many = forms.ModelMultipleChoiceField(
         queryset=Bibliography.objects.all(),
         widget=BibliographyWidgetMulti(
             attrs={'data-placeholder': '',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     text = forms.CharField(widget=forms.Textarea(
         attrs={'style': 'width:100%', 'rows': 3}),
@@ -382,21 +448,21 @@ class LiturgicalManuscriptForm(ModelForm):
         widget=RiteWidget(
             attrs={'data-placeholder': 'Select rite',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     type = forms.ModelChoiceField(
         queryset=ManuscriptType.objects.all(),
         widget=ManuscriptTypeWidget(
             attrs={'data-placeholder': 'Select manuscript type',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     original_location = forms.ModelChoiceField(
         queryset=Church.objects.all(),
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select Church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
 
     original_location_city = forms.ModelChoiceField(
@@ -404,35 +470,35 @@ class LiturgicalManuscriptForm(ModelForm):
         widget=CityWidget(
             attrs={'data-placeholder': 'Select City',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     original_location_region = forms.ModelChoiceField(
         queryset=Region.objects.all(),
         widget=RegionWidget(
             attrs={'data-placeholder': 'Select Region',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     provenance = forms.ModelChoiceField(
         queryset=Church.objects.all(),
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select Church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     provenance_museum = forms.ModelChoiceField(
         queryset=Museum.objects.all(),
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select Museum',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     feast = forms.ModelChoiceField(
         queryset=Rite.objects.all(),
         widget=FeastWidget(
             attrs={'data-placeholder': 'Select feast',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
 
     bibliography = forms.ModelChoiceField(
@@ -440,14 +506,14 @@ class LiturgicalManuscriptForm(ModelForm):
         widget=BibliographyWidget(
             attrs={'data-placeholder': 'Select bibliography',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     bibliography_many = forms.ModelMultipleChoiceField(
         queryset=Bibliography.objects.all(),
         widget=BibliographyWidgetMulti(
             attrs={'data-placeholder': '',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
     description = forms.CharField(widget=forms.Textarea(
         attrs={'style': 'width:100%', 'rows': 3}),
@@ -487,7 +553,7 @@ class SaintChurchRelationForm(ModelForm):
         widget=SaintWidget(
             attrs={'data-placeholder': 'Select saint',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     church = forms.ModelChoiceField(
@@ -495,7 +561,7 @@ class SaintChurchRelationForm(ModelForm):
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -509,14 +575,14 @@ class SaintInscriptionRelationForm(ModelForm):
         widget=SaintWidget(
             attrs={'data-placeholder': 'Select saint',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
     inscription = forms.ModelChoiceField(
         queryset=Inscription.objects.all(),
         widget=InscriptionWidget(
             attrs={'data-placeholder': 'Select inscription',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -530,7 +596,7 @@ class SaintObjectRelationForm(ModelForm):
         widget=SaintWidget(
             attrs={'data-placeholder': 'Select saint',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     object = forms.ModelChoiceField(
@@ -538,7 +604,7 @@ class SaintObjectRelationForm(ModelForm):
         widget=ObjectWidget(
             attrs={'data-placeholder': 'Select object',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -552,7 +618,7 @@ class SaintLitManuscriptRelationForm(ModelForm):
         widget=SaintWidget(
             attrs={'data-placeholder': 'Select saint',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     liturgical_manuscript = forms.ModelChoiceField(
@@ -560,7 +626,7 @@ class SaintLitManuscriptRelationForm(ModelForm):
         widget=LiturgicalManuscriptWidget(
             attrs={'data-placeholder': 'Select liturgical manuscript',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -574,7 +640,7 @@ class ChurchObjectRelationForm(ModelForm):
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     object = forms.ModelChoiceField(
@@ -582,7 +648,7 @@ class ChurchObjectRelationForm(ModelForm):
         widget=ObjectWidget(
             attrs={'data-placeholder': 'Select object',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -596,7 +662,7 @@ class ChurchLitManuscriptRelationForm(ModelForm):
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     liturgical_manuscript = forms.ModelChoiceField(
@@ -604,7 +670,7 @@ class ChurchLitManuscriptRelationForm(ModelForm):
         widget=LiturgicalManuscriptWidget(
             attrs={'data-placeholder': 'Select liturgical manuscript',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -618,7 +684,7 @@ class InscriptionChurchRelationForm(ModelForm):
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     inscription = forms.ModelChoiceField(
@@ -626,7 +692,7 @@ class InscriptionChurchRelationForm(ModelForm):
         widget=InscriptionWidget(
             attrs={'data-placeholder': 'Select inscription',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -641,7 +707,7 @@ class SaintLinkRelationForm(ModelForm):
         widget=SaintWidget(
             attrs={'data-placeholder': 'Select saint',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -655,7 +721,7 @@ class ChurchLinkRelationForm(ModelForm):
         widget=ChurchWidget(
             attrs={'data-placeholder': 'Select church',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -669,7 +735,7 @@ class ObjectLinkRelationForm(ModelForm):
         widget=ObjectWidget(
             attrs={'data-placeholder': 'Select object',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -682,7 +748,7 @@ class InscriptionLinkRelationForm(ModelForm):
         widget=InscriptionWidget(
             attrs={'data-placeholder': 'Select inscription',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:
@@ -696,7 +762,7 @@ class LitManuscriptLinkRelationForm(ModelForm):
         widget=LiturgicalManuscriptWidget(
             attrs={'data-placeholder': 'Select liturgical manuscript',
                    'style': 'width:100%;', 'class': 'searching',
-                   'data-minimum-input-length': '1'}),
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
     )
 
     class Meta:

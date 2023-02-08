@@ -8,7 +8,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseNotFound
-from django.urls import path
+from django.urls import path, re_path
 import django.contrib.auth.views
 import django
 
@@ -43,34 +43,34 @@ def custom_page_not_found(request):
 
 urlpatterns = [
     # ============ STANDARD VIEWS =====================
-    url(r'^$', iberian.saints.views.home, name='home'),
+    re_path(r'^$', iberian.saints.views.home, name='home'),
     path("404/", custom_page_not_found),
-    url(r'^favicon\.ico$',RedirectView.as_view(url='/static/saints/content/favicon.ico')),
+    re_path(r'^favicon\.ico$',RedirectView.as_view(url='/static/saints/content/favicon.ico')),
     
     # ============ SAINTS VIEWS =======================
-    url('', include(('iberian.saints.urls',  'saints'), namespace="saints")),
+    re_path('', include(('iberian.saints.urls',  'saints'), namespace="saints")),
 
     # =============================================================================================
 
     # For working with ModelWidgets from the select2 package https://django-select2.readthedocs.io
-    url(r'^select2/', include('django_select2.urls')),
+    re_path(r'^select2/', include('django_select2.urls')),
 
-    url(r'^definitions$', RedirectView.as_view(url='/'+pfx+'admin/'), name='definitions'),
-    url(r'^nlogin', iberian.seeker.views.nlogin, name='nlogin'),
-    url(r'^signup/$', iberian.seeker.views.signup, name='signup'),
+    re_path(r'^definitions$', RedirectView.as_view(url='/'+pfx+'admin/'), name='definitions'),
+    re_path(r'^nlogin', iberian.seeker.views.nlogin, name='nlogin'),
+    re_path(r'^signup/$', iberian.seeker.views.signup, name='signup'),
 
-    url(r'^login/user/(?P<user_id>\w[\w\d_]+)$', iberian.seeker.views.login_as_user, name='login_as'),
+    re_path(r'^login/user/(?P<user_id>\w[\w\d_]+)$', iberian.seeker.views.login_as_user, name='login_as'),
 
-    url(r'^login/$', LoginView.as_view
+    re_path(r'^login/$', LoginView.as_view
         (
             template_name= 'login.html',
             authentication_form= iberian.seeker.forms.BootstrapAuthenticationForm,
             extra_context= {'title': 'Log in','year': datetime.now().year,}
         ),
         name='login'),
-    url(r'^logout$',  LogoutView.as_view(next_page=reverse_lazy('home')), name='logout'),
+    re_path(r'^logout$',  LogoutView.as_view(next_page=reverse_lazy('home')), name='logout'),
 
     # Uncomment the next line to enable the admin:
-    url(r'^admin/', admin.site.urls, name='admin_base'),
+    re_path(r'^admin/', admin.site.urls, name='admin_base'),
 ]
 

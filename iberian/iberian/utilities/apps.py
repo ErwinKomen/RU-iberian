@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class UtilitiesConfig(AppConfig):
-    name = 'utilities'
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'iberian.utilities'

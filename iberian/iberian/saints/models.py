@@ -244,7 +244,7 @@ class ObjectChurchRelation(models.Model):
     end_date = PartialDateField(blank=True, null=True)
 
     def __str__(self):
-        message = self.object + "and" + self.church
+        message = "{} and {}".format(self.object, self.church)
         return message
 
 
@@ -255,7 +255,7 @@ class LitManuscriptChurchRelation(models.Model):
     end_date = PartialDateField(blank=True, null=True)
 
     def __str__(self):
-        message = self.liturgical_manuscript + "and" + self.church
+        message = "{} and {}".format(self.liturgical_manuscript, self.church)
         return message
 
 
@@ -264,7 +264,7 @@ class SaintChurchRelation(models.Model):
     church = models.ForeignKey(Church, on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        message = self.saint + "and" + self.church
+        message = "{} and {}".format(self.saint, self.church)
         return message
 
 
@@ -273,7 +273,7 @@ class SaintInscriptionRelation(models.Model):
     inscription = models.ForeignKey(Inscription, on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        message = self.saint + "and" + self.inscription
+        message = "{} and {}".format(self.saint, self.inscription)
         return message
 
 
@@ -282,7 +282,7 @@ class SaintObjectRelation(models.Model):
     object = models.ForeignKey(Object, on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        message = self.saint + "and" + self.object
+        message = "{} and {}".format(self.saint, self.object)
         return message
 
 
@@ -291,7 +291,7 @@ class SaintLitManuscriptRelation(models.Model):
     liturgical_manuscript = models.ForeignKey(LiturgicalManuscript, on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        message = self.saint + "and" + self.liturgical_manuscript
+        message = "{} and {}".format(self.saint, self.liturgical_manuscript)
         return message
 
 
@@ -302,26 +302,8 @@ class InscriptionChurchRelation(models.Model):
     end_date = PartialDateField(blank=True, null=True)
 
     def __str__(self):
-        message = self.inscription + "and" + self.church
+        message = "{} and {}".format(self.inscription, self.church)
         return message
-
-
-# class ChurchObjectRelation(models.Model):
-#     church = models.ForeignKey(Church, on_delete=models.CASCADE, blank=True)
-#     object = models.ForeignKey(Object, on_delete=models.CASCADE, blank=True)
-#
-#     def __str__(self):
-#         message = self.church + "and" + self.object
-#         return message
-#
-#
-# class ChurchLitManuscriptRelation(models.Model):
-#     church = models.ForeignKey(Church, on_delete=models.CASCADE, blank=True)
-#     liturgical_manuscript = models.ForeignKey(LiturgicalManuscript, on_delete=models.CASCADE, blank=True)
-#
-#     def __str__(self):
-#         message = self.church + "and" + self.liturgical_manuscript
-#         return message
 
 
 # Multiple external links
@@ -330,7 +312,7 @@ class SaintLinkRelation(models.Model):
     link = models.URLField(max_length=256, default='', blank=True)
 
     def __str__(self):
-        message = self.saint + "and" + self.link
+        message = "{} and {}".format(self.saint, self.link)
         return message
 
 
@@ -339,7 +321,7 @@ class ChurchLinkRelation(models.Model):
     link = models.URLField(max_length=256, default='', blank=True)
 
     def __str__(self):
-        message = self.church + "and" + self.link
+        message = "{} and {}".format(self.church, self.link)
         return message
 
 
@@ -348,7 +330,7 @@ class ObjectLinkRelation(models.Model):
     link = models.URLField(max_length=256, default='', blank=True)
 
     def __str__(self):
-        message = self.object + "and" + self.link
+        message = "{} and {}".format(self.object, self.link)
         return message
 
 
@@ -357,7 +339,7 @@ class InscriptionLinkRelation(models.Model):
     link = models.URLField(max_length=256, default='', blank=True)
 
     def __str__(self):
-        message = self.inscription + "and" + self.link
+        message = "{} and {}".format(self.inscription, self.link)
         return message
 
 
@@ -366,5 +348,5 @@ class LitManuscriptLinkRelation(models.Model):
     link = models.URLField(max_length=256, default='', blank=True)
 
     def __str__(self):
-        message = self.liturgical_manuscript + "and" + self.link
+        message = "{} and {}".format(self.liturgical_manuscript, self.link)
         return message

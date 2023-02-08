@@ -5,6 +5,7 @@ from django.utils import timezone
 
 # ========= Own application
 from iberian.utils.model_util import id_generator, info
+from iberian.basic.utils import ErrHandle
 
 
 class RelationModel(models.Model):
@@ -14,9 +15,15 @@ class RelationModel(models.Model):
         abstract = True
 
     def other(self, name):
-        if name == self.model_fields[0]: return self.model_fields[1]
-        if name == self.model_fields[1]: return self.model_fields[0]
-        return ''
+        oErr = ErrHandle()
+        sBack = ""
+        try:
+            if name == self.model_fields[0]: return self.model_fields[1]
+            if name == self.model_fields[1]: return self.model_fields[0]
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("RelationModel/other")
+        return sBack
 
 
 class SimpleModel(models.Model):
@@ -45,16 +52,23 @@ class Language(models.Model, info):
 
 def copy_complete(instance, commit=True):
     '''copy a model instance completely with all relations.'''
-    copy = simple_copy(instance, commit)
-    app_name, model_name = instance2names(instance)
-    for f in copy._meta.get_fields():
-        if f.one_to_many:
-            for r in list(getattr(instance, f.name + '_set').all()):
-                rcopy = simple_copy(r, False)
-                setattr(rcopy, model_name.lower(), copy)
-                rcopy.save()
-        if f.many_to_many:
-            getattr(copy, f.name).set(getattr(instance, f.name).all())
+
+    oErr = ErrHandle()
+    copy = None
+    try:
+        copy = simple_copy(instance, commit)
+        app_name, model_name = instance2names(instance)
+        for f in copy._meta.get_fields():
+            if f.one_to_many:
+                for r in list(getattr(instance, f.name + '_set').all()):
+                    rcopy = simple_copy(r, False)
+                    setattr(rcopy, model_name.lower(), copy)
+                    rcopy.save()
+            if f.many_to_many:
+                getattr(copy, f.name).set(getattr(instance, f.name).all())
+    except:
+        msg = oErr.get_error_message()
+        oErr.DoError("copy_complete")
     return copy
 
 
@@ -62,18 +76,33 @@ def simple_copy(instance, commit=True):
     '''Copy a model instance and save it to the database.
     m2m and relations are not saved.
     '''
-    app_name, model_name = instance2names(instance)
-    model = apps.get_model(app_name, model_name)
-    copy = model.objects.get(pk=instance.pk)
-    copy.pk = None
-    if commit:
-        copy.save()
+
+    oErr = ErrHandle()
+    copy = None
+    try:
+        app_name, model_name = instance2names(instance)
+        model = apps.get_model(app_name, model_name)
+        copy = model.objects.get(pk=instance.pk)
+        copy.pk = None
+        if commit:
+            copy.save()
+    except:
+        msg = oErr.get_error_message()
+        oErr.DoError("simple_copy")
     return copy
 
 
 def instance2names(instance):
-    s = str(type(instance)).split("'")[-2]
-    app_name, _, model_name = s.split('.')
+
+    app_name = ""
+    model_name = ""
+    oErr = ErrHandle()
+    try:
+        s = str(type(instance)).split("'")[-2]
+        main_name, app_name, _, model_name = s.split('.')
+    except:
+        msg = oErr.get_error_message()
+        oErr.DoError("instance2names")
     return app_name, model_name
 
 
@@ -98,14 +127,20 @@ def instance2icon(instance):
 
 
 def instance2map_buttons(instance):
-    app_name, model_name = instance2names(instance)
+
     m = ''
-    m += '<a class = "btn btn-link btn-sm mt-1 pl-0 text-dark" href='
-    m += '/' + app_name + '/edit_' + model_name.lower() + '/' + str(instance.pk)
-    m += ' role="button"><i class="far fa-edit"></i></a>'
-    m += '<a class = "btn btn-link btn-sm mt-1 pl-0 text-dark" href='
-    m += '/locations/show_links/' + app_name + '/' + model_name.lower() + '/' + str(instance.pk) + '/'
-    m += ' role="button"><i class="fas fa-project-diagram"></i></a>'
+    oErr = ErrHandle()
+    try:
+        app_name, model_name = instance2names(instance)
+        m += '<a class = "btn btn-link btn-sm mt-1 pl-0 text-dark" href='
+        m += '/' + app_name + '/edit_' + model_name.lower() + '/' + str(instance.pk)
+        m += ' role="button"><i class="far fa-edit"></i></a>'
+        m += '<a class = "btn btn-link btn-sm mt-1 pl-0 text-dark" href='
+        m += '/locations/show_links/' + app_name + '/' + model_name.lower() + '/' + str(instance.pk) + '/'
+        m += ' role="button"><i class="fas fa-project-diagram"></i></a>'
+    except:
+        msg = oErr.get_error_message()
+        oErr.DoError("instance2map_buttons")
     return m
 
 
