@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
+
+from iberian.basic.utils import ErrHandle
 from .forms import *
 from django.utils.decorators import method_decorator
 
@@ -9,9 +11,10 @@ from django.urls import reverse_lazy
 
 # Extra Imports for the Login and Logout Capabilities
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpRequest, HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 # ========================= OWN APPLICATION IMPORT ========================
@@ -83,13 +86,13 @@ def user_login(request):
                 # Log the user in.
                 login(request, user)
                 # Send the user back to some page. In this case their homepage.
-                return HttpResponseRedirect(reverse('saints:home'))
+                return home(request)
             else:
                 # If account is not active:
                 return HttpResponse("Your account is not active.")
         else:
             print("Someone tried to login and failed.")
-            print("They used username: {} and password: {}".format(username, password))
+            print("They used username: {}".format(username))
             return HttpResponse("Invalid login details supplied.")
 
     else:
@@ -102,12 +105,89 @@ def user_logout(request):
     # Log out the user.
     logout(request)
     # Return to homepage.
-    return HttpResponseRedirect(reverse('saints:home'))
+    return redirect('saints:home')
+
+
+login_required(login_url='/login/')
+def password_change(request):
+    """Allow the user to change password and then return home"""
+
+    oErr = ErrHandle()
+    context = {}
+    template_name = "saints/change_password.html"
+    registered = False
+    try:
+        # Must be signed in
+        if request.user.is_authenticated:
+            # Get the user object
+            user = request.user
+            # Check if we are just showing the form or responding to it
+            if request.method == "POST":
+                msg = ""
+                # Processing change of password
+                # form = UserPasswordChangeForm(data=request.POST)
+                form = PasswordChangeForm(user, data=request.POST)
+                # Get the form values
+                if form.is_valid():
+                    # Get the values
+                    cleaned_data = form.cleaned_data
+                    password_old = cleaned_data.get("old_password")
+                    password_new = cleaned_data.get("new_password1")
+                    password_new2 = cleaned_data.get("new_password2")
+                    if user.check_password(password_old):
+                        # Check whether new and new2 are equal
+                        if password_new == password_new2 and password_new != "":
+                            # Yes, valid: process
+                            user.set_password(password_new)
+                            user.save()
+                            # Change of password was Successful!
+                            registered = True
+                            
+                        else:
+                            msg = "Your new password is not the same as your repeated password"
+                    else:
+                        # There is an error
+                        msg = "Your old password is incorrect"
+                else:
+                    # Form is not valid
+                    msg = "The password form is not valid"
+                context['registered'] = registered
+                context['msg'] =msg
+                if registered:
+                    # Go to the home page
+                    login(request, user)
+                    response = redirect(reverse("saints:home"))
+                else:
+                    context['form_auth'] = PasswordChangeForm(user)
+                    response = render(request, template_name, context)
+            else:
+                # This is a get: show the correct form
+                context['form_auth'] = PasswordChangeForm(user)
+                context['registered'] = registered
+                response = render(request, template_name, context)
+        else:
+            response = user_login(request)
+    except:
+        msg = oErr.get_error_message()
+        oErr.DoError("")
+
+    # Return to homepage.
+    return response
 
 
 #
 def home(request):
-    return render(request, 'saints/home.html')
+    """Renders the home page."""
+
+    assert isinstance(request, HttpRequest)
+    # Specify the template
+    template_name = 'saints/home.html'
+    context = {
+        'title': 'Iberian saints',
+        'user': request.user}
+
+    # Render and return the page
+    return render(request, template_name, context)
 
 
 def view_404(request, *args, **kwargs):

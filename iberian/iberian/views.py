@@ -1,4 +1,4 @@
 from django.shortcuts import render, redirect
 
 def view_404(request, exception):
-    return redirect('home')
+    return redirect('saints:home')

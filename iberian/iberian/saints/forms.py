@@ -150,6 +150,16 @@ class UserForm(forms.ModelForm):
         fields = ('username', 'email', 'password')
 
 
+class UserPasswordChangeForm(forms.Form):
+    password_old = forms.CharField(widget=forms.PasswordInput())
+    password_new = forms.CharField(widget=forms.PasswordInput())
+    password_new2 = forms.CharField(widget=forms.PasswordInput())
+
+    #class Meta():
+    #    model = User
+    #    fields = ('password', 'password_new', 'password_new2')
+
+
 class UserProfileInfoForm(forms.ModelForm):
     class Meta():
         model = UserProfileInfo

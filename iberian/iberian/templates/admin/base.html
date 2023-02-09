@@ -25,7 +25,7 @@
           <div id="branding">
             <!-- Link to the main site -->
             <h1 id="site-name">
-              <a href="{% url 'home' %}">Iberian Saints</a>
+              <a href="{% url 'saints:home' %}">Iberian Saints</a>
             </h1>
           </div>
 
@@ -47,7 +47,7 @@
                           {% endif %}
                       {% endif %}
                       {% if user.has_usable_password %}
-                      <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+                      <a href="{% url 'saints:password_change' %}">{% trans 'Change password' %}</a> /
                       {% endif %}
                       <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
                   {% endblock %}
@@ -59,7 +59,7 @@
       <!-- END Header -->
       {% block breadcrumbs %}
         <div class="breadcrumbs erwin">
-          <a href="{% url 'home' %}">{% trans 'Home' %} XXX</a>
+          <a href="{% url 'saints:home' %}">{% trans 'Home' %} XXX</a>
           {% if title %} &rsaquo; {{ title }}{% endif %}
         </div>
       {% endblock %}

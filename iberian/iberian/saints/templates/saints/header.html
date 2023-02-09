@@ -11,7 +11,7 @@
         <a class="nav-link" href="{% url 'saints:home' %}">Home<span class="sr-only">(current)</span></a>
       </li>
 
-      {% if user.is_authenticated %}
+      {% if user.is_authenticated and user.is_superuser %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
         </li>
@@ -84,7 +84,7 @@
         <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Logout</a>
         <div class="dropdown-menu">
           <a class="dropdown-item" href="{% url 'saints:logout' %}">Logout</a>
-          <a class="dropdown-item" href="{% url 'admin:password_change' %}">Change password</a>
+          <a class="dropdown-item" href="{% url 'saints:password_change' %}">Change password</a>
         </div>
       </li>
     {% else %}

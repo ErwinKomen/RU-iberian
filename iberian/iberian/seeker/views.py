@@ -121,7 +121,9 @@ def login_as_user(request, user_id):
         if user != None:
             # Perform the login
             login(request, user)
-            return HttpResponseRedirect(reverse("home"))
+            # return HttpResponseRedirect(reverse("home"))
+            # return redirect('saints:home')
+            return home(request)
 
     return home(request)
 
@@ -150,7 +152,7 @@ def signup(request):
                 g.user_set.add(user)
             # Log in as the user
             login(request, user)
-            return redirect('home')
+            return redirect('saints:home')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})

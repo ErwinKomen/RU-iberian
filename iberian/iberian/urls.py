@@ -61,15 +61,6 @@ urlpatterns = [
 
     re_path(r'^login/user/(?P<user_id>\w[\w\d_]+)$', iberian.seeker.views.login_as_user, name='login_as'),
 
-    re_path(r'^login/$', LoginView.as_view
-        (
-            template_name= 'login.html',
-            authentication_form= iberian.seeker.forms.BootstrapAuthenticationForm,
-            extra_context= {'title': 'Log in','year': datetime.now().year,}
-        ),
-        name='login'),
-    re_path(r'^logout$',  LogoutView.as_view(next_page=reverse_lazy('home')), name='logout'),
-
     # Uncomment the next line to enable the admin:
     re_path(r'^admin/', admin.site.urls, name='admin_base'),
 ]
