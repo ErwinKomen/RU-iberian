@@ -13,9 +13,7 @@
       <li class="nav-item">
         <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
       </li>
-<!--      <li class="nav-item">-->
-<!--        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
-<!--      </li>-->
+
       {% if user.is_authenticated %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">View</a>
@@ -79,8 +77,12 @@
       <li class="nav-item">
         <a class="nav-link" href="#">Hi {{ user.username }}!</a>
       </li>
-       <li class="nav-item">
-        <a class="nav-link" href="{% url 'saints:logout' %}">Logout</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Logout</a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'saints:logout' %}">Logout</a>
+          <a class="dropdown-item" href="{% url 'admin:password_change' %}">Change password</a>
+        </div>
       </li>
     {% else %}
       <li class="nav-item">
