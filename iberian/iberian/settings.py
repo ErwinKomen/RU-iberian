@@ -78,8 +78,8 @@ from .secret_key import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'iberian.rich.ru.nl', 'testserver' ]
-CSRF_TRUSTED_ORIGINS = ['https://iberian.rich.ru.nl']
+ALLOWED_HOSTS = ['localhost', 'iberiansaints.rich.ru.nl', 'testserver' ]
+CSRF_TRUSTED_ORIGINS = ['https://iberiansaints.rich.ru.nl']
 
 # Caching
 if USE_REDIS:
