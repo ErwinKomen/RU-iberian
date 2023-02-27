@@ -119,17 +119,26 @@ def login_as_user(request, user_id):
     if super.is_staff and super.is_superuser:
         user = User.objects.filter(username__iexact=user_id).first()
         if user != None:
-            # Perform the login
-            login(request, user)
-            # return HttpResponseRedirect(reverse("home"))
-            # return redirect('saints:home')
-            return home(request)
 
-    return home(request)
+            # Check it the account is active
+            if user.is_active:
+                # Log the user in.
+                login(request, user)
+                # Go to the home page
+                response = redirect(reverse("saints:home"))
+                return response
+            else:
+                # If account is not active:
+                return HttpResponse("The account of {} is not active.".format(user.username))
+
+    # Go to the home page
+    response = redirect(reverse("saints:home"))
+    return response
 
 def signup(request):
     """Provide basic sign up and validation of it """
 
+    context = {'registered': False}
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -142,18 +151,27 @@ def signup(request):
             #      otherwise he/she may not see the admin pages
             user = authenticate(username=username, 
                                 password=raw_password,
-                                is_staff=True)
-            user.is_staff = True
+                                is_staff=False)
+            # Default settings: 
+            user.is_staff = False
+            user.is_active = False
+            # Safe using the defaults
             user.save()
-            # Add user to the "lila_user" group
+            # Add user to the "iberian_user" group
             gQs = Group.objects.filter(name=app_user)
             if gQs.count() > 0:
                 g = gQs[0]
                 g.user_set.add(user)
-            # Log in as the user
-            login(request, user)
-            return redirect('saints:home')
+
+            # Set the 'registered' flag in the context
+            context['registered'] = True
+            ## Log in as the user
+            #login(request, user)
+            #return redirect(reverse("saints:home"))
     else:
         form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
+    # Make sure the form ends up in the context
+    context['form'] = form
+    # return render(request, 'signup.html', {'form': form})
+    return render(request, 'signup.html', context)
 

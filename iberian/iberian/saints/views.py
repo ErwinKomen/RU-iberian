@@ -85,8 +85,9 @@ def user_login(request):
             if user.is_active:
                 # Log the user in.
                 login(request, user)
-                # Send the user back to some page. In this case their homepage.
-                return home(request)
+                # Go to the home page
+                response = redirect(reverse("saints:home"))
+                return response
             else:
                 # If account is not active:
                 return HttpResponse("Your account is not active.")
