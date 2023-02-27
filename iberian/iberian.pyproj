@@ -124,6 +124,7 @@
     </Content>
     <Content Include="iberian\basic\static\basic\content\basic.css" />
     <Content Include="iberian\basic\static\basic\content\font-awesome.min.css" />
+    <Content Include="iberian\saints\static\saints\content\site.css" />
     <Content Include="iberian\saints\templates\saints\add_church.html" />
     <Content Include="iberian\saints\templates\saints\add_inscription.html" />
     <Content Include="iberian\saints\templates\saints\add_liturgicalmanuscript.html" />
@@ -158,6 +159,7 @@
     <Content Include="iberian\saints\templates\saints\object_list.html" />
     <Content Include="iberian\saints\templates\saints\region_form.html" />
     <Content Include="iberian\saints\templates\saints\region_list.html" />
+    <Content Include="iberian\saints\templates\saints\change_password.html" />
     <Content Include="iberian\saints\templates\saints\registration.html" />
     <Content Include="iberian\saints\templates\saints\rite_form.html" />
     <Content Include="iberian\saints\templates\saints\rite_list.html" />
@@ -193,22 +195,11 @@
     <Content Include="iberian\templates\guide.html" />
     <Content Include="iberian\templates\about.html" />
     <Content Include="iberian\templates\admin\base.html" />
-    <Content Include="iberian\templates\technical.html" />
     <Content Include="iberian\templates\technical_404.html" />
-    <Content Include="iberian\templates\tools.html" />
-    <Content Include="iberian\templates\breadcrumb_list.html" />
     <Content Include="iberian\templates\contact.html" />
-    <Content Include="iberian\templates\index.html" />
-    <Content Include="iberian\templates\layout.html" />
-    <Content Include="iberian\templates\login.html" />
-    <Content Include="iberian\templates\loginpartial.html" />
-    <Content Include="iberian\templates\more.html" />
     <Content Include="iberian\templates\nlogin.html" />
-    <Content Include="iberian\templates\pagination.html" />
-    <Content Include="iberian\templates\paginationpost.html" />
     <Content Include="iberian\templates\signup.html" />
     <Content Include="iberian\templates\submit_row.html" />
-    <Content Include="iberian\templates\topnav.html" />
     <Content Include="iberian\utilities\templates\utilities\edit_minimize_tab.html" />
     <Content Include="iberian\utilities\templates\utilities\list_search_bar.html" />
     <Content Include="iberian\utilities\templates\utilities\tab_selector.html" />
