@@ -111,13 +111,15 @@ def login_as_user(request, user_id):
 
     # Find out who I am
     supername = request.user.username
-    super = User.objects.filter(username__iexact=supername).first()
+    # super = User.objects.filter(username__iexact=supername).first()
+    super = User.objects.filter(username=supername).first()
     if super == None:
         return nlogin(request)
 
     # Make sure that I am superuser
     if super.is_staff and super.is_superuser:
-        user = User.objects.filter(username__iexact=user_id).first()
+        # user = User.objects.filter(username__iexact=user_id).first()
+        user = User.objects.filter(username=user_id).first()
         if user != None:
 
             # Check it the account is active
