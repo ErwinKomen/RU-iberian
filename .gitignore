@@ -394,3 +394,5 @@ __pycache__/
 *.sql
 *.sqlite
 *.sqlite3
+/iberian/iberian/saints/migrations
+/iberian/iberian/utilities/migrations

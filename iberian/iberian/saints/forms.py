@@ -8,7 +8,7 @@ from django_select2 import forms as s2forms
 DATA_MINIMUM_INPUT_LENGTH = 0
 
 
-# Widgets
+# ============================ Widgets ============================================
 class SaintTypeWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
 
@@ -141,7 +141,7 @@ class BibliographyWidgetMulti(s2forms.ModelSelect2MultipleWidget):
         return qs
 
 
-# User form
+# ==================== User form ==============================
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
 
@@ -167,7 +167,7 @@ class UserProfileInfoForm(forms.ModelForm):
         fields = ()
 
 
-# Location forms: City, Region, Museum, Church as a location
+# ================ Location forms: City, Region, Museum, Church as a location =========================
 class CityForm(ModelForm):
     class Meta:
         model = City
@@ -201,7 +201,7 @@ class MuseumForms(ModelForm):
         fields = ('name', 'city', 'description')
 
 
-# Forms
+# ================= Other Forms =======================================================================
 class SaintForm(forms.ModelForm):
     class Meta:
         model = Saint
@@ -445,6 +445,81 @@ class InscriptionForm(ModelForm):
         self.fields['status'].required = False
 
 
+class WrittenTextForm(ModelForm):
+    class Meta:
+        model = WrittenText
+        fields = '__all__'
+
+    date_lower = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Please enter lower bound'}))
+    date_upper = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Please enter upper bound'}))
+
+    original_location = forms.ModelChoiceField(
+        queryset=Church.objects.all(),
+        widget=ChurchWidget(
+            attrs={'data-placeholder': 'Select Church',
+                   'style': 'width:100%;', 'class': 'searching',
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
+        required=False)
+    original_location_city = forms.ModelChoiceField(
+        queryset=City.objects.all(),
+        widget=CityWidget(
+            attrs={'data-placeholder': 'Select City',
+                   'style': 'width:100%;', 'class': 'searching',
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
+        required=False)
+    original_location_region = forms.ModelChoiceField(
+        queryset=Region.objects.all(),
+        widget=RegionWidget(
+            attrs={'data-placeholder': 'Select Region',
+                   'style': 'width:100%;', 'class': 'searching',
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
+        required=False)
+    current_location = forms.ModelChoiceField(
+        queryset=Church.objects.all(),
+        widget=ChurchWidget(
+            attrs={'data-placeholder': 'Select Church',
+                   'style': 'width:100%;', 'class': 'searching',
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
+        required=False)
+    current_location_museum = forms.ModelChoiceField(
+        queryset=Museum.objects.all(),
+        widget=MuseumWidget(
+            attrs={'data-placeholder': 'Select Museum',
+                   'style': 'width:100%;', 'class': 'searching',
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
+        required=False)
+
+    bibliography = forms.ModelChoiceField(
+        queryset=Bibliography.objects.all(),
+        widget=BibliographyWidget(
+            attrs={'data-placeholder': 'Select bibliography',
+                   'style': 'width:100%;', 'class': 'searching',
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
+        required=False)
+    bibliography_many = forms.ModelMultipleChoiceField(
+        queryset=Bibliography.objects.all(),
+        widget=BibliographyWidgetMulti(
+            attrs={'data-placeholder': '',
+                   'style': 'width:100%;', 'class': 'searching',
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
+        required=False)
+    text = forms.CharField(widget=forms.Textarea(
+        attrs={'style': 'width:100%', 'rows': 3}),
+        required=False)
+    description = forms.CharField(widget=forms.Textarea(
+        attrs={'style': 'width:100%', 'rows': 3}),
+        required=False)
+    status = forms.BooleanField()
+
+    def __init__(self, *args, **kwargs):
+        # First perform the default thing
+        super(WrittenTextForm, self).__init__(*args, **kwargs)
+        # Make sure some fields are not perceived as obligatory
+        self.fields['date_lower'].required = False
+        self.fields['date_upper'].required = False
+        self.fields['status'].required = False
+
+
 class LiturgicalManuscriptForm(ModelForm):
     class Meta:
         model = LiturgicalManuscript
@@ -556,7 +631,7 @@ class InstitutionTypeForm(ModelForm):
         fields = '__all__'
 
 
-# Relations form
+# ========================== Relations form ===========================================================
 class SaintChurchRelationForm(ModelForm):
     saint = forms.ModelChoiceField(
         queryset=Saint.objects.all(),
@@ -710,7 +785,7 @@ class InscriptionChurchRelationForm(ModelForm):
         fields = ('church', 'inscription', 'start_date', 'end_date')
 
 
-# Multiple Links
+# ================================== Multiple Links ==========================================
 class SaintLinkRelationForm(ModelForm):
     saint = forms.ModelChoiceField(
         queryset=Saint.objects.all(),
@@ -752,6 +827,7 @@ class ObjectLinkRelationForm(ModelForm):
         model = ObjectLinkRelation
         fields = ('object', 'link')
 
+
 class InscriptionLinkRelationForm(ModelForm):
     inscription = forms.ModelChoiceField(
         queryset=Inscription.objects.all(),
@@ -778,7 +854,9 @@ class LitManuscriptLinkRelationForm(ModelForm):
     class Meta:
         model = LitManuscriptLinkRelation
         fields = ('liturgical_manuscript', 'link')
-# Formsets
+
+
+# ================================= Formsets ===============================================
 
 saintchurch_formset = inlineformset_factory(
     Saint, SaintChurchRelation, form=SaintChurchRelationForm, extra=1)
@@ -815,7 +893,7 @@ inscriptionchurch_formset = inlineformset_factory(
 churchinscription_formset = inlineformset_factory(
     Church, InscriptionChurchRelation, form=InscriptionChurchRelationForm, extra=1)
 
-# Multiple Links
+# ================================== Multiple Links ==========================================
 saintlink_formset = inlineformset_factory(
     Saint, SaintLinkRelation, form=SaintLinkRelationForm, extra=1)
 
