@@ -1,0 +1,96 @@
+{% extends "saints/base.html" %}
+
+{% block main_content %}
+    <h2>
+        {% if not form.instance.pk %}
+            Add Literary text
+        {% else %}
+            Update Literary text "{{form.instance.title}}"
+        {% endif %}
+    </h2>
+
+
+<form method="post" enctype="multipart/form-data" onsubmit="dosubmit();">
+{% csrf_token %}
+
+
+<!-- Church form is defined in a separate template -->
+    {% include 'saints/_literarytext_form.html' %}
+	{% if form.errors %}
+		<div style="color: red;">{{form.errors}}</div>
+	{% endif %}
+
+{% if view == "inline" %}
+{% else %}
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+
+		<li class="nav-item">
+        <a class="nav-link" id="Bibliographya" data-toggle="tab" href="#Bibliography" role="tab" aria-controls="Bibliography" aria-selected="false">Bibliography</a>
+		</li>
+		<li class="nav-item">
+        <a class="nav-link" id="Linksa" data-toggle="tab" href="#Links" role="tab" aria-controls="Links" aria-selected="false">External Links</a>
+		</li>
+</ul>
+
+<div class="tab-content" id="myTabContent">
+
+	<!--Bibliography -->
+	<div class="tab-pane fade" id="Bibliography">
+		{{literarytextbibliography_formset.management_form}}
+		<table class="table table-borderless">
+			<tr class="d-flex">
+				<th class="col-8">Link</th>
+				<th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+			</tr>
+			{% for f in literarytextbibliography_formset.forms %}
+			<tr class="d-flex">
+				<td class="col-8">{{f.bibliography}} {{f.bibliography.errors}}</td>
+				<td class="col-1" style="text-align:left">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+
+	<!--Links -->
+	<div class="tab-pane fade" id="Links">
+		{{literarytextlink_formset.management_form}}
+		<table class="table table-borderless">
+			<tr class="d-flex">
+				<th class="col-8">Link</th>
+				<th class="col-1" style="text-align:center"><i class="fa fa-times text-danger"></i></th>
+			</tr>
+			{% for f in literarytextlink_formset.forms %}
+			<tr class="d-flex">
+				<td class="col-8">{{f.link}} {{f.link.errors}}</td>
+				<td class="col-1" style="text-align:left">{{f.DELETE}} {{f.id}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+
+</div>
+
+{% endif %}
+
+
+<input type="hidden" name="navbar" id="navbar" value="" />
+<input type="hidden" name="navcontent" id="navcontent" value="" />
+<input type="hidden" name="focus" id="focus" value="" />
+<button type="submit" value="Submit" class ="btn btn-success">Save</button>
+	{% if view == "inline" %}
+		<a type="reset" value="Cancel" class ="btn btn-light"
+		href="{% url 'utilities:close' %}">Cancel</a>
+	{% else %}
+		<button type="submit" name="save" value="add_another"
+			 class ="btn btn-outline-success">Save | add another</button>
+	{% endif %}
+	{% if page_name == "Edit literarytext"%}
+<!--    <button type="submit" name="save" value="delete"-->
+<!--		 class ="btn btn-outline-danger">delete</button>-->
+	{% endif %}
+
+
+{% include 'utilities/tab_selector.html' %}
+</form>
+{% endblock main_content %}

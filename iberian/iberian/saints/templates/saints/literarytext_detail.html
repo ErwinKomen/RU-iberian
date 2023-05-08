@@ -1,0 +1,87 @@
+{% extends 'saints/base.html' %}
+
+{% block main_content %}
+    <table class="table table-borderless" >
+    <tr class="d-flex">
+        <h1>{{ literarytext.title }} <a href="{% url 'saints:literarytext-update' literarytext.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a></h1>
+
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Author:</th>
+        <td class="col-8">{% if literarytext.author %}{{literarytext.author}}{% endif %}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Date:</th>
+        <td class="col-8">{{literarytext.get_daterange}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Description:</th>
+        <td class="col-8">{{literarytext.get_description}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Church location:</th>
+        <td class="col-8">{{literarytext.get_location_church}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">City location:</th>
+        <td class="col-8">{{literarytext.get_location_city}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Region location:</th>
+        <td class="col-8">{{literarytext.get_location_region}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Museum location:</th>
+        <td class="col-8">{{literarytext.get_location_museum}}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Status:</th>
+        <td class="col-1" align="left">
+            {% if literarytext.status == True %}
+                Completed
+            {% else %}
+                Uncompleted
+            {% endif %}
+
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Text:</th>
+        <td class="col-8">{{literarytext.get_text}}</td>
+    </tr>
+</table>
+    <hr>
+{# --------------------------------------------------------------------------------------------------------------------- #}
+<table class="table table-borderless">
+    <thead class="border-bottom font-weight-bold">
+        <tr>
+            <th class="col-3"><h3 style="color:limegreen">Bibliography</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Links</h3></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="col-3">
+                {% for t in literarytext.literarytextbibliographyrelation_set.all %}
+                    {% if t %}
+                        <a href="{% url 'saints:bibliography-update' t.bibliography.id %}"> {{ t.bibliography }} </a><br>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="col-3">
+                {% for t in literarytext.literarytextlinkrelation_set.all %}
+                    {% if t %}
+                        <a href="{{t.link}}">url {{t.id}}</a><br />
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+    <hr>
+{% endblock main_content %}

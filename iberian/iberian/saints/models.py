@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 from django.db.models import ForeignKey
 
+SUPER_LONG_TEXT = 500
 LONG_TEXT = 256
 AVERAGE_TEXT = 100
 SHORT_TEXT = 50
@@ -85,6 +86,15 @@ class Feast(models.Model):
         return self.name
 
 
+class AuthorAncient(models.Model):
+    """Medieval author of literary text, like Braulio"""
+
+    name = models.CharField(max_length=AVERAGE_TEXT)  #
+
+    def __str__(self):
+        return self.name
+
+
 # ===================== Location models: City, Region, Museum, Church as a location =================================
 
 class City(models.Model):
@@ -111,7 +121,7 @@ class Region(models.Model):
 
 class Museum(models.Model):
     name = models.CharField(max_length=AVERAGE_TEXT, blank=False)
-    description = models.CharField(max_length=SHORT_TEXT0, default='', blank=True)
+    description = models.CharField(max_length=SUPER_LONG_TEXT, default='', blank=True)
 
     # ============= FK Links to other items ======================
     city = models.ForeignKey(City, on_delete=models.CASCADE, blank=True, null=True)
@@ -179,18 +189,34 @@ class Church(models.Model):
 
 
 class Saint(models.Model):
+    """Someone who has been recognized as 'saint' by a particular group of people"""
+
+    # [1] Each saint is known by a name
     name = models.CharField(max_length=LONG_TEXT)
+    # [0-1] SEMM Name
+    semm_name = models.CharField(max_length=LONG_TEXT, blank=True, null=True)
+    # [0-1] Feast day associated with this saint
     feast_day = models.CharField(max_length=LONG_TEXT, blank=True, null=True)
     feast_day_old = PartialDateField(blank=True, null=True)
+    # [0-1] Date and place where this saint has died
     death_date = PartialDateField(blank=True, null=True)
     death_place = models.CharField(max_length=LONG_TEXT, blank=True, null=True)
+
+    # OBSOLETE
     # external_link = models.URLField(max_length=LONG_TEXT, default='', blank=True) # It is replaced with SaintLinkRElation in order to have multiple external links
+
+    # [0-1] Description
     description = models.TextField(default='', blank=True, null=True)
+
     status = models.BooleanField("Completed", default=False, help_text="Complete")
 
     # ============= FK Links to other items ======================
     type = models.ForeignKey(SaintType, related_name='saints', on_delete=models.CASCADE, blank=True, default='',
                              null=True)
+    location_region = models.ForeignKey(Region, related_name='loc_region_saints',
+                                          on_delete=models.SET_NULL, blank=True, default='', null=True)
+
+    # ============= MANY-TO-MANY links =============================
 
     def __str__(self):
         return self.name
@@ -257,11 +283,17 @@ class LiturgicalManuscript(models.Model):
         return self.shelf_no
 
 
-class TextItem(models.Model):
-    """A particular text that is dated, is located somewhere, and may even occur in a bibliography"""
+class LiteraryText(models.Model):
+    """A literary text is the assumed original of a text that later occurs in manuscripts.
+    
+    - Dating: a literary text is dated by a lower and upper date
+    - Location: it originates from somewhere [City, Region, Museum or Church]
+    - Bibliography: references to this literary text may occur in a bibliography"""
 
     # [1] The title of this text item
     title = models.CharField(max_length=LONG_TEXT, blank=False, default='')
+    # [0-1] Optionally (if known) the actual text
+    text = models.TextField(default='', blank=True, null=True)
     # [0-1] Description
     description = models.TextField(default='', blank=True, null=True)
     # [0-1] Dating
@@ -270,14 +302,76 @@ class TextItem(models.Model):
 
     status = models.BooleanField("Completed", default=False, help_text="Complete")
 
+    # ============= Foreign Key links =================================
+
+    # [0-1] The author (a medieval author, like Braulio)
+    author = models.ForeignKey(AuthorAncient, related_name='author_literarytexts',
+                                          on_delete=models.SET_NULL, blank=True, null=True)
+    # [0-1] Location links
+    location_church = models.ForeignKey(Church, related_name='loc_church_literarytexts',
+                                          on_delete=models.SET_NULL, blank=True, default='', null=True)
+    location_city = models.ForeignKey(City, related_name='loc_city_literarytexts',
+                                          on_delete=models.SET_NULL, blank=True, default='', null=True)
+    location_region = models.ForeignKey(Region, related_name='loc_region_literarytexts',
+                                          on_delete=models.SET_NULL, blank=True, default='', null=True)
+    location_museum = models.ForeignKey(Museum, related_name='loc_museum_literarytexts',
+                                          on_delete=models.SET_NULL, blank=True, default='', null=True)
+
     # ============= MANY-TO-MANY links =============================
     # used in the future. I didn't delete this because there is data saved for some entries on the database.
-    bibliography_many = models.ManyToManyField(Bibliography, related_name='bibliographies_textitem', blank=True,
+    bibliography_many = models.ManyToManyField(Bibliography, related_name='bibliographies_literarytext', blank=True,
                                                default='')
 
     def __str__(self):
         return self.title
 
+    def get_daterange(self):
+        sBack = "-"
+        if self.date_lower is None:
+            if not self.date_upper is None:
+                sBack = self.date_upper
+        else:
+            if self.date_upper is None:
+                sBack = self.date_lower
+            else:
+                sBack = "{} - {}".format(self.date_lower, self.date_upper)
+        return sBack
+
+    def get_text(self):
+        sBack = ""
+        if not self.text is None and self.text != "":
+            sBack = self.text
+        return sBack
+
+    def get_description(self):
+        sBack = ""
+        if not self.description is None and self.description != "":
+            sBack = self.description
+        return sBack
+
+    def get_location_church(self):
+        sBack = ""
+        if not self.location_church is None and self.location_church != "":
+            sBack = self.location_church
+        return sBack
+
+    def get_location_city(self):
+        sBack = ""
+        if not self.location_city is None and self.location_city != "":
+            sBack = self.location_city
+        return sBack
+
+    def get_location_region(self):
+        sBack = ""
+        if not self.location_region is None and self.location_region != "":
+            sBack = self.location_region
+        return sBack
+
+    def get_location_museum(self):
+        sBack = ""
+        if not self.location_museum is None and self.location_museum != "":
+            sBack = self.location_museum
+        return sBack
 
 
 class Object(models.Model):
@@ -430,3 +524,28 @@ class LitManuscriptLinkRelation(models.Model):
     def __str__(self):
         message = "{} and {}".format(self.liturgical_manuscript, self.link)
         return message
+
+
+# ------------------- related to LiteraryText ------------------------------------------
+
+class LiteraryTextLinkRelation(models.Model):
+    ltext = models.ForeignKey(LiteraryText, on_delete=models.CASCADE, blank=True)
+    link = models.URLField(max_length=LONG_TEXT, default='', blank=True)
+
+    def __str__(self):
+        message = "{} and {}".format(self.ltext, self.link)
+        return message
+
+
+class LiteraryTextBibliographyRelation(models.Model):
+    ltext = models.ForeignKey(LiteraryText, on_delete=models.CASCADE, blank=True)
+    bibliography = models.ForeignKey(Bibliography, on_delete=models.CASCADE, blank=True)
+
+    def __str__(self):
+        message = self.id
+        if not self.ltext is None and not self.bibliography is None:
+            message = "{} and {}".format(self.ltext, self.bibliography)
+        return message
+
+
+

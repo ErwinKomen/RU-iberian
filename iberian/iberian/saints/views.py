@@ -20,7 +20,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 # ========================= OWN APPLICATION IMPORT ========================
 from iberian.utilities.views import edit_model
 from iberian.utilities.views import saintsimplesearch, churchsimplesearch, objectsimplesearch, inscriptionsimplesearch, \
-    liturgicalmanuscriptsimplesearch
+    liturgicalmanuscriptsimplesearch, ltextsimplesearch
 
 
 # Create your views here.
@@ -372,6 +372,42 @@ class SaintDetailView(DetailView):
     model = Saint
 
 
+# LiteraryText
+@login_required(login_url='/login/')
+def LiteraryTextList(request):
+    query_set = ltextsimplesearch(request, 'saints', 'literarytext')
+    query = request.GET.get("q", "")
+    context = {'ltext_list': query_set,
+               'nentries': len(query_set),
+               'query': query}
+    return render(request, 'saints/literarytext_list.html', context)
+
+
+@login_required(login_url='/login/')
+def edit_ltext(request, pk=None, focus='', view='complete'):
+    names = 'literarytextbibliography_formset,literarytextlink_formset' # 'ltextchurch_formset'
+    return edit_model(request, __name__, 'LiteraryText', 'saints', pk, formset_names=names,
+                      focus=focus, view=view)
+
+
+@login_required(login_url='/login/')
+class LiteraryTextUpdateView(UpdateView):
+    model = LiteraryText
+    fields = '__all__'
+    success_url = reverse_lazy('saints:literarytext-list')
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class LiteraryTextDeleteView(DeleteView):
+    model = LiteraryText
+    success_url = reverse_lazy("saints:literarytext-list")
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class LiteraryTextDetailView(DetailView):
+    model = LiteraryText
+
+
 # Object
 @login_required(login_url='/login/')
 def ObjectList(request):
@@ -437,7 +473,37 @@ class FeastDeleteView(DeleteView):
     success_url = reverse_lazy("saints:feast-list")
 
 
+# AuthorAncient
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class AuthorAncientListView(ListView):
+    model = AuthorAncient
+    template_name = 'installations/authorancient_list.html'
+    context_object_name = 'ancientauthors'
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class AuthorAncientCreatView(CreateView):
+    model = AuthorAncient
+    fields = '__all__'
+    template_name = 'saints/authorancient_form.html'
+    success_url = reverse_lazy('saints:authorancient-list')
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class AuthorAncientUpdateView(UpdateView):
+    model = AuthorAncient
+    fields = '__all__'
+    success_url = reverse_lazy('saints:authorancient-list')
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class AuthorAncientDeleteView(DeleteView):
+    model = AuthorAncient
+    success_url = reverse_lazy("saints:authorancient-list")
+
+
 # LiturgicalManuscript
+
 # @method_decorator(login_required(login_url='/login/'), name='dispatch')
 # class LiturgicalManuscriptListView(ListView):
 #     model = LiturgicalManuscript

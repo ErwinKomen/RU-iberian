@@ -42,6 +42,14 @@ urlpatterns = [
     path('saint/<int:pk>', views.SaintDetailView.as_view(), name='saint-detail'),
     path('saint/list', views.SaintList, name='saint-list'),
 
+    re_path(r'^ltext/new/$', views.edit_ltext, name='literarytext-insert'),
+    path('ltext/new/<str:view>/', views.edit_ltext, name='literarytext-insert'),
+    path('ltext/new/<int:pk>', views.edit_ltext, name='literarytext-update'),
+    path('ltext/new/<int:pk>/<str:focus>', views.edit_ltext, name='literarytext-update'),
+    re_path(r'^ltext/delete/(?P<pk>\d+)/$', views.LiteraryTextDeleteView.as_view(), name='literarytext-delete'),
+    path('ltext/<int:pk>', views.LiteraryTextDetailView.as_view(), name='literarytext-detail'),
+    path('ltext/list', views.LiteraryTextList, name='literarytext-list'),
+
     re_path(r'^object/new/$', views.edit_object, name='object-insert'),
     path('object/new/<int:pk>', views.edit_object, name='object-update'),
     path('object/new/<int:pk>/<str:focus>', views.edit_object, name='object-update'),
@@ -53,6 +61,11 @@ urlpatterns = [
     re_path(r'^feast/new/(?P<pk>\d+)/$', views.FeastUpdateView.as_view(), name='feast-update'),
     re_path(r'^feast/delete/(?P<pk>\d+)/$', views.FeastDeleteView.as_view(), name='feast-delete'),
     path('feast/list', views.FeastListView.as_view(), name='feast-list'),
+
+    re_path(r'^authorancient/new/$', views.AuthorAncientCreatView.as_view(), name='authorancient-insert'),
+    re_path(r'^authorancient/new/(?P<pk>\d+)/$', views.AuthorAncientUpdateView.as_view(), name='authorancient-update'),
+    re_path(r'^authorancient/delete/(?P<pk>\d+)/$', views.AuthorAncientDeleteView.as_view(), name='authorancient-delete'),
+    path('authorancient/list', views.AuthorAncientListView.as_view(), name='authorancient-list'),
 
     re_path(r'^liturgicalmanuscript/new/$', views.edit_liturgicalmanuscript, name='liturgicalmanuscript-insert'),
     path('liturgicalmanuscript/new/<str:view>/', views.edit_liturgicalmanuscript, name='liturgicalmanuscript-insert'),

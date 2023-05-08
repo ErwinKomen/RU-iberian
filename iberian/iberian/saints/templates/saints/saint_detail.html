@@ -7,36 +7,28 @@
 
     </tr>
     <tr class="d-flex">
+        <th class="col-2">SEMM name:</th>
+        <td class="col-8">{% if saint.semm_name %}{{saint.semm_name}}{% endif %}</td>
+    </tr>
+    <tr class="d-flex">
         <th class="col-2">Feast day:</th>
-        <td class="col-8">
-            {% if saint.feast_day %}
-                {{saint.feast_day}}
-            {% endif %}
-        </td>
+        <td class="col-8">{% if saint.feast_day %}{{saint.feast_day}}{% endif %}</td>
     </tr>
     <tr class="d-flex">
         <th class="col-2">Death date:</th>
-        <td class="col-8">
-            {% if saint.death_date %}
-                {{saint.death_date}}
-            {% endif %}
-        </td>
+        <td class="col-8">{% if saint.death_date %}{{saint.death_date}}{% endif %}</td>
     </tr>
     <tr class="d-flex">
         <th class="col-2">Death place:</th>
-        <td class="col-8">
-            {% if saint.death_place %}
-                {{saint.death_place}}
-            {% endif %}
-        </td>
+        <td class="col-8">{% if saint.death_place %}{{saint.death_place}}{% endif %}</td>
     </tr>
     <tr class="d-flex">
         <th class="col-2">Type:</th>
-        <td class="col-8">
-            {% if saint.type %}
-                {{saint.type}}
-            {% endif %}
-        </td>
+        <td class="col-8">{% if saint.type %}{{saint.type}}{% endif %}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Region:</th>
+        <td class="col-8">{% if saint.location_region %}{{saint.location_region}}{% endif %}</td>
     </tr>
     <tr class="d-flex">
         <th class="col-2">External links:</th>
@@ -71,7 +63,7 @@
 <table class="table table-borderless">
     <thead class="border-bottom font-weight-bold">
         <tr>
-            <th class="col-3"><h3 style="color:limegreen">Churchs</h3></th>
+            <th class="col-3"><h3 style="color:limegreen">Churches</h3></th>
             <th class="col-3"><h3 style="color:limegreen">Inscriptions</h3></th>
             <th class="col-3"><h3 style="color:limegreen">Objects</h3></th>
             <th class="col-3"><h3 style="color:limegreen">Lit. manuscripts</h3></th>

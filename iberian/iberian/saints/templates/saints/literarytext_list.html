@@ -1,0 +1,62 @@
+{% extends 'saints/base.html' %}
+{% load widget_tweaks %}
+
+{% block main_content %}
+{% include 'utilities/list_search_bar.html' %}
+
+    <h2>Literary text list</h2>
+    <table class="table table-borderless">
+        <thead class="border-bottom font-weight-bold">
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Title
+                    <a href="?q={{query}}&order_by=title"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-title"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                </th>
+                <th scope="col">Author
+                    <a href="?q={{query}}&order_by=author__name"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-author__name"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                </th>
+                <th scope="col">Date
+                    <a href="?q={{query}}&order_by=date_upper"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-date_upper"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                </th>
+                <td>
+                    <a href= "{% url 'saints:literarytext-insert' %}"
+                       class="btn btn-outline-success"
+                       target="popup"
+                       onclick="window.open('{% url 'saints:literarytext-insert' %}','popup','width=600,height=600'); return false;">
+                        <i class="fa fa-plus"></i> Add New</a>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ltext in ltext_list %}
+            <tr style="border-bottom:1px solid lightgrey">
+                <!-- Status dot red or green -->
+                <td>{% if ltext.status %}<span class="Gdot"></span>{% else %}<span class="Rdot"></span>{% endif %}</td>
+
+                <!-- Name of the text (title) -->
+                <td><a href="{% url 'saints:literarytext-detail' ltext.id %}"> {{ltext.title}} </a></td>
+
+                <!-- Author name -->
+                <td>{% if ltext.author %}{{ltext.author.name}}{% endif %}</td>
+
+                <!-- Date: the upper date -->
+                <td>{% if ltext.date_upper %}{{ltext.date_upper}}{% endif %}</td>
+
+
+                <td>
+                    <a href="{% url 'saints:literarytext-update' ltext.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a>
+                    <form action="{% url 'saints:literarytext-delete' ltext.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn" onclick="return confirm('Are you sure you want to delete all entities connected to this from the database?')">
+                        <i class="fa fa-trash fa-lg text-danger float-right"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

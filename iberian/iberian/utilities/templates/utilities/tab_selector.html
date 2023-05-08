@@ -24,9 +24,13 @@ function get_ids(classname){
 
 
 function dosubmit(){
-	document.getElementById('focus').value = get_ids("tab-pane fade show active");
-	document.getElementById('focus1').value = get_ids("tab-pane fade show active");
-	document.getElementById('focus2').value = get_ids("tab-pane fade show active");
+	var lst_ids = get_ids("tab-pane fade show active");
+
+	if (lst_ids.length > 0) {
+    document.getElementById('focus').value = lst_ids;
+    document.getElementById('focus1').value = lst_ids;
+    document.getElementById('focus2').value = lst_ids;
+  }
 	return true;
 }
 

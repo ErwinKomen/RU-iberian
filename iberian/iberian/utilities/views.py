@@ -72,13 +72,18 @@ def edit_model(request, name_space, model_name, app_name, instance_id=None,
                         # return HttpResponseRedirect(reverse(
                         #     app_name + ':edit_' + model_name.lower(),
                         #     kwargs={'pk': instance.pk, 'focus': focus}))
-                        return HttpResponseRedirect(reverse(
-                            app_name + ':' + model_name.lower() + '-update',
-                            kwargs={'pk': instance.pk, 'focus': focus}))
+                        url = app_name + ':' + model_name.lower() + '-update'
+                        if focus == "":
+                            return HttpResponseRedirect(reverse(url,kwargs={'pk': instance.pk}))
+                        else:
+                            return HttpResponseRedirect(reverse(url,kwargs={'pk': instance.pk, 'focus': focus}))
                     else:
                         print('ERROR', ffm.errors)
                 else:
                     return HttpResponseRedirect('/utilities/close/')
+            else:
+                # Form is not valid. At least show reason here
+                print("Form errors: {}".format(form.errors))
         if not form: form = modelform(instance=instance)
         if not ffm: ffm = FormsetFactoryManager(name_space, names, instance=instance)
         tabs = make_tabs(model_name.lower(), focus_names=focus)
@@ -245,6 +250,41 @@ def saintsimplesearch(request, app_name, model_name):
     except:
         msg = oErr.get_error_message()
         oErr.DoError("saintsimplesearch")
+
+    return response
+
+
+def ltextsimplesearch(request, app_name, model_name):
+    '''Search function between all fields in a model.
+    app_name : saints
+    model_name : literarytext
+    '''
+
+    response = None
+    oErr = ErrHandle()
+    try:
+        model = apps.get_model(app_name, model_name)
+        query = request.GET.get("q", "")
+        order_by = request.GET.get("order_by", "id")
+        query_set = model.objects.all().order_by(order_by)
+        # -----------------------------------------------------------
+        queries = query.split()
+        if query is not None:
+            query_setall = model.objects.none()
+            for qs in queries:
+                query_seti = query_set.filter(
+                    Q(title__icontains=qs) |
+                    Q(description__icontains=qs)
+                )
+                query_setall = query_setall | query_seti
+            query_set = query_setall.order_by(order_by)
+        if query == "":
+            query_set = model.objects.all().order_by(order_by)
+
+        response = query_set.distinct()
+    except:
+        msg = oErr.get_error_message()
+        oErr.DoError("ltextsimplesearch")
 
     return response
 

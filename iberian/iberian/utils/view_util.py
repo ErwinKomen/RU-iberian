@@ -7,6 +7,7 @@ from easyaudit.models import CRUDEvent
 
 # ===================== IMPORT FROM OWN APP =======================
 from iberian.utilities.models import instance2name, instance2names
+from iberian.basic.utils import ErrHandle
 
 
 def get_modelform(namespace, modelform_name):
@@ -433,6 +434,10 @@ def make_tabs(tab_type, focus=0, focus_names=''):
         return Tabs([minimize, relations], 'minimize,relations', focus_names)
     if tab_type == 'liturgicalmanuscript':
         t = 'Saints, Churches, External links'
+        relations = Tab(t, focus)
+        return Tabs([minimize, relations], 'minimize,relations', focus_names)
+    if tab_type == 'literarytext':
+        t = 'External links'
         relations = Tab(t, focus)
         return Tabs([minimize, relations], 'minimize,relations', focus_names)
 
