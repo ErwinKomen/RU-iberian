@@ -1,6 +1,13 @@
 {% extends 'saints/base.html' %}
+{% load static %}
 
 {% block main_content %}
+
+{% if is_404 %}
+  <div class="sent-error">
+    Sorry, but the path that you attempted to use is not available for this application.
+  </div>
+{% endif %}
 
 <br>
 <h1>Iberian Saints</h1>

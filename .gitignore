@@ -396,3 +396,4 @@ __pycache__/
 *.sqlite3
 /iberian/iberian/saints/migrations
 /iberian/iberian/utilities/migrations
+/iberian/iberian/basic/migrations

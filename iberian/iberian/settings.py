@@ -24,6 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_NAME = os.path.basename(BASE_DIR)
 WRITABLE_DIR = os.path.abspath(os.path.join(BASE_DIR, "../../writable/database/"))
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
 
 if "RU-iberian\\writable" in WRITABLE_DIR:
     # Need another string
@@ -43,6 +46,7 @@ if "d:" in WRITABLE_DIR or "D:" in WRITABLE_DIR or "c:" in WRITABLE_DIR or "C:" 
     # Specific differentiation
     if "d:" in WRITABLE_DIR or "D:" in WRITABLE_DIR:
         USE_REDIS = True
+        # DEBUG = True
 elif "131.174" in hst or "/var/www" in WRITABLE_DIR:
     # Configuration within the Radboud University environment (Lightning)
     APP_PREFIX = ""             # Was: "iberian/"
@@ -68,9 +72,6 @@ BLOCKED_IPS = []
 
 # SECURITY WARNING: keep the secret key used in production secret!
 from .secret_key import *
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'iberiansaints.rich.ru.nl', 'testserver' ]
 CSRF_TRUSTED_ORIGINS = ['https://iberiansaints.rich.ru.nl']
@@ -110,19 +111,18 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'django_select2',
     'easyaudit',
-
     # From this application
     'iberian.basic',
     'iberian.seeker',
     'iberian.saints',
-    'iberian.utilities',
+    'iberian.utilities'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # MIDDLEWARE_CLASSES = [
 MIDDLEWARE = [
-    'iberian.basic.utils.BlockedIpMiddleware',
+    'iberian.basic.middle.BlockedIpMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -206,9 +206,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/' # '/static/'
 if ("/var/www" in WRITABLE_DIR and not bUseTunnel):
-    STATIC_URL = "/" + APP_PREFIX + "static/"
+    # STATIC_URL = "/" + APP_PREFIX + "static/"
+    STATIC_URL = APP_PREFIX + "static/"
 
 STATIC_ROOT = os.path.abspath(os.path.join("/", posixpath.join(*(BASE_DIR.split(os.path.sep) + ['static']))))
 

@@ -177,7 +177,7 @@ def password_change(request):
 
 
 #
-def home(request):
+def home(request, errortype=None):
     """Renders the home page."""
 
     assert isinstance(request, HttpRequest)
@@ -186,6 +186,11 @@ def home(request):
     context = {
         'title': 'Iberian saints',
         'user': request.user}
+
+    # See if this is the result of a particular error
+    if errortype != None:
+        if errortype == "404":
+            context['is_404'] = True
 
     # Render and return the page
     return render(request, template_name, context)
