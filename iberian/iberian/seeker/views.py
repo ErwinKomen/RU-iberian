@@ -127,14 +127,14 @@ def login_as_user(request, user_id):
                 # Log the user in.
                 login(request, user)
                 # Go to the home page
-                response = redirect(reverse("saints:home"))
+                response = redirect(reverse("myhome"))
                 return response
             else:
                 # If account is not active:
                 return HttpResponse("The account of {} is not active.".format(user.username))
 
     # Go to the home page
-    response = redirect(reverse("saints:home"))
+    response = redirect(reverse("myhome"))
     return response
 
 def signup(request):
@@ -169,7 +169,7 @@ def signup(request):
             context['registered'] = True
             ## Log in as the user
             #login(request, user)
-            #return redirect(reverse("saints:home"))
+            #return redirect(reverse("myhome"))
     else:
         form = SignUpForm()
     # Make sure the form ends up in the context

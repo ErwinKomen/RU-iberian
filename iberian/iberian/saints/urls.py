@@ -6,7 +6,7 @@ from . import views
 app_name = 'saints'
 
 urlpatterns = [
-    path('', views.home, name='home'), # get and post req. for insert operation
+    # path('', views.home, name='home'), # get and post req. for insert operation
     path('register/', views.register , name='register'),                        # Sign up
     path('logout/', views.user_logout, name='logout'),                          # Logout
     path('login/', views.user_login, name='user_login'),                        # Login

@@ -45,7 +45,7 @@ handler404 = custom_page_not_found
 
 urlpatterns = [
     # ============ STANDARD VIEWS =====================
-    re_path(r'^$', iberian.saints.views.home, name='home'),
+    re_path(r'^$', iberian.saints.views.home, name='myhome'),
     path("404/", custom_page_not_found),
     re_path(r'^favicon\.ico$',RedirectView.as_view(url='/static/saints/content/favicon.ico')),
     

@@ -1157,7 +1157,7 @@ class BasicList(ListView):
         context['is_app_moderator'] = user_is_superuser(self.request) or user_is_ingroup(self.request, app_moderator)
 
         # Process this visit and get the new breadcrumbs object
-        prevpage = reverse('home')
+        prevpage = reverse('myhome')
         context['prevpage'] = prevpage
         context['breadcrumbs'] = get_breadcrumbs(self.request, self.plural_name, True)
 
@@ -1844,7 +1844,7 @@ class BasicDetails(DetailView):
             try:
                 context['listview'] = reverse(listviewname)
             except:
-                context['listview'] = reverse('home')
+                context['listview'] = reverse('myhome')
 
         if self.basic_add:
             basic_add = reverse(self.basic_add)
@@ -2038,7 +2038,7 @@ class BasicDetails(DetailView):
                 if self.rtype == "json":
                     # This is the EditView
                     context['breadcrumbs'] = get_breadcrumbs(self.request, "{} edit".format(title), False)
-                    prevpage = reverse('home')
+                    prevpage = reverse('myhome')
                     context['prevpage'] = prevpage
                 else:
                     # This is DetailsView

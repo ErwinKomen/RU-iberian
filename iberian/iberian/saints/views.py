@@ -86,7 +86,7 @@ def user_login(request):
                 # Log the user in.
                 login(request, user)
                 # Go to the home page
-                response = redirect(reverse("saints:home"))
+                response = redirect(reverse("myhome"))
                 return response
             else:
                 # If account is not active:
@@ -106,7 +106,7 @@ def user_logout(request):
     # Log out the user.
     logout(request)
     # Return to homepage.
-    return redirect('saints:home')
+    return redirect('myhome')
 
 
 login_required(login_url='/login/')
@@ -157,7 +157,7 @@ def password_change(request):
                 if registered:
                     # Go to the home page
                     login(request, user)
-                    response = redirect(reverse("saints:home"))
+                    response = redirect(reverse("myhome"))
                 else:
                     context['form_auth'] = PasswordChangeForm(user)
                     response = render(request, template_name, context)
@@ -191,7 +191,7 @@ def home(request, errortype=None):
     if errortype != None:
         if errortype == "404":
             context['is_404'] = True
-
+    x = render(request, "saints/base.html", context)
     # Render and return the page
     return render(request, template_name, context)
 

@@ -17,19 +17,29 @@ function get_ids(classname){
 	var x = document.getElementsByClassName(classname);
 	var i, arr = [];
 	for (i=0; i < x.length; i++) {
-	arr.push(x[i].id);
+		arr.push(x[i].id);
 	}
 	return arr;
 }
 
 
 function dosubmit(){
-	var lst_ids = get_ids("tab-pane fade show active");
+	var lst_ids = "",
+			elFocus = null,
+			elFocus1 = null,
+			elFocus2 = null;
 
+  lst_ids = get_ids("tab-pane fade show active");
 	if (lst_ids.length > 0) {
-    document.getElementById('focus').value = lst_ids;
-    document.getElementById('focus1').value = lst_ids;
-    document.getElementById('focus2').value = lst_ids;
+		elFocus = document.getElementById('focus');
+    elFocus1 = document.getElementById('focus1');
+		elFocus2 = document.getElementById('focus2');
+    if (elFocus !== null) { elFocus.value = lst_ids;}
+    if (elFocus1 !== null) { elFocus1.value = lst_ids; }
+    if (elFocus2 !== null) { elFocus2.value = lst_ids; }
+  //  document.getElementById('focus').value = lst_ids;
+  //  document.getElementById('focus1').value = lst_ids;
+  //  document.getElementById('focus2').value = lst_ids;
   }
 	return true;
 }

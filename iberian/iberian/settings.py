@@ -206,10 +206,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_URL = 'static/' # '/static/'
+#STATIC_URL = 'static/' 
+#if ("/var/www" in WRITABLE_DIR and not bUseTunnel):
+#    STATIC_URL = APP_PREFIX + "static/"
+
+STATIC_URL = '/static/'
 if ("/var/www" in WRITABLE_DIR and not bUseTunnel):
-    # STATIC_URL = "/" + APP_PREFIX + "static/"
-    STATIC_URL = APP_PREFIX + "static/"
+    STATIC_URL = "/" + APP_PREFIX + "static/"
 
 STATIC_ROOT = os.path.abspath(os.path.join("/", posixpath.join(*(BASE_DIR.split(os.path.sep) + ['static']))))
 

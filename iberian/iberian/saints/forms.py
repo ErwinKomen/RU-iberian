@@ -16,7 +16,7 @@ class SaintTypeWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
 
     def get_queryset(self):
-        qs = Saint.objects.all().order_by('name')
+        qs = SaintType.objects.all().order_by('name')
         return qs
 
 
@@ -225,6 +225,9 @@ class SaintForm(forms.ModelForm):
     class Meta:
         model = Saint
         fields = '__all__'
+        widgets = {
+            'death_date': forms.DateInput(format="Y", attrs={ 'placeholder': 'Select a year'})
+        }
 
     type = forms.ModelChoiceField(
         queryset=SaintType.objects.all().order_by('name'),
