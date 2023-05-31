@@ -226,7 +226,7 @@ class SaintForm(forms.ModelForm):
         model = Saint
         fields = '__all__'
         widgets = {
-            'death_date': forms.DateInput(format="Y", attrs={ 'placeholder': 'Select a year'})
+            'death_date': forms.DateInput(format="4Y", attrs={ 'placeholder': 'Select a year'})
         }
 
     type = forms.ModelChoiceField(
