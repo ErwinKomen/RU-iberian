@@ -1,3 +1,9 @@
+{% if form.errors %}
+  {% for k,v in form.errors.items %}
+    <div><code>{{k}}</code>: <span>{{v}}</span></div>
+  {% endfor %}
+{% endif %}
+
 <table class="table table-borderless" >
     <!-- Title -->
     <tr class="d-flex">
@@ -9,7 +15,7 @@
     </tr>
     <!-- Date lower and upper -->
     <tr class="d-flex">
-        <th class="col-2">Date</th><td class="col-4">{{form.date_lower}}</td><td class="col-4">{{form.date_upper}}</td>
+        <th class="col-2">Date</th><td class="col-4">{{form.year_lower}}</td><td class="col-4">{{form.year_upper}}</td>
     </tr>
     <!-- Description -->
     <tr class="d-flex">

@@ -71,7 +71,7 @@ class FormsetFactoryManager:
     def __repr__(self):
         return ' '.join(self.names)
 
-    def save(self):
+    def save(self, **kwargs):
         self.valid, self.errors = True, []
         for formset in self.formsets:
             if formset.is_valid():

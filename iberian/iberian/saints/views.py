@@ -23,7 +23,27 @@ from iberian.utilities.views import saintsimplesearch, churchsimplesearch, objec
     liturgicalmanuscriptsimplesearch, ltextsimplesearch
 
 
-# Create your views here.
+# =================== Helper functions ===================================
+
+def partial_year_to_date(form, instance, date_field, year_field):
+    """Used in [before_save()] to change the date_field"""
+
+    # Get the value of the year_field
+    value_year = form.cleaned_data.get(year_field)
+    if value_year != "":
+        value_year = value_year.zfill(4)
+    # Get the date_field
+    value_date = getattr(instance, date_field)
+    # If they are the same: don't change
+    if value_date != value_year:
+        # Check for changes
+        if value_date is None or value_date == "" or str(value_date.date.year).zfill(4) != value_year:
+            # Adapt the form's instance value
+            setattr(form.instance, date_field, value_year)
+
+
+
+# =================== Create your views here =============================
 
 def register(request):
     registered = False
@@ -201,9 +221,16 @@ def view_404(request, *args, **kwargs):
 
 @login_required(login_url='/login/')
 def edit_church(request, pk=None, focus='', view='complete'):
+    """Allow adding a new or editing an existing [Saint] instance"""
+
+    def before_save(form, instance):
+        # Check whether the date is filled in as a correct four-digit year
+        partial_year_to_date(form, instance, "date_lower", "year_lower")
+        partial_year_to_date(form, instance, "date_upper", "year_upper")
+
     names = 'churchsaint_formset,churchobject_formset,churchinscription_formset,churchliturgicalmanuscript_formset,churchlink_formset'
     return edit_model(request, __name__, 'Church', 'saints', pk, formset_names=names,
-                      focus=focus, view=view)
+                      focus=focus, view=view, before_save=before_save)
 
 
 @login_required(login_url='/login/')
@@ -230,6 +257,10 @@ class ChurchDetailView(DetailView):
 
 @login_required(login_url='/login/')
 def bibliographyCreate(request, id=0):
+    def before_save(form, instance):
+        # Check whether the date is filled in as a correct four-digit year
+        partial_year_to_date(form, instance, "year", "char_year")
+
     if request.method == "GET":
         if id == 0:
             form = BibliographyForm()
@@ -244,6 +275,7 @@ def bibliographyCreate(request, id=0):
             bibliography = Bibliography.objects.get(pk=id)
             form = BibliographyForm(request.POST, instance=bibliography)
         if form.is_valid():
+            before_save(form, bibliography)
             form.save()
         return redirect('saints:bibliography-list')  # after save redirect to the city list
 
@@ -315,9 +347,16 @@ def InscriptionList(request):
 
 @login_required(login_url='/login/')
 def edit_inscription(request, pk=None, focus='', view='complete'):
+    """Allow adding a new or editing an existing [Saint] instance"""
+
+    def before_save(form, instance):
+        # Check whether the date is filled in as a correct four-digit year
+        partial_year_to_date(form, instance, "date_lower", "year_lower")
+        partial_year_to_date(form, instance, "date_upper", "year_upper")
+
     names = 'inscriptionsaint_formset,inscriptionchurch_formset,inscriptionlink_formset'
     return edit_model(request, __name__, 'Inscription', 'saints', pk, formset_names=names,
-                      focus=focus, view=view)
+                      focus=focus, view=view, before_save=before_save)
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
@@ -354,9 +393,15 @@ def SaintList(request):
 
 @login_required(login_url='/login/')
 def edit_saint(request, pk=None, focus='', view='complete'):
+    """Allow adding a new or editing an existing [Saint] instance"""
+
+    def before_save(form, instance):
+        # Check for death_year vs death_date
+        partial_year_to_date(form, instance, "death_date", "death_year")
+
     names = 'saintchurch_formset,saintinscription_formset,saintobject_formset,saintliturgicalmanuscript_formset,saintlink_formset'
     return edit_model(request, __name__, 'Saint', 'saints', pk, formset_names=names,
-                      focus=focus, view=view)
+                      focus=focus, view=view, before_save=before_save)
 
 
 @login_required(login_url='/login/')
@@ -390,9 +435,16 @@ def LiteraryTextList(request):
 
 @login_required(login_url='/login/')
 def edit_ltext(request, pk=None, focus='', view='complete'):
+    """Allow adding a new or editing an existing [Saint] instance"""
+
+    def before_save(form, instance):
+        # Check whether the date is filled in as a correct four-digit year
+        partial_year_to_date(form, instance, "date_lower", "year_lower")
+        partial_year_to_date(form, instance, "date_upper", "year_upper")
+
     names = 'literarytextbibliography_formset,literarytextlink_formset' # 'ltextchurch_formset'
     return edit_model(request, __name__, 'LiteraryText', 'saints', pk, formset_names=names,
-                      focus=focus, view=view)
+                      focus=focus, view=view, before_save=before_save)
 
 
 @login_required(login_url='/login/')
@@ -426,9 +478,16 @@ def ObjectList(request):
 
 @login_required(login_url='/login/')
 def edit_object(request, pk=None, focus='', view='complete'):
+    """Allow adding a new or editing an existing [Saint] instance"""
+
+    def before_save(form, instance):
+        # Check whether the date is filled in as a correct four-digit year
+        partial_year_to_date(form, instance, "date_lower", "year_lower")
+        partial_year_to_date(form, instance, "date_upper", "year_upper")
+
     names = 'objectsaint_formset,objectchurch_formset,objectlink_formset'
     return edit_model(request, __name__, 'Object', 'saints', pk, formset_names=names,
-                      focus=focus, view=view)
+                      focus=focus, view=view, before_save=before_save)
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
@@ -528,9 +587,16 @@ def LiturgicalManuscriptList(request):
 
 @login_required(login_url='/login/')
 def edit_liturgicalmanuscript(request, pk=None, focus='', view='complete'):
+    """Allow adding a new or editing an existing [Saint] instance"""
+
+    def before_save(form, instance):
+        # Check whether the date is filled in as a correct four-digit year
+        partial_year_to_date(form, instance, "date_lower", "year_lower")
+        partial_year_to_date(form, instance, "date_upper", "year_upper")
+
     names = 'liturgicalmanuscriptsaint_formset,liturgicalmanuscriptchurch_formset,litmanuscriptlink_formset'
     return edit_model(request, __name__, 'LiturgicalManuscript', 'saints', pk, formset_names=names,
-                      focus=focus, view=view)
+                      focus=focus, view=view, before_save=before_save)
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')

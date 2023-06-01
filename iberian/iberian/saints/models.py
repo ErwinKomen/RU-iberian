@@ -421,6 +421,18 @@ class ObjectChurchRelation(models.Model):
         message = "{} and {}".format(self.object, self.church)
         return message
 
+    def get_dates(self):
+        """Show the date range"""
+
+        sBack = ""
+        lHtml = []
+        if not self.start_date is None:
+            lHtml.append(str(self.start_date))
+        if not self.end_date is None:
+            lHtml.append(str(self.end_date))
+        sBack = "-".join(lHtml)
+        return sBack
+
 
 class LitManuscriptChurchRelation(models.Model):
     liturgical_manuscript = models.ForeignKey(LiturgicalManuscript, on_delete=models.CASCADE, blank=True, null=True)
@@ -431,6 +443,18 @@ class LitManuscriptChurchRelation(models.Model):
     def __str__(self):
         message = "{} and {}".format(self.liturgical_manuscript, self.church)
         return message
+
+    def get_dates(self):
+        """Show the date range"""
+
+        sBack = ""
+        lHtml = []
+        if not self.start_date is None:
+            lHtml.append(str(self.start_date))
+        if not self.end_date is None:
+            lHtml.append(str(self.end_date))
+        sBack = "-".join(lHtml)
+        return sBack
 
 
 class SaintChurchRelation(models.Model):
@@ -478,6 +502,18 @@ class InscriptionChurchRelation(models.Model):
     def __str__(self):
         message = "{} and {}".format(self.inscription, self.church)
         return message
+
+    def get_dates(self):
+        """Show the date range"""
+
+        sBack = ""
+        lHtml = []
+        if not self.start_date is None:
+            lHtml.append(str(self.start_date))
+        if not self.end_date is None:
+            lHtml.append(str(self.end_date))
+        sBack = "-".join(lHtml)
+        return sBack
 
 
 # Multiple external links

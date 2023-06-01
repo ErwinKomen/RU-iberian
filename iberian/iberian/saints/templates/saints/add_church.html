@@ -77,8 +77,8 @@
 		{% for f in churchobject_formset.forms %}
 			<tr class ="d-flex">
 				<td class="col-5">{{f.object}} {{f.object.errors}}</td>
-				<td class="col-3">{{f.start_date}} {{f.start_date.errors}}</td>
-				<td class="col-3">{{f.end_date}} {{f.end_date.errors}}</td>
+				<td class="col-3">{{f.start_year}} {{f.start_year.errors}}</td>
+				<td class="col-3">{{f.end_year}} {{f.end_year.errors}}</td>
 				<td class="col-1">{{f.DELETE}} {{f.id}}</td>
 			</tr>
 		{% endfor %}
@@ -102,8 +102,8 @@
 		{% for f in churchinscription_formset.forms %}
 			<tr class ="d-flex">
 			<td class="col-5">{{f.inscription}} {{f.inscription.errors}}</td>
-            <td class="col-3">{{f.start_date}} {{f.start_date.errors}}</td>
-            <td class="col-3">{{f.end_date}} {{f.end_date.errors}}</td>
+            <td class="col-3">{{f.start_year}} {{f.start_year.errors}}</td>
+            <td class="col-3">{{f.end_year}} {{f.end_year.errors}}</td>
 			<td class="col-1" style="text-align:left">{{f.DELETE}} {{f.id}}</td>
 			</tr>
 		{% endfor %}
@@ -128,8 +128,8 @@
 		{% for f in churchliturgicalmanuscript_formset.forms %}
 			<tr class ="d-flex">
 				<td class="col-5">{{f.liturgical_manuscript}} {{f.liturgical_manuscript.errors}}</td>
-				<td class="col-3">{{f.start_date}} {{f.start_date.errors}}</td>
-				<td class="col-3">{{f.end_date}} {{f.end_date.errors}}</td>
+				<td class="col-3">{{f.start_year}} {{f.start_year.errors}}</td>
+				<td class="col-3">{{f.end_year}} {{f.end_year.errors}}</td>
 				<td class="col-1">{{f.DELETE}} {{f.id}}</td>
 			</tr>
 		{% endfor %}

@@ -1,3 +1,9 @@
+{% if form.errors %}
+  {% for k,v in form.errors.items %}
+    <div><code>{{k}}</code>: <span>{{v}}</span></div>
+  {% endfor %}
+{% endif %}
+
 <table class="table table-borderless" >
     <tr class="d-flex">
         <th class="col-2">Church name</th>
@@ -5,8 +11,8 @@
     </tr>
     <tr class="d-flex">
         <th class="col-2">Date</th>
-        <td class="col-4">{{form.date_lower}}</td>
-        <td class="col-4">{{form.date_upper}}</td>
+        <td class="col-4">{{form.year_lower}}</td>
+        <td class="col-4">{{form.year_upper}}</td>
     </tr>
     <tr class="d-flex">
         <th class="col-2">Coordinates</th>

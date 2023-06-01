@@ -120,7 +120,7 @@
             <td class="col-3">
                 {% for t in church.objectchurchrelation_set.all %}
                     {% if t %}
-                        <a href="{% url 'saints:object-detail' t.object.id %}"> {{ t.object }} </a><br>
+                        <a href="{% url 'saints:object-detail' t.object.id %}"> {{ t.object }} </a> {{t.get_dates}}<br>
                     {% else %}
                         &nbsp;
                     {% endif %}
@@ -129,7 +129,7 @@
             <td class="col-3">
                 {% for t in church.inscriptionchurchrelation_set.all %}
                     {% if t %}
-                        <a href="{% url 'saints:inscription-detail' t.inscription.id %}"> {{ t.inscription }} </a><br>
+                        <a href="{% url 'saints:inscription-detail' t.inscription.id %}"> {{ t.inscription }} </a>{{t.get_dates}}<br>
                     {% else %}
                         &nbsp;
                     {% endif %}
@@ -138,7 +138,7 @@
             <td class="col-3">
                 {% for t in church.litmanuscriptchurchrelation_set.all %}
                     {% if t %}
-                        <a href="{% url 'saints:liturgicalmanuscript-detail' t.liturgical_manuscript.id %}"> {{ t.liturgical_manuscript }} </a><br>
+                        <a href="{% url 'saints:liturgicalmanuscript-detail' t.liturgical_manuscript.id %}"> {{ t.liturgical_manuscript }} </a>{{t.get_dates}}<br>
                     {% else %}
                         &nbsp;
                     {% endif %}

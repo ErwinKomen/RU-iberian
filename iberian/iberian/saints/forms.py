@@ -10,6 +10,23 @@ from .models import *
 
 DATA_MINIMUM_INPUT_LENGTH = 0
 
+def partial_year_to_date(form, instance, date_field, year_field):
+    """Used in [before_save()] to change the date_field"""
+
+    # Get the value of the year_field
+    value_year = form.cleaned_data.get(year_field)
+    if value_year != "":
+        value_year = value_year.zfill(4)
+    # Get the date_field
+    value_date = getattr(instance, date_field)
+    # If they are the same: don't change
+    if value_date != value_year:
+        # Check for changes
+        if value_date is None or value_date == "" or str(value_date.date.year).zfill(4) != value_year:
+            # Adapt the form's instance value
+            setattr(form.instance, date_field, value_year)
+
+
 
 # ============================ Widgets ============================================
 class SaintTypeWidget(s2forms.ModelSelect2Widget):
@@ -222,12 +239,13 @@ class MuseumForms(ModelForm):
 
 # ================= Other Forms =======================================================================
 class SaintForm(forms.ModelForm):
+
+    # Add a separate input for the YEAR
+    death_year = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+
     class Meta:
         model = Saint
         fields = '__all__'
-        widgets = {
-            'death_date': forms.DateInput(format="4Y", attrs={ 'placeholder': 'Select a year'})
-        }
 
     type = forms.ModelChoiceField(
         queryset=SaintType.objects.all().order_by('name'),
@@ -253,8 +271,22 @@ class SaintForm(forms.ModelForm):
         self.fields['type'].required = False
         self.fields['status'].required = False
 
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the death_year
+            if not instance.death_date is None:
+                # This is just collecting what we have
+                death_year = str(instance.death_date.date.year)
+                self.fields['death_year'].initial = death_year
+
 
 class ChurchForm(ModelForm):
+
+    # Add a separate input for the YEAR
+    year_lower = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+    year_upper = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+
     class Meta:
         model = Church
         fields = '__all__'
@@ -320,8 +352,25 @@ class ChurchForm(ModelForm):
         self.fields['date_upper'].required = False
         self.fields['status'].required = False
 
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the date_lower
+            if not instance.date_lower is None:
+                # This is just collecting what we have
+                self.fields['year_lower'].initial = str(instance.date_lower.date.year)
+            # Fill in the correct value for the date_upper
+            if not instance.date_upper is None:
+                # This is just collecting what we have
+                self.fields['year_upper'].initial = str(instance.date_upper.date.year)
+
 
 class ObjectForm(ModelForm):
+
+    # Add a separate input for the YEAR
+    year_lower = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+    year_upper = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+
     class Meta:
         model = Object
         fields = '__all__'
@@ -396,8 +445,25 @@ class ObjectForm(ModelForm):
         self.fields['date_upper'].required = False
         self.fields['status'].required = False
 
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the date_lower
+            if not instance.date_lower is None:
+                # This is just collecting what we have
+                self.fields['year_lower'].initial = str(instance.date_lower.date.year)
+            # Fill in the correct value for the date_upper
+            if not instance.date_upper is None:
+                # This is just collecting what we have
+                self.fields['year_upper'].initial = str(instance.date_upper.date.year)
+
 
 class InscriptionForm(ModelForm):
+
+    # Add a separate input for the YEAR
+    year_lower = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+    year_upper = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+
     class Meta:
         model = Inscription
         fields = '__all__'
@@ -469,9 +535,25 @@ class InscriptionForm(ModelForm):
         self.fields['date_upper'].required = False
         self.fields['status'].required = False
 
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the date_lower
+            if not instance.date_lower is None:
+                # This is just collecting what we have
+                self.fields['year_lower'].initial = str(instance.date_lower.date.year)
+            # Fill in the correct value for the date_upper
+            if not instance.date_upper is None:
+                # This is just collecting what we have
+                self.fields['year_upper'].initial = str(instance.date_upper.date.year)
+
 
 class LiteraryTextForm(ModelForm):
     """A literary text is the assumed original of a text that later occurs in manuscripts."""
+
+    # Add a separate input for the YEAR
+    year_lower = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+    year_upper = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
 
     class Meta:
         model = LiteraryText
@@ -516,8 +598,25 @@ class LiteraryTextForm(ModelForm):
         self.fields['author'].queryset = AuthorAncient.objects.all()
         self.fields['bibliography_many'].queryset = Bibliography.objects.all()
 
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the date_lower
+            if not instance.date_lower is None:
+                # This is just collecting what we have
+                self.fields['year_lower'].initial = str(instance.date_lower.date.year)
+            # Fill in the correct value for the date_upper
+            if not instance.date_upper is None:
+                # This is just collecting what we have
+                self.fields['year_upper'].initial = str(instance.date_upper.date.year)
+
 
 class LiturgicalManuscriptForm(ModelForm):
+
+    # Add a separate input for the YEAR
+    year_lower = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+    year_upper = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+
     class Meta:
         model = LiturgicalManuscript
         fields = '__all__'
@@ -608,18 +707,42 @@ class LiturgicalManuscriptForm(ModelForm):
         self.fields['date_upper'].required = False
         self.fields['status'].required = False
 
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the date_lower
+            if not instance.date_lower is None:
+                # This is just collecting what we have
+                self.fields['year_lower'].initial = str(instance.date_lower.date.year)
+            # Fill in the correct value for the date_upper
+            if not instance.date_upper is None:
+                # This is just collecting what we have
+                self.fields['year_upper'].initial = str(instance.date_upper.date.year)
+
 
 class BibliographyForm(ModelForm):
+    # Add a separate input for the YEAR
+    char_year = forms.CharField(label="Year", required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+
     class Meta:
         model = Bibliography
         fields = '__all__'
+        exclude = ("year",)
         # its possible to use following line for all fields, also exclude
         # fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(BibliographyForm, self).__init__(*args, **kwargs)
-        # self.fields['country'].empty_label = "Select"
-        self.fields['year'].required = False
+
+        # self.fields['year'].required = False
+
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the death_year
+            if not instance.year is None:
+                # This is just collecting what we have
+                self.fields['char_year'].initial = str(instance.year.date.year)
 
 
 class InstitutionTypeForm(ModelForm):
@@ -717,6 +840,11 @@ class SaintLitManuscriptRelationForm(ModelForm):
 
 
 class ChurchObjectRelationForm(ModelForm):
+
+    # Add a separate input for the YEAR
+    start_year = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+    end_year = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+
     church = forms.ModelChoiceField(
         queryset=Church.objects.all(),
         widget=ChurchWidget(
@@ -737,8 +865,41 @@ class ChurchObjectRelationForm(ModelForm):
         model = ObjectChurchRelation
         fields = ('church', 'object', 'start_date', 'end_date')
 
+    def __init__(self, *args, **kwargs):
+        super(ChurchObjectRelationForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'].required = False
+        self.fields['end_date'].required = False
+
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the start_date
+            if not instance.start_date is None:
+                # This is just collecting what we have
+                self.fields['start_year'].initial = str(instance.start_date.date.year)
+            # Fill in the correct value for the end_date
+            if not instance.end_date is None:
+                # This is just collecting what we have
+                self.fields['end_year'].initial = str(instance.end_date.date.year)
+
+    def save(self, commit=True, *args, **kwargs):
+        # Get the instance
+        instance = self.instance
+        # Adapt the form.instance for start_date and end_date
+        partial_year_to_date(self, instance, "start_date", "start_year")
+        partial_year_to_date(self, instance, "end_date", "end_year")
+        # Perform the actual saving
+        response = super(ChurchObjectRelationForm, self).save(commit=commit)
+        # Return the save response
+        return response
+
 
 class ChurchLitManuscriptRelationForm(ModelForm):
+
+    # Add a separate input for the YEAR
+    start_year = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+    end_year = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+
     church = forms.ModelChoiceField(
         queryset=Church.objects.all(),
         widget=ChurchWidget(
@@ -759,8 +920,40 @@ class ChurchLitManuscriptRelationForm(ModelForm):
         model = LitManuscriptChurchRelation
         fields = ('church', 'liturgical_manuscript', 'start_date', 'end_date')
 
+    def __init__(self, *args, **kwargs):
+        super(ChurchLitManuscriptRelationForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'].required = False
+        self.fields['end_date'].required = False
+
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the start_date
+            if not instance.start_date is None:
+                # This is just collecting what we have
+                self.fields['start_year'].initial = str(instance.start_date.date.year)
+            # Fill in the correct value for the end_date
+            if not instance.end_date is None:
+                # This is just collecting what we have
+                self.fields['end_year'].initial = str(instance.end_date.date.year)
+
+    def save(self, commit=True, *args, **kwargs):
+        #instance = kwargs.get("instance")
+        instance = self.instance
+        partial_year_to_date(self, instance, "start_date", "start_year")
+        partial_year_to_date(self, instance, "end_date", "end_year")
+        # Perform the actual saving
+        response = super(ChurchLitManuscriptRelationForm, self).save(commit=commit)
+        # Return the save response
+        return response
+
 
 class InscriptionChurchRelationForm(ModelForm):
+
+    # Add a separate input for the YEAR
+    start_year = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+    end_year = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+
     church = forms.ModelChoiceField(
         queryset=Church.objects.all(),
         widget=ChurchWidget(
@@ -781,27 +974,33 @@ class InscriptionChurchRelationForm(ModelForm):
         model = InscriptionChurchRelation
         fields = ('church', 'inscription', 'start_date', 'end_date')
 
+    def __init__(self, *args, **kwargs):
+        super(InscriptionChurchRelationForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'].required = False
+        self.fields['end_date'].required = False
 
-#class LiteraryTextChurchRelationForm(ModelForm):
-#    ltext = forms.ModelChoiceField(
-#        queryset=LiteraryText.objects.all(),
-#        widget=LiteraryTextWidget(
-#            attrs={'data-placeholder': 'Select saint',
-#                   'style': 'width:100%;', 'class': 'searching',
-#                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
-#    )
+        # Check if the instance is there
+        instance = kwargs.get("instance")
+        if not instance is None:
+            # Fill in the correct value for the start_date
+            if not instance.start_date is None:
+                # This is just collecting what we have
+                self.fields['start_year'].initial = str(instance.start_date.date.year)
+            # Fill in the correct value for the end_date
+            if not instance.end_date is None:
+                # This is just collecting what we have
+                self.fields['end_year'].initial = str(instance.end_date.date.year)
 
-#    church = forms.ModelChoiceField(
-#        queryset=Church.objects.all(),
-#        widget=ChurchWidget(
-#            attrs={'data-placeholder': 'Select church',
-#                   'style': 'width:100%;', 'class': 'searching',
-#                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
-#    )
+    def save(self, commit=True, *args, **kwargs):
+        #instance = kwargs.get("instance")
+        instance = self.instance
+        partial_year_to_date(self, instance, "start_date", "start_year")
+        partial_year_to_date(self, instance, "end_date", "end_year")
+        # Perform the actual saving
+        response = super(InscriptionChurchRelationForm, self).save(commit=commit)
+        # Return the save response
+        return response
 
-#    class Meta:
-#        model = LiteraryTextChurchRelation
-#        fields = ('ltext', 'church')
 
 
 # ================================== Multiple Links ==========================================

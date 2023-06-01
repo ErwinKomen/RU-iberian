@@ -38,7 +38,7 @@ def list_view(request, model_name, app_name):
 
 # @permission_required('utilities.add_generic')
 def edit_model(request, name_space, model_name, app_name, instance_id=None,
-               formset_names='', focus='', view='complete'):
+               formset_names='', focus='', view='complete', before_save = None):
     '''edit view generalized over models.
     assumes a 'add_{{model_name}}.html template and edit_{{model_name}} function
     and {{model_name}}Form
@@ -59,6 +59,10 @@ def edit_model(request, name_space, model_name, app_name, instance_id=None,
             form = modelform(request.POST, request.FILES, instance=instance)
             if form.is_valid():
                 print('form is valid: ', form.cleaned_data, type(form))
+
+                # Allow the user to add something before actually saving
+                if not before_save is None:
+                    before_save(form, instance)
 
                 instance = form.save()
                 if view == 'complete':
