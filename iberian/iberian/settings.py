@@ -46,7 +46,7 @@ if "d:" in WRITABLE_DIR or "D:" in WRITABLE_DIR or "c:" in WRITABLE_DIR or "C:" 
     # Specific differentiation
     if "d:" in WRITABLE_DIR or "D:" in WRITABLE_DIR:
         USE_REDIS = True
-        # DEBUG = True
+        DEBUG = True
 elif "131.174" in hst or "/var/www" in WRITABLE_DIR:
     # Configuration within the Radboud University environment (Lightning)
     APP_PREFIX = ""             # Was: "iberian/"

@@ -16,13 +16,14 @@ import iberian
 from iberian import views
 
 # Import from iberian as a whole
-from iberian.settings import APP_PREFIX
+from iberian.settings import APP_PREFIX, STATIC_ROOT
 
 # Other Django stuff
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy, path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
+from django.views.static import serve
 
 import iberian.seeker.views
 
@@ -46,6 +47,7 @@ handler404 = custom_page_not_found
 urlpatterns = [
     # ============ STANDARD VIEWS =====================
     re_path(r'^$', iberian.saints.views.home, name='myhome'),
+    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': STATIC_ROOT}), 
     path("404/", custom_page_not_found),
     re_path(r'^favicon\.ico$',RedirectView.as_view(url='/static/saints/content/favicon.ico')),
     

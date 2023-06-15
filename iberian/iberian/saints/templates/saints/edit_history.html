@@ -1,0 +1,21 @@
+{% if form.instance.pk %}
+  <div id="edit_history" class="collapse row edit-history">
+    <div class="container">
+      <div class="col-md-offset-3 col-md-9">
+        {% if crud.anychanges %}
+          <table style="width: 100%;">
+            {% for upd in crud.updates_str %}
+            <tr>
+              <td>{{forloop.counter}}</td>
+              <td>{{upd.0}}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        {% else %}
+          <i>(No changes)</i>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+

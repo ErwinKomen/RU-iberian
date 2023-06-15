@@ -6,9 +6,12 @@
             Add Object
         {% else %}
             Update Object "{{form.instance.name}}"
+						<span class="pull-right"><a role="button" class="btn btn-xs btn-info" data-target="#edit_history" data-toggle="collapse">History</a></span>
         {% endif %}
     </h2>
 
+
+{% include 'saints/edit_history.html' %}
 
 <form method="post" enctype="multipart/form-data" onsubmit="dosubmit();">
 {% csrf_token %}
