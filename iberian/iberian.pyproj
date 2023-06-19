@@ -40,6 +40,9 @@
     <DefaultItemExcludes>migrations/**;$(DefaultItemExcludes)</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="iberian\basic\middle.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="iberian\saints\admin.py" />
     <Compile Include="iberian\saints\apps.py" />
     <Compile Include="iberian\saints\forms.py" />
@@ -124,9 +127,11 @@
     </Content>
     <Content Include="iberian\basic\static\basic\content\basic.css" />
     <Content Include="iberian\basic\static\basic\content\font-awesome.min.css" />
+    <Content Include="iberian\saints\static\saints\content\favicon.ico" />
     <Content Include="iberian\saints\static\saints\content\site.css" />
     <Content Include="iberian\saints\templates\saints\add_church.html" />
     <Content Include="iberian\saints\templates\saints\add_inscription.html" />
+    <Content Include="iberian\saints\templates\saints\add_literarytext.html" />
     <Content Include="iberian\saints\templates\saints\add_liturgicalmanuscript.html" />
     <Content Include="iberian\saints\templates\saints\add_object.html" />
     <Content Include="iberian\saints\templates\saints\add_saint.html" />
@@ -137,7 +142,10 @@
     <Content Include="iberian\saints\templates\saints\church_list.html" />
     <Content Include="iberian\saints\templates\saints\city_form.html" />
     <Content Include="iberian\saints\templates\saints\city_list.html" />
+    <Content Include="iberian\saints\templates\saints\edit_history.html" />
     <Content Include="iberian\saints\templates\saints\feast_form.html" />
+    <Content Include="iberian\saints\templates\saints\authorancient_form.html" />
+    <Content Include="iberian\saints\templates\saints\authorancient_list.html" />
     <Content Include="iberian\saints\templates\saints\feast_list.html" />
     <Content Include="iberian\saints\templates\saints\footer.html" />
     <Content Include="iberian\saints\templates\saints\header.html" />
@@ -165,10 +173,13 @@
     <Content Include="iberian\saints\templates\saints\rite_list.html" />
     <Content Include="iberian\saints\templates\saints\sainttype_form.html" />
     <Content Include="iberian\saints\templates\saints\sainttype_list.html" />
+    <Content Include="iberian\saints\templates\saints\literarytext_detail.html" />
     <Content Include="iberian\saints\templates\saints\saint_detail.html" />
+    <Content Include="iberian\saints\templates\saints\literarytext_list.html" />
     <Content Include="iberian\saints\templates\saints\saint_list.html" />
     <Content Include="iberian\saints\templates\saints\_church_form.html" />
     <Content Include="iberian\saints\templates\saints\_inscription_form.html" />
+    <Content Include="iberian\saints\templates\saints\_literarytext_form.html" />
     <Content Include="iberian\saints\templates\saints\_liturgicalmanuscript_form.html" />
     <Content Include="iberian\saints\templates\saints\_object_form.html" />
     <Content Include="iberian\saints\templates\saints\_saint_form.html" />

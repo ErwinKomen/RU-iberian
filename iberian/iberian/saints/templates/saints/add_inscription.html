@@ -6,7 +6,10 @@
             Add Inscription
         {% else %}
             Update Inscription "{{form.instance.reference_no}}"
-						<span class="pull-right"><a role="button" class="btn btn-xs btn-info" data-target="#edit_history" data-toggle="collapse">History</a></span>
+						<span class="pull-right">
+							<a type="reset" value="Cancel" class ="btn btn-light" href="{% url 'saints:inscription-detail' form.instance.pk %}">Cancel</a>
+							<a role="button" class="btn btn-xs btn-info" data-target="#edit_history" data-toggle="collapse">History</a>
+						</span>
         {% endif %}
     </h2>
 
