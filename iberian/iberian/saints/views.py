@@ -733,6 +733,35 @@ class SaintTypeDeleteView(DeleteView):
     success_url = reverse_lazy("saints:sainttype-list")
 
 
+# LiturgicalType
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class LiturgicalTypeListView(ListView):
+    model = LiturgicalType
+    template_name = 'installations/liturgicaltype_list.html'
+    context_object_name = 'liturgicaltypes'
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class LiturgicalTypeCreatView(CreateView):
+    model = LiturgicalType
+    fields = '__all__'
+    template_name = 'saints/liturgicaltype_form.html'
+    success_url = reverse_lazy('saints:liturgicaltype-list')
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class LiturgicalTypeUpdateView(UpdateView):
+    model = LiturgicalType
+    fields = '__all__'
+    success_url = reverse_lazy('saints:liturgicaltype-list')
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class LiturgicalTypeDeleteView(DeleteView):
+    model = LiturgicalType
+    success_url = reverse_lazy("saints:liturgicaltype-list")
+
+
 # InstitutionType
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class InstitutionTypeListView(ListView):

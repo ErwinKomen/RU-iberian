@@ -51,7 +51,19 @@ class Bibliography(models.Model):
 
 
 class SaintType(models.Model):
+    """The type of Saint that is being defined (e.g. man, confessor, virgin)"""
+
     name = models.CharField(max_length=AVERAGE_TEXT)  # Just Man, Confessor, Virgin, Virgin Confessor, Apostle, etc
+
+    def __str__(self):
+        return self.name
+
+
+class LiturgicalType(models.Model):
+    """This is different from SaintType, but still is used in the description of a Saint"""
+
+    # [1] The name of this liturgical type
+    name = models.CharField(max_length=AVERAGE_TEXT)
 
     def __str__(self):
         return self.name
@@ -212,6 +224,8 @@ class Saint(models.Model):
 
     # ============= FK Links to other items ======================
     type = models.ForeignKey(SaintType, related_name='saints', on_delete=models.CASCADE, blank=True, default='',
+                             null=True)
+    ltype = models.ForeignKey(LiturgicalType, related_name='ltypesaints', on_delete=models.CASCADE, blank=True, default='',
                              null=True)
     location_region = models.ForeignKey(Region, related_name='loc_region_saints',
                                           on_delete=models.SET_NULL, blank=True, default='', null=True)

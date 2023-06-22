@@ -23,8 +23,12 @@
         <td class="col-8">{% if saint.death_place %}{{saint.death_place}}{% endif %}</td>
     </tr>
     <tr class="d-flex">
-        <th class="col-2">Type:</th>
+        <th class="col-2">Saint type:</th>
         <td class="col-8">{% if saint.type %}{{saint.type}}{% endif %}</td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Liturgical type:</th>
+        <td class="col-8">{% if saint.ltype %}{{saint.ltype}}{% endif %}</td>
     </tr>
     <tr class="d-flex">
         <th class="col-2">Region:</th>

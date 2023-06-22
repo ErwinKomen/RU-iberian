@@ -95,6 +95,11 @@ urlpatterns = [
     re_path(r'^sainttype/delete/(?P<pk>\d+)/$', views.SaintTypeDeleteView.as_view(), name='sainttype-delete'),
     path('sainttype/list', views.SaintTypeListView.as_view(), name='sainttype-list'),
 
+    re_path(r'^liturgicaltype/new/$', views.LiturgicalTypeCreatView.as_view(), name='liturgicaltype-insert'),
+    re_path(r'^liturgicaltype/new/(?P<pk>\d+)/$', views.LiturgicalTypeUpdateView.as_view(), name='liturgicaltype-update'),
+    re_path(r'^liturgicaltype/delete/(?P<pk>\d+)/$', views.LiturgicalTypeDeleteView.as_view(), name='liturgicaltype-delete'),
+    path('liturgicaltype/list', views.LiturgicalTypeListView.as_view(), name='liturgicaltype-list'),
+
     re_path(r'^institutiontype/new/$', views.InstitutionTypeCreatView.as_view(), name='institutiontype-insert'),
     re_path(r'^institutiontype/new/(?P<pk>\d+)/$', views.InstitutionTypeUpdateView.as_view(), name='institutiontype-update'),
     re_path(r'^institutiontype/delete/(?P<pk>\d+)/$', views.InstitutionTypeDeleteView.as_view(), name='institutiontype-delete'),

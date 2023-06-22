@@ -29,10 +29,18 @@
         <td class="col-8">{{form.death_place}}</td>
     </tr>
     <tr class="d-flex">
-        <th class="col-2">Type</th>
+        <th class="col-2">Saint type</th>
         <td class="col-8">{{form.type}}</td>
         <td><a class = "btn btn-link btn-sm ml-auto" target = "_blank"
            href ="{% url 'saints:sainttype-insert' %}"
+           role="button"><i class="fa fa-plus"></i></a>
+        </td>
+    </tr>
+    <tr class="d-flex">
+        <th class="col-2">Liturgical type</th>
+        <td class="col-8">{{form.ltype}}</td>
+        <td><a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+           href ="{% url 'saints:liturgicaltype-insert' %}"
            role="button"><i class="fa fa-plus"></i></a>
         </td>
     </tr>

@@ -171,7 +171,9 @@
     <Content Include="iberian\saints\templates\saints\registration.html" />
     <Content Include="iberian\saints\templates\saints\rite_form.html" />
     <Content Include="iberian\saints\templates\saints\rite_list.html" />
+    <Content Include="iberian\saints\templates\saints\liturgicaltype_form.html" />
     <Content Include="iberian\saints\templates\saints\sainttype_form.html" />
+    <Content Include="iberian\saints\templates\saints\liturgicaltype_list.html" />
     <Content Include="iberian\saints\templates\saints\sainttype_list.html" />
     <Content Include="iberian\saints\templates\saints\literarytext_detail.html" />
     <Content Include="iberian\saints\templates\saints\saint_detail.html" />

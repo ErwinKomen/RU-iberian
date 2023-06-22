@@ -103,4 +103,10 @@ body
     color: darkblue;
 }
 
-
+/* Select2 needs some update*/
+.select2-selection__clear {
+    position: absolute;
+    right: 20px;
+    border: none;
+    background-color: transparent;
+}

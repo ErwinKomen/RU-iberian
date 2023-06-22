@@ -37,6 +37,14 @@ class SaintTypeWidget(s2forms.ModelSelect2Widget):
         return qs
 
 
+class LiturgicalTypeWidget(s2forms.ModelSelect2Widget):
+    search_fields = ['name__icontains']
+
+    def get_queryset(self):
+        qs = LiturgicalType.objects.all().order_by('name')
+        return qs
+
+
 class SaintWidget(s2forms.ModelSelect2Widget):
     search_fields = ['name__icontains']
 
@@ -256,6 +264,15 @@ class SaintForm(forms.ModelForm):
                    'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
         required=False)
 
+    ltype = forms.ModelChoiceField(
+        queryset=LiturgicalType.objects.all().order_by('name'),
+        # this line refreshes the list when a new item is entered using the plus button
+        widget=LiturgicalTypeWidget(
+            attrs={'data-placeholder': 'Select liturgical type',
+                   'style': 'width:100%;', 'class': 'searching',
+                   'data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}),
+        required=False)
+
     location_region = forms.ModelChoiceField(required=False, queryset=Region.objects.all(), widget=RegionWidget(
         attrs={'data-placeholder': 'Select Region','style': 'width:100%;', 'class': 'searching','data-minimum-input-length': DATA_MINIMUM_INPUT_LENGTH}))
 
@@ -269,6 +286,7 @@ class SaintForm(forms.ModelForm):
         super(SaintForm, self).__init__(*args, **kwargs)
         self.fields['name'].required = True
         self.fields['type'].required = False
+        self.fields['ltype'].required = False
         self.fields['status'].required = False
 
         # Check if the instance is there
