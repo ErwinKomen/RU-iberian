@@ -230,6 +230,9 @@ def saintsimplesearch(request, app_name, model_name):
         query = request.GET.get("q", "")
         order_by = request.GET.get("order_by", "id")
         query_set = model.objects.all().order_by(order_by)
+
+        # issue #19: remove comma from query
+        query = query.replace(",", "")
         # -----------------------------------------------------------
         queries = query.split()
         if query is not None:
@@ -274,6 +277,8 @@ def ltextsimplesearch(request, app_name, model_name):
         query = request.GET.get("q", "")
         order_by = request.GET.get("order_by", "id")
         query_set = model.objects.all().order_by(order_by)
+        # issue #19: remove comma from query
+        query = query.replace(",", "")
         # -----------------------------------------------------------
         queries = query.split()
         if query is not None:
@@ -309,6 +314,8 @@ def churchsimplesearch(request, app_name, model_name):
         query = request.GET.get("q", "")
         order_by = request.GET.get("order_by", "id")
         query_set = model.objects.all().order_by(order_by)
+        # issue #19: remove comma from query
+        query = query.replace(",", "")
         # -----------------------------------------------------------
         queries = query.split()
         if query is not None:
@@ -350,6 +357,8 @@ def objectsimplesearch(request, app_name, model_name):
         query = request.GET.get("q", "")
         order_by = request.GET.get("order_by", "id")
         query_set = model.objects.all().order_by(order_by)
+        # issue #19: remove comma from query
+        query = query.replace(",", "")
         # -----------------------------------------------------------
         queries = query.split()
         if query is not None:
@@ -393,6 +402,8 @@ def inscriptionsimplesearch(request, app_name, model_name):
         query = request.GET.get("q", "")
         order_by = request.GET.get("order_by", "id")
         query_set = model.objects.all().order_by(order_by)
+        # issue #19: remove comma from query
+        query = query.replace(",", "")
         # -----------------------------------------------------------
         queries = query.split()
         if query is not None:
@@ -435,6 +446,8 @@ def liturgicalmanuscriptsimplesearch(request, app_name, model_name):
         query = request.GET.get("q", "")
         order_by = request.GET.get("order_by", "id")
         query_set = model.objects.all().order_by(order_by)
+        # issue #19: remove comma from query
+        query = query.replace(",", "")
         # -----------------------------------------------------------
         queries = query.split()
         if query is not None:
