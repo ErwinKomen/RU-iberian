@@ -17,8 +17,17 @@
 
     <table class="table table-borderless table-sm">
         <tr class="d-flex">
-            <th class="col-2">Name</th>
-            <td class="col-8">{{form.name}}</td>
+            <th class="col-2">City</th>
+            <td class="col-8">{{form.city}}</td>
+            <td>
+                <a class = "btn btn-link btn-sm ml-auto" target = "_blank"
+               href ="{% url 'saints:city-insert' %}"
+               role="button"><i class="fa fa-plus"></i></a>
+            </td>
+        </tr>
+        <tr class="d-flex">
+            <th class="col-2">Region number</th>
+            <td class="col-8">{{form.region_number}}</td>
         </tr>
         <tr class="d-flex">
             <th class="col-2">Extent shapefile</th>

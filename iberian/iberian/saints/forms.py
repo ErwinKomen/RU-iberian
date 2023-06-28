@@ -78,11 +78,11 @@ class CityWidget(s2forms.ModelSelect2Widget):
 
 
 class RegionWidget(s2forms.ModelSelect2Widget):
-    search_fields = ['city__name__icontains',
+    search_fields = ['name__icontains',
                      'region_number__icontains', ]
 
     def get_queryset(self):
-        qs = Region.objects.all().order_by('city__name', 'region_number')
+        qs = Region.objects.all().order_by('name', 'region_number')
         return qs
 
 
@@ -232,7 +232,9 @@ class RegionForms(ModelForm):
 
     class Meta:
         model = Region
-        fields = ('city', 'region_number', 'extent_shapefile')
+        # issue #17: changes in region specification
+        # fields = ('city', 'region_number', 'extent_shapefile')
+        fields = ('name', 'extent_shapefile')
 
 
 class MuseumForms(ModelForm):

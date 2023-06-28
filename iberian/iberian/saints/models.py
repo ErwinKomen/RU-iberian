@@ -119,15 +119,25 @@ class City(models.Model):
 
 
 class Region(models.Model):
+    """A region is an area with a name and a shape"""
+
+    # [1] Each saint is known by a name
+    name = models.CharField(max_length=LONG_TEXT)
+    # [0-1] Optional number for the region
     region_number = models.PositiveIntegerField(null=True, blank=True)
+    # [0-1] Optional shapefile for the region
     extent_shapefile = models.FileField(upload_to='shapefiles/', max_length=SHORT_TEXT, null=True,
                                         blank=True)
 
     # ============= FK Links to other items ======================
-    city = models.ForeignKey(City, on_delete=models.CASCADE, blank=False, null=False, default='')
+    # issue #17: remove the link to city
+    # city = models.ForeignKey(City, on_delete=models.CASCADE, blank=False, null=False, default='')
 
     def __str__(self):
-        st = self.city.name + ' ' + str(self.region_number)
+        # issue #17: region is no longer marked by city and region number
+        # OLD st = self.city.name + ' ' + str(self.region_number)
+        # Instead: region is just marked by name
+        st = self.name
         return st
 
 

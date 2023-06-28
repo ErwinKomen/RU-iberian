@@ -5,7 +5,8 @@
     <table class="table table-borderless">
         <thead class="border-bottom font-weight-bold">
             <tr>
-                <th scope="col">Name</th>
+                <th scope="col">City</th>
+                <th scope="col">Region number</th>
                 <th scope="col">Extent shapefile</th>
                 <td>
                     <a href="{% url 'saints:region-insert'%}" class="btn btn-outline-success" > <i class="fa fa-plus"></i> Add New</a>
@@ -15,7 +16,8 @@
         <tbody>
             {% for region in region_list %}
             <tr>
-                <td>{{region.name}}</td>
+                <td>{{region.city}}</td>
+                <td>{{region.region_number}}</td>
                 <td>{{region.extent_shapefile.name}}</td>
                 <td>
                     <a href="{% url 'saints:region-update' region.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a>
