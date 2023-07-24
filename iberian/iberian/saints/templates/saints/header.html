@@ -76,6 +76,16 @@
           </div>
         </li>
       {% endif %}
+
+      {% if is_app_moderator %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tools</a>
+          <div class="dropdown-menu" aria-labelledby="dropdown02">
+            <a class="dropdown-item" href="{% url 'upload_list' %}">Uploads</a>
+          </div>
+        </li>
+      {% endif %}
+
     </ul>
     <!-- Log in and Sign up     -->
     <ul class="navbar-nav ml-auto">

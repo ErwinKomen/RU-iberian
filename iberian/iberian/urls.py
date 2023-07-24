@@ -26,7 +26,7 @@ from django.views.generic.base import RedirectView
 from django.views.static import serve
 
 import iberian.seeker.views
-
+from iberian.seeker.views import *
 
 admin.autodiscover()
 
@@ -53,6 +53,12 @@ urlpatterns = [
     
     # ============ SAINTS VIEWS =======================
     re_path('', include(('iberian.saints.urls',  'saints'), namespace="saints")),
+
+    # ============ SEEKER views =======================
+
+    re_path(r'^upload/list', UploadListView.as_view(), name='upload_list'),
+    re_path(r'^upload/details(?:/(?P<pk>\d+))?/$', UploadDetails.as_view(), name='upload_details'),
+    re_path(r'^upload/edit(?:/(?P<pk>\d+))?/$', UploadEdit.as_view(), name='upload_edit'),
 
     # =============================================================================================
 

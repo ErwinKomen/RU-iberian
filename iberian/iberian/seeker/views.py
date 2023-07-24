@@ -26,9 +26,19 @@ from django.views.decorators.csrf import csrf_exempt
 
 # ======= imports from my own application ======
 from iberian.basic.utils import ErrHandle
-from iberian.seeker.models import get_current_datetime
-from iberian.seeker.forms import SignUpForm
+from iberian.seeker.models import Upload, get_current_datetime
+from iberian.seeker.forms import SignUpForm, UploadForm
 from iberian.saints.views import home
+
+# ======= from RU-Basic ========================
+from iberian.basic.views import BasicPart, BasicList, BasicDetails, make_search_list, add_rel_item, adapt_search
+
+
+# Some constants that can be used
+paginateSize = 20
+paginateSelect = 15
+paginateValues = (100, 50, 20, 10, 5, 2, 1, )
+
 
 def get_application_name():
     """Try to get the name of this application"""
@@ -177,3 +187,94 @@ def signup(request):
     # return render(request, 'signup.html', {'form': form})
     return render(request, 'signup.html', context)
 
+
+# =================================== OTHER VIEWS ===================================================
+
+
+class UploadEdit(BasicDetails):
+    """The details of one author"""
+
+    model = Upload
+    mForm = UploadForm
+    prefix = 'upl'
+    title = "Upload"
+    has_select2 = True
+    no_delete = True
+    mainitems = []
+
+    def add_to_context(self, context, instance):
+        """Add to the existing context"""
+
+        oErr = ErrHandle()
+
+        try:
+            # Define the main items to show and edit
+            context['mainitems'] = [
+                # -------- HIDDEN field values ---------------
+                {'type': 'plain', 'label': "User:",         'value': instance.user.id,      'field_key': 'user', 'empty': 'idonly'},
+                # --------------------------------------------
+                {'type': 'plain', 'label': "Name:",         'value': instance.name,         'field_key': "name" },
+                {'type': 'plain', 'label': "Info:",         'value': instance.get_info()                        },
+                {'type': 'plain', 'label': "Last saved:",   'value': instance.get_saved()                       },
+                ]
+
+            # Signal that we have select2
+            context['has_select2'] = True
+
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("UploadEdit/add_to_context")
+
+        # Return the context we have made
+        return context
+
+
+class UploadDetails(UploadEdit):
+    """Html variant of UploadEdit"""
+
+    rtype = "html"
+
+
+class UploadListView(BasicList):
+    """Details of uploads"""
+
+    model = Upload
+    listform = UploadForm
+    prefix = "upl"
+    has_select2 = False
+    new_button = True
+    order_cols = ['user__username', 'name', 'saved']
+    order_default = order_cols
+    order_heads = [
+        {'name': 'User',    'order': 'o=1', 'type': 'str', 'custom': 'username',    'linkdetails': True},
+        {'name': 'Name',    'order': 'o=2', 'type': 'str', 'field':  'name',        'linkdetails': True, 'main': True},
+        {'name': 'Saved',   'order': 'o=3', 'type': 'str', 'custom': 'saved'}
+        ]
+    filters = [ {"name": "Name",    "id": "filter_name",    "enabled": False},
+                {"name": "User",    "id": "filter_user",    "enabled": False},
+               ]
+    searches = [
+        {'section': '', 'filterlist': [
+            {'filter': 'name',  'dbfield': 'name', 'keyS': 'name'},
+            {'filter': 'user',  'fkfield': 'user', 'keyFk': 'username', 'keyList': 'userlist', 'infield': 'id' }
+            ]}
+        ]
+
+    def get_field_value(self, instance, custom):
+        sBack = ""
+        sTitle = ""
+        html = []
+        oErr = ErrHandle()
+        try:
+            if custom == "username":
+                sTitle = instance.user.username
+            elif custom == "saved":
+                sTitle = instance.get_saved()
+
+            # Combine the HTML code
+            sBack = "\n".join(html)
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("UploadListView/get_field_value")
+
+        return sBack, sTitle

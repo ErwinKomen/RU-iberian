@@ -22,6 +22,7 @@ from iberian.utilities.views import edit_model
 from iberian.utilities.views import saintsimplesearch, churchsimplesearch, objectsimplesearch, inscriptionsimplesearch, \
     liturgicalmanuscriptsimplesearch, ltextsimplesearch
 
+from iberian.basic.views import get_application_context
 
 # =================== Helper functions ===================================
 
@@ -206,6 +207,8 @@ def home(request, errortype=None):
     context = {
         'title': 'Iberian saints',
         'user': request.user}
+
+    context = get_application_context(request, context)
 
     # See if this is the result of a particular error
     if errortype != None:

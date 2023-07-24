@@ -71,6 +71,14 @@ app_moderator = "{}_moderator".format(PROJECT_NAME.lower())
 app_developer = "{}_developer".format(PROJECT_NAME.lower())
 
 
+def get_application_context(request, context):
+    context['is_app_uploader'] = user_is_ingroup(request, app_uploader)
+    context['is_app_editor'] = user_is_ingroup(request, app_editor)
+    context['is_app_userplus'] = user_is_ingroup(request, app_userplus)
+    context['is_app_developer'] = user_is_ingroup(request, app_developer)
+    context['is_app_moderator'] = user_is_superuser(request) or user_is_ingroup(request, app_moderator)
+    return context
+
 def user_is_authenticated(request):
     # Is this user authenticated?
     username = request.user.username
@@ -117,7 +125,7 @@ def get_breadcrumbs(request, name, is_menu, lst_crumb=[], **kwargs):
 
     # Initialisations
     p_list = []
-    p_list.append({'name': 'Home', 'url': reverse('home')})
+    p_list.append({'name': 'Home', 'url': reverse('myhome')})
     # Find out who this is
     username = "anonymous" if request.user == None else request.user.username
     if username != "anonymous" and request.user.username != "":

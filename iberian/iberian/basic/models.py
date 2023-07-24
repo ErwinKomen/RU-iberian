@@ -207,7 +207,8 @@ class Address(models.Model):
         bResult = False
         oErr = ErrHandle()
         look_for = [
-            ".php", "%3dphp", "win.ini", "/passwd", ".env", "config.ini", ".local", ".zip", "jasperserver"
+            ".php", "%3dphp", "win.ini", "/passwd", ".env", "config.ini", ".local", ".zip", "jasperserver",
+            ".git/config"
             ]
         try:
             # Check if it is on there already
