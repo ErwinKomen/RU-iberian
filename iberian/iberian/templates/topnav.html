@@ -1,0 +1,143 @@
+{% load static %}
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="no-container" url_home="{% url 'myhome' %}">
+
+    <!-- Show my default home page -->
+    <a class="navbar-brand" href="{% url 'myhome' %}">Iberian Saints</a>
+
+    <!-- Hamburger toggler if too small -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+    </div>
+
+    <!-- The full navigation (if not collapsed) -->
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'myhome' %}">Home<span class="sr-only">(current)</span></a>
+        </li>
+
+        {% if user.is_authenticated and user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+          </li>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              View<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="{% url 'saints:saint-list' %}">Saint</a>
+              <a class="dropdown-item" href="{% url 'saints:church-list' %}">Church</a>
+              <a class="dropdown-item" href="{% url 'saints:object-list' %}">Object</a>
+              <a class="dropdown-item" href="{% url 'saints:inscription-list' %}">Inscription</a>
+              <a class="dropdown-item" href="{% url 'saints:liturgicalmanuscript-list' %}">Liturgical Manuscript</a>
+              <a class="dropdown-item" href="{% url 'saints:literarytext-list' %}">Literary Text</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'saints:bibliography-list' %}">Bibliography</a>
+              <a class="dropdown-item" href="{% url 'saints:feast-list' %}">Feast</a>
+              <a class="dropdown-item" href="{% url 'saints:rite-list' %}">Rite</a>
+              <a class="dropdown-item" href="{% url 'saints:authorancient-list' %}">Author</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'saints:city-list' %}">City</a>
+              <a class="dropdown-item" href="{% url 'saints:region-list' %}">Region</a>
+              <a class="dropdown-item" href="{% url 'saints:museum-list' %}">Museum</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'saints:institutiontype-list' %}">Institution type</a>
+              <a class="dropdown-item" href="{% url 'saints:liturgicaltype-list' %}">Liturgical type</a>
+              <a class="dropdown-item" href="{% url 'saints:manuscripttype-list' %}">Manuscript type</a>
+              <a class="dropdown-item" href="{% url 'saints:objecttype-list' %}">Object type</a>
+              <a class="dropdown-item" href="{% url 'saints:sainttype-list' %}">Saint type</a>
+
+
+              <!--          <a class="dropdown-item" href="#">Person</a>-->
+              <!--          <a class="dropdown-item" href="#">Something else here</a>-->
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Add
+              <span class="caret"></span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdown02">
+              <a class="dropdown-item" href="{% url 'saints:saint-insert' %}">Saint</a>
+              <a class="dropdown-item" href="{% url 'saints:church-insert' %}">Church</a>
+              <a class="dropdown-item" href="{% url 'saints:object-insert' %}">Object</a>
+              <a class="dropdown-item" href="{% url 'saints:inscription-insert' %}">Inscription</a>
+              <a class="dropdown-item" href="{% url 'saints:liturgicalmanuscript-insert' %}">Liturgical Manuscript</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'saints:bibliography-insert' %}">Bibliography</a>
+              <a class="dropdown-item" href="{% url 'saints:feast-insert' %}">Feast</a>
+              <a class="dropdown-item" href="{% url 'saints:rite-insert' %}">Rite</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'saints:city-insert' %}">City</a>
+              <a class="dropdown-item" href="{% url 'saints:region-insert' %}">Region</a>
+              <a class="dropdown-item" href="{% url 'saints:museum-insert' %}">Museum</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'saints:institutiontype-insert' %}">Institution type</a>
+              <a class="dropdown-item" href="{% url 'saints:manuscripttype-insert' %}">Manuscript type</a>
+              <a class="dropdown-item" href="{% url 'saints:objecttype-insert' %}">Object type</a>
+              <a class="dropdown-item" href="{% url 'saints:sainttype-insert' %}">Saint type</a>
+
+
+              <!--           <a class="dropdown-item" href="#">Person</a>-->
+              <!--          <a class="dropdown-item" href="#">Something else here</a>-->
+            </div>
+          </li>
+        {% endif %}
+
+        {% if is_app_moderator %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Tools<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdown02">
+              <a class="dropdown-item" href="{% url 'upload_list' %}">Uploads</a>
+            </div>
+          </li>
+        {% endif %}
+
+      </ul>
+
+      <!-- Log in and Sign up: at the right side    -->
+      <div class="pull-right" style="margin-right: 15px;">
+        <ul class="nav navbar-nav navbar-rights">
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="#">Hi {{ user.username }}!</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Logout</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'saints:logout' %}">Logout</a>
+                <a class="dropdown-item" href="{% url 'saints:password_change' %}">Change password</a>
+              </div>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'saints:user_login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'signup' %}">Sign up</a>
+            </li>
+          {% endif %}
+        </ul>
+
+        <!-- Search form -->
+        <form class="navbar-form navbar-right">
+          <div class="form-group">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          </div>
+          <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</nav>

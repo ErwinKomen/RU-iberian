@@ -33,8 +33,12 @@ def partial_year_to_date(form, instance, date_field, year_field):
     value_year = form.cleaned_data.get(year_field)
     if value_year != "":
         value_year = value_year.zfill(4)
-    # Get the date_field
-    value_date = getattr(instance, date_field)
+    # This only works if there is an instance
+    if instance is None:
+        value_date = None
+    else:
+        # Get the date_field
+        value_date = getattr(instance, date_field)
     # If they are the same: don't change
     if value_date != value_year:
         # Check for changes

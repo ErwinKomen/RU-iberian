@@ -45,6 +45,7 @@ def edit_model(request, name_space, model_name, app_name, instance_id=None,
     '''
     names = formset_names
     oErr = ErrHandle()
+    response = None
     try:
         model = apps.get_model(app_name, model_name)
         modelform = view_util.get_modelform(name_space, model_name + 'Form')

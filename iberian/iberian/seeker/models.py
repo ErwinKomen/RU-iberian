@@ -52,7 +52,6 @@ def upload_path(instance, filename=None):
     sSubdir = "upload"
     try:
         # Adapt the filename for storage
-        # sAdapted = "{}_{:08d}_{}".format(sType, instance.id, filename.replace(" ", "_"))
         sAdapted = filename.replace(" ", "_")
 
         # The stuff that we return
@@ -111,6 +110,13 @@ class Upload(models.Model):
         response = super(Upload, self).save(force_insert, force_update, using, update_fields)
         return response
 
+    def get_info(self):
+        """Get information"""
+
+        sBack = "-"
+
+        return sBack
+
     def get_saved(self):
         """REturn the saved date in a readable form"""
 
@@ -123,6 +129,6 @@ class Upload(models.Model):
 
         sBack = "-"
         if not self.upfile is None:
-            sBack = self.upfile
+            sBack = os.path.basename( self.upfile.name)
         return sBack
 

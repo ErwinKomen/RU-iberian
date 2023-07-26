@@ -1,0 +1,9 @@
+<p>Dear user, you are <b>not</b> logged in.</p>
+<p>Unfortunately this means that you will not be able to perform any searches.</p>
+<p>
+  Should you want to work with this application, here are your options:
+  <ul>
+    <li><a class="btn btn-info btn-xs" href="{% url 'user_login' %}">Login</a> - if you already have an account</li>
+    <li><a class="btn btn-warning btn-xs" href="{% url 'register' %}">Sign up</a> - if you don't have an account yet</li>
+  </ul>
+</p>

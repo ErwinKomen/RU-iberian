@@ -211,9 +211,11 @@ class UploadEdit(BasicDetails):
             # Define the main items to show and edit
             context['mainitems'] = [
                 # -------- HIDDEN field values ---------------
-                {'type': 'plain', 'label': "User:",         'value': instance.user.id,      'field_key': 'user', 'empty': 'idonly'},
+                {'type': 'plain', 'label': "User:",         'value': instance.user.id,      'field_key': 'user', 'empty': 'hide'},
                 # --------------------------------------------
+                {'type': 'plain', 'label': "User:",         'value': instance.user.username                     },
                 {'type': 'plain', 'label': "Name:",         'value': instance.name,         'field_key': "name" },
+                {'type': 'plain', 'label': "File:",         'value': instance.get_upload_file(), 'field_key': "upfile" },
                 {'type': 'plain', 'label': "Info:",         'value': instance.get_info()                        },
                 {'type': 'plain', 'label': "Last saved:",   'value': instance.get_saved()                       },
                 ]
@@ -267,9 +269,9 @@ class UploadListView(BasicList):
         oErr = ErrHandle()
         try:
             if custom == "username":
-                sTitle = instance.user.username
+                html.append(instance.user.username)
             elif custom == "saved":
-                sTitle = instance.get_saved()
+                html.append(instance.get_saved())
 
             # Combine the HTML code
             sBack = "\n".join(html)
@@ -278,3 +280,6 @@ class UploadListView(BasicList):
             oErr.DoError("UploadListView/get_field_value")
 
         return sBack, sTitle
+
+
+# ============= THE END ==============================================================================

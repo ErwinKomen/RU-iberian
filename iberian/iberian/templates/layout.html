@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ title }}</title>
-  {% load staticfiles %}
+  {% load static %}
   <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/bootstrap.css' %}" />
   <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/ru-base.css' %}" />
   <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/ru-form.css' %}" />
@@ -26,7 +26,7 @@
   {% block breadcrumbs %}{% endblock %}
 
   <div class="container-fluid body-content">
-    <div id="__baseurl__" class="hidden" url_home="{% url 'home' %}">{% url 'home' %}</div>
+    <div id="__baseurl__" class="hidden" url_home="{% url 'myhome' %}">{% url 'myhome' %}</div>
     <div class="hidden" id="__typeaheads__">{{typeaheads}}</div>
     <div id="__form__" class="hidden"><form></form></div>
     <!-- room for all errors -->
@@ -37,13 +37,7 @@
     <hr />
   </div>
   <div>
-    <footer>
-      <span>PASSIM v1.3.3 &copy; jan/2019-jul/2023 </span>
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <span>Sponsored by: <a href="https://cordis.europa.eu/project/rcn/218691/factsheet/en">Cordis</a></span>
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <span>Developed at: <a href="https://www.ru.nl/en/about-us/organisation/faculties/arts/research/research-facilities">Radboud University Nijmegen</a></span>
-    </footer>
+    {% include 'saints/footer.html' %}
 
   </div>
   {% block endcontent %}{% endblock %}
