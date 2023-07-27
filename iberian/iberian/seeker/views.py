@@ -23,6 +23,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.base import RedirectView
 from django.views.generic import ListView, View
 from django.views.decorators.csrf import csrf_exempt
+import os, json
 
 # ======= imports from my own application ======
 from iberian.basic.utils import ErrHandle
@@ -32,6 +33,7 @@ from iberian.saints.views import home
 
 # ======= from RU-Basic ========================
 from iberian.basic.views import BasicPart, BasicList, BasicDetails, make_search_list, add_rel_item, adapt_search
+from iberian.settings import MEDIA_ROOT
 
 
 # Some constants that can be used
@@ -199,7 +201,7 @@ class UploadEdit(BasicDetails):
     prefix = 'upl'
     title = "Upload"
     has_select2 = True
-    no_delete = True
+    no_delete = False
     mainitems = []
 
     def add_to_context(self, context, instance):
@@ -208,20 +210,34 @@ class UploadEdit(BasicDetails):
         oErr = ErrHandle()
 
         try:
+            #user_id = self.request.user.id if instance.user is None else instance.user.id
+            #user = None if user_id is None else User.objects.filter(id=user_id).first()
+
+            # Make sure we know the user id
+            user_id = instance.user.id
+
+            # Get the info now, because some processing may take place
+            sButtonInfo = self.get_buttons(instance)
+
             # Define the main items to show and edit
             context['mainitems'] = [
                 # -------- HIDDEN field values ---------------
-                {'type': 'plain', 'label': "User:",         'value': instance.user.id,      'field_key': 'user', 'empty': 'hide'},
+                {'type': 'plain', 'label': "User:",         'value': user_id,          'field_key': 'user', 'empty': 'hide'},
                 # --------------------------------------------
                 {'type': 'plain', 'label': "User:",         'value': instance.user.username                     },
-                {'type': 'plain', 'label': "Name:",         'value': instance.name,         'field_key': "name" },
-                {'type': 'plain', 'label': "File:",         'value': instance.get_upload_file(), 'field_key': "upfile" },
+                {'type': 'plain', 'label': "Name:",         'value': instance.name,             'field_key': "name" },
+                {'type': 'safe',  'label': "File:",         'value': instance.get_upload_file(),'field_key': "upfile" },
                 {'type': 'plain', 'label': "Info:",         'value': instance.get_info()                        },
                 {'type': 'plain', 'label': "Last saved:",   'value': instance.get_saved()                       },
+                {'type': 'plain', 'label': "Status:",       'value': instance.get_status()                      },
+                {'type': 'safe',  'label': "",              'value': sButtonInfo                                },
                 ]
 
             # Signal that we have select2
             context['has_select2'] = True
+
+            context['upload_id'] = instance.id
+            context['after_details'] = render_to_string("seeker/upload_process.html", context, self.request)
 
         except:
             msg = oErr.get_error_message()
@@ -229,6 +245,44 @@ class UploadEdit(BasicDetails):
 
         # Return the context we have made
         return context
+
+    def before_save(self, form, instance):
+        bResult = True
+        sBack = ""
+        if not instance is None:
+            if instance.user is None:
+                instance.user = self.request.user
+        return bResult, sBack
+
+    def get_buttons(self, instance):
+        """Create button(s) for reading the contents, supposing there is any JSON contents"""
+
+        sBack = ""
+        oErr = ErrHandle()
+        lHtml = []
+        sText = ""
+        try:
+            # Check if there is a file uploaded
+            if not instance.upfile is None and not instance.upfile.name is None:
+                # Get the fullinfo as a string
+                bResult, sBack = instance.read_fullinfo()
+
+                if bResult and sBack != "":
+                    # It has been read: is this valid json?
+                    oText = json.loads(sBack)
+                    # Getting here means all is well
+
+                    # Getting here means we can create a button to process it
+                    lHtml.append('<a class="btn btn-xs jumbo-3" role="button" ')
+                    lHtml.append('   onclick="document.getElementById(\'process_upload\').submit();">')
+                    lHtml.append('Process the upload</a>')
+                    # Combine into string
+                    sBack = "\n".join(lHtml)
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("UploadEdit/get_buttons")
+            sBack = msg
+        return sBack
 
 
 class UploadDetails(UploadEdit):
@@ -245,12 +299,13 @@ class UploadListView(BasicList):
     prefix = "upl"
     has_select2 = False
     new_button = True
-    order_cols = ['user__username', 'name', 'saved']
+    order_cols = ['user__username', 'name', 'status', 'saved']
     order_default = order_cols
     order_heads = [
         {'name': 'User',    'order': 'o=1', 'type': 'str', 'custom': 'username',    'linkdetails': True},
-        {'name': 'Name',    'order': 'o=2', 'type': 'str', 'field':  'name',        'linkdetails': True, 'main': True},
-        {'name': 'Saved',   'order': 'o=3', 'type': 'str', 'custom': 'saved'}
+        {'name': 'Name',    'order': 'o=2', 'type': 'str', 'field':  'name',        'linkdetails': True},
+        {'name': 'Status',  'order': 'o=3', 'type': 'str', 'field':  'status',      'linkdetails': True, 'main': True},
+        {'name': 'Saved',   'order': 'o=4', 'type': 'str', 'custom': 'saved'}
         ]
     filters = [ {"name": "Name",    "id": "filter_name",    "enabled": False},
                 {"name": "User",    "id": "filter_user",    "enabled": False},
@@ -280,6 +335,33 @@ class UploadListView(BasicList):
             oErr.DoError("UploadListView/get_field_value")
 
         return sBack, sTitle
+
+
+class UploadProcess(UploadDetails):
+    """Actually process the upload"""
+
+    initRedirect = True
+
+    def custom_init(self, instance):
+        data = dict(status="ok")
+        oErr = ErrHandle()
+        try:
+            # Figure out where to go to after processing this
+            self.redirectpage = reverse('upload_details', kwargs={'pk': instance.id})
+
+            if not instance is None and user_is_ingroup(self.request, app_editor):
+                # Start the processing of the contents
+                instance.do_process()
+
+                # Log that this has been done
+                print("UploadProcess: done id {}".format(instance.id))
+
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("UploadProcess")
+
+        return None
+
 
 
 # ============= THE END ==============================================================================

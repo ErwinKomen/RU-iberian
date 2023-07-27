@@ -59,6 +59,7 @@ urlpatterns = [
     re_path(r'^upload/list', UploadListView.as_view(), name='upload_list'),
     re_path(r'^upload/details(?:/(?P<pk>\d+))?/$', UploadDetails.as_view(), name='upload_details'),
     re_path(r'^upload/edit(?:/(?P<pk>\d+))?/$', UploadEdit.as_view(), name='upload_edit'),
+    re_path(r'^upload/process(?:/(?P<pk>\d+))?/$', UploadProcess.as_view(), name='upload_process'),
 
     # =============================================================================================
 

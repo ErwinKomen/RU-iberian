@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.urls import reverse
 import os
+import json
 import pytz
 
 
@@ -95,6 +96,9 @@ class Upload(models.Model):
     # [1] Any upload belongs to a particular user
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="useruploads")
 
+    # [0-1] Any status message from processing this upload
+    status = models.TextField("Status", null=True, blank=True)
+
     # [1] Be sure to keep track of when this one was created and saved last
     created = models.DateTimeField(default=get_current_datetime)
     saved = models.DateTimeField(default=get_current_datetime)
@@ -110,11 +114,38 @@ class Upload(models.Model):
         response = super(Upload, self).save(force_insert, force_update, using, update_fields)
         return response
 
+    def do_process(self):
+        """Process the upload"""
+
+        bResult = True
+        oErr = ErrHandle()
+        try:
+            sText = self.fullinfo
+            if not sText is None and sText != "":
+                # It has been read: is this valid json?
+                oText = json.loads(sText)
+                # Getting here means that we have loaded a valid JSON
+
+                # Indicate we have read it
+                self.set_status("Processed information at: {}".format(get_crpp_date(get_current_datetime(), True)))
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("do_process")
+            bResult = False
+
+        return bResult
+
     def get_info(self):
         """Get information"""
 
         sBack = "-"
-
+        if not self.fullinfo is None and self.fullinfo != "":
+            try:
+                oInfo = json.loads(self.fullinfo)
+                num_items = len(oInfo)
+                sBack = "{} item(s)".format(num_items)
+            except:
+                sBack = "Sorry, get_info() cannot decypher what is in @fullinfo"
         return sBack
 
     def get_saved(self):
@@ -124,11 +155,62 @@ class Upload(models.Model):
         sDate = get_crpp_date(self.saved, True)
         return sDate
 
+    def get_status(self):
+        sBack = "-"
+        if not self.status is None:
+            sBack = self.status
+        return sBack
+
     def get_upload_file(self):
         """If file has been filled in, get the file name"""
 
         sBack = "-"
-        if not self.upfile is None:
-            sBack = os.path.basename( self.upfile.name)
+        oErr = ErrHandle()
+        try:
+            if not self.upfile is None and not self.upfile.name is None and self.upfile.name != "":
+                sBack = "<code>{}</code>".format(os.path.basename( self.upfile.name) )
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("get_upload_file")
         return sBack
+
+    def read_fullinfo(self):
+        sBack = ""
+        bResult = True
+        oErr = ErrHandle()
+        try:
+            if not self.upfile is None and not self.upfile.name is None and self.upfile.name != "":
+                # Okay, a file has been uploaded
+                # Check if there is any contents
+                if self.fullinfo is None or self.fullinfo == "":
+                    # Try to read the file as text
+                    sBasename = os.path.basename(self.upfile.name)
+                    sFilename = os.path.abspath(os.path.join(MEDIA_ROOT, "upload", sBasename))
+                    # Check existence
+                    if os.path.exists(sFilename):
+                        # Try read it as JSON
+                        try:
+                            with open(sFilename, "r", encoding="utf-8") as f:
+                                oResult = json.load(f)
+                            sBack = json.dumps(oResult, indent=2)
+                            # Getting here means all is well
+                            self.fullinfo = sBack
+                            self.save()
+                            self.set_status("Uploaded info from file at: {}".format(get_crpp_date(get_current_datetime(), True)))
+                        except:
+                            sBack = "Sorry, cannot read file. Is it in UTF-8? [{}]".format(sBasename)
+                            bResult = False
+                            return bResult, sBack
+                else:
+                    sBack = self.fullinfo
+
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("do_process")
+            bResult = False
+        return bResult, sBack
+
+    def set_status(self, msg):
+        self.status = msg
+        self.save()
 

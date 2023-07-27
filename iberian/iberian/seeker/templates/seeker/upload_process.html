@@ -1,0 +1,12 @@
+{% if is_app_editor %}
+<!-- The form that facilitates processing the upload -->
+<div class="row">
+  <div class="hidden col-md-offset-6 col-md-6">
+    <form id="process_upload" action="{% url 'upload_process' pk=upload_id %}" method="post">
+      {% csrf_token %}
+    </form>
+  </div>
+</div>
+
+
+{% endif %}

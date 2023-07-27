@@ -397,5 +397,4 @@ __pycache__/
 /iberian/iberian/saints/migrations
 /iberian/iberian/utilities/migrations
 /iberian/iberian/basic/migrations
-/iberian/iberian/seeker/migrations/0002_upload_user.py
-/iberian/iberian/seeker/migrations/0001_initial.py
+/iberian/iberian/seeker/migrations
