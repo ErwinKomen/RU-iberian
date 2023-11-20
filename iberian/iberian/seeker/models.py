@@ -11,6 +11,7 @@ from django.urls import reverse
 import os
 import json
 import pytz
+import openpyxl
 
 
 # From own application
@@ -75,6 +76,74 @@ def upload_path(instance, filename=None):
         msg = oErr.get_error_message()
         oErr.DoError("upload_path")
     return sBack
+
+def excel_to_list(filename, lExcel = None):
+    """Read an excel file into a list of objects
+
+    This assumes that the first row contains column headers
+    """
+
+    oErr = ErrHandle()
+    bResult = True
+    lData = []
+    msg = ""
+    try:
+
+        # Read string file
+        wb = openpyxl.load_workbook(filename, read_only=True)
+        ws = wb.active
+
+        # Iterate through rows
+        bFirst = True
+        
+        lHeader = []
+        if lExcel is None:
+            # Cannot handle this
+            msg = "Please specify lExcel"
+            return False, [], msg
+
+        # Iterate
+        for row in ws.iter_rows(min_row=1, min_col=1):
+            if bFirst:
+                # Expect header
+                for cell in row:
+                    sValue = cell.value.strip("\t").lower()                    
+                    sKey = ""
+                    for idx, oItem in enumerate(lExcel):
+                        item = oItem['xfield'].lower()
+                        if item in sValue:
+                            sKey = oItem['field']
+                            break
+                    # Check if it's okay
+                    if sKey == "":
+                        # Cannot read this
+                        msg = "Don't understand column header [{}]".format(sValue)
+                        return False, [], msg
+                    lHeader.append(sKey)
+                bFirst = False
+            elif row[0].value != None:
+                oRow = {}
+                for idx, key in enumerate(lHeader):
+                    cell = row[idx]
+                    # Get the value as a string
+                    cv = "" if cell.value == None else "{}".format(cell.value).strip()
+                    oRow[key] = cv
+                # Also add the row number (as string)
+                oRow['row_number'] = "{}".format(row[0].row)
+                lData.append(oRow)
+        # Close the workbook
+        wb.close()
+
+        # Return positively
+        bResult = True
+    except:
+        # Note the error here
+        msg = oErr.get_error_message()
+        bResult = False
+        oErr.DoError("excel_to_list")
+
+    # Return what we have found
+    return bResult, lData, msg
 
 
 
@@ -174,7 +243,7 @@ class Upload(models.Model):
             oErr.DoError("get_upload_file")
         return sBack
 
-    def read_fullinfo(self):
+    def read_fullinfo(self, lExcel = None):
         sBack = ""
         bResult = True
         oErr = ErrHandle()
@@ -188,11 +257,26 @@ class Upload(models.Model):
                     sFilename = os.path.abspath(os.path.join(MEDIA_ROOT, "upload", sBasename))
                     # Check existence
                     if os.path.exists(sFilename):
-                        # Try read it as JSON
+                        # Try read it as JSON or as EXCEL
                         try:
-                            with open(sFilename, "r", encoding="utf-8") as f:
-                                oResult = json.load(f)
-                            sBack = json.dumps(oResult, indent=2)
+                            sBase, sExt = os.path.splitext(sBasename)
+                            sExt = sExt.lower()
+
+                            if sExt == "json":
+                                with open(sFilename, "r", encoding="utf-8") as f:
+                                    oResult = json.load(f)
+                                sBack = json.dumps(oResult, indent=2)
+                            elif sExt == "xlsx" and not lExcel is None:
+                                bResult, lst_row, msg = excel_to_list(sFilename, lExcel)
+
+                                if bResult:
+                                    sBack = json.dumps(lst_row, indent=2)
+                            else:
+                                # We do not know the file extension
+                                sBack = "Sorry, cannot read file. Is it in UTF-8? [{}]".format(sBasename)
+                                bResult = False
+                                return bResult, sBack
+
                             # Getting here means all is well
                             self.fullinfo = sBack
                             self.save()

@@ -261,11 +261,24 @@ class UploadEdit(BasicDetails):
         oErr = ErrHandle()
         lHtml = []
         sText = ""
+        lSaintsExcel = [
+            {"xfield": "name",       "type": "str",     "lfield": "name" }, 
+            {"xfield": "SEMM name",  "type": "str",     "lfield": "semm_name"}, 
+            {"xfield": "death_date", "type": "str",     "lfield": "death_date"}, 
+            {"xfield": "feast_day",  "type": "str",     "lfield": "feast_day"}, 
+            {"xfield": "region",     "type": "fk_str",  "lfield": "location_region"},                                              
+            {"xfield": "description","type": "str",     "lfield": "description"}, 
+            {"xfield": "id",         "type": "id",      "lfield": "id"}, 
+            {"xfield": "status",     "type": "bool",    "lfield": "status"}, 
+            {"xfield": "type_id",    "type": "fk_id",   "lfield": "type"}, 
+            {"xfield": "ltype_id",   "type": "fk_id",   "lfield": "ltype"}
+            ]
+
         try:
             # Check if there is a file uploaded
             if not instance.upfile is None and not instance.upfile.name is None:
                 # Get the fullinfo as a string
-                bResult, sBack = instance.read_fullinfo()
+                bResult, sBack = instance.read_fullinfo(lSaintsExcel)
 
                 if bResult and sBack != "":
                     # It has been read: is this valid json?
