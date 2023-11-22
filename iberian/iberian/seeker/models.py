@@ -1,6 +1,7 @@
 """Models for the SEEKER app.
 
 """
+from unittest.result import failfast
 from django.apps.config import AppConfig
 from django.apps import apps
 from django.db import models, transaction
@@ -11,12 +12,14 @@ from django.urls import reverse
 import os
 import json
 import pytz
+import copy
 import openpyxl
 
 
 # From own application
 from iberian.basic.utils import ErrHandle
 from iberian.settings import MEDIA_ROOT, TIME_ZONE
+from iberian.saints.models import Saint
 
 # constants
 STANDARD_LENGTH=100
@@ -77,7 +80,7 @@ def upload_path(instance, filename=None):
         oErr.DoError("upload_path")
     return sBack
 
-def excel_to_list(filename, lExcel = None):
+def excel_to_list(filename, lExcel):
     """Read an excel file into a list of objects
 
     This assumes that the first row contains column headers
@@ -85,7 +88,7 @@ def excel_to_list(filename, lExcel = None):
 
     oErr = ErrHandle()
     bResult = True
-    lData = []
+    oData = {'data': []}
     msg = ""
     try:
 
@@ -102,6 +105,9 @@ def excel_to_list(filename, lExcel = None):
             msg = "Please specify lExcel"
             return False, [], msg
 
+        # Put the list in the fields
+        oData['fields'] = lExcel
+
         # Iterate
         for row in ws.iter_rows(min_row=1, min_col=1):
             if bFirst:
@@ -111,26 +117,41 @@ def excel_to_list(filename, lExcel = None):
                     sKey = ""
                     for idx, oItem in enumerate(lExcel):
                         item = oItem['xfield'].lower()
-                        if item in sValue:
-                            sKey = oItem['field']
+                        if item == sValue:
+                            if oItem['type'] == "skip":
+                                sKey = None
+                            else:
+                                sKey = oItem['lfield']
                             break
                     # Check if it's okay
                     if sKey == "":
                         # Cannot read this
                         msg = "Don't understand column header [{}]".format(sValue)
                         return False, [], msg
-                    lHeader.append(sKey)
+                    elif not sKey is None:
+                        lHeader.append(sKey)
                 bFirst = False
             elif row[0].value != None:
                 oRow = {}
                 for idx, key in enumerate(lHeader):
+                    # Get the processing element for this column
+                    oColumn = lExcel[idx]
+                    sType = oColumn.get("type")
+                    sField = oColumn.get("lfield")
+                    clsFK = oColumn.get("cls")
+
+                    # Get this cell
                     cell = row[idx]
                     # Get the value as a string
                     cv = "" if cell.value == None else "{}".format(cell.value).strip()
-                    oRow[key] = cv
+
+                    # Processing depends on what the oColumn says
+                    if sType != "skip":
+                        cv_str = "" if cell.value == None else "{}".format(cell.value).strip()
+                        oRow[key] = cv_str
                 # Also add the row number (as string)
                 oRow['row_number'] = "{}".format(row[0].row)
-                lData.append(oRow)
+                oData['data'].append(oRow)
         # Close the workbook
         wb.close()
 
@@ -143,7 +164,7 @@ def excel_to_list(filename, lExcel = None):
         oErr.DoError("excel_to_list")
 
     # Return what we have found
-    return bResult, lData, msg
+    return bResult, oData, msg
 
 
 
@@ -194,6 +215,57 @@ class Upload(models.Model):
                 # It has been read: is this valid json?
                 oText = json.loads(sText)
                 # Getting here means that we have loaded a valid JSON
+
+                # (1) Expecting there to be fields (with instructions) and data
+                lFields = oText.get("fields")
+                lData = oText.get("data")
+
+                # (2) Retrieve the correct FK classes
+                oFields = {}
+                for oField in lFields:
+                    clsFK = oField.get("cls")
+                    if not clsFK is None:
+                        cls_fk = apps.get_model(clsFK, "saints")
+                        oField["cls_fk"] = cls_fk
+                    # Add to [oFields]
+                    oFields[oField.get("lfield")] = copy.copy(oField)
+
+                # (3) Walk through all the data
+                for oRow in lData:
+                    # First get the id and the name
+                    id = oRow['id']
+                    name = oRow['name']
+                    # Check if this item is already present
+                    saint = Saint.objects.filter(id=id).first()
+                    if saint is None:
+                        # Create it
+                        saint = Saint.object.create(name=name)
+                    # Process the data in this row by looking at the appropriate field
+                    for field_name, oHandle in oFields.items():
+                        # Get the field value as string
+                        str_value = oRow.get(field_name)
+                        # See how it should be processed
+                        sType = oHandle.get("type")
+                        cls_fk = oHandle.get("cls_fk")
+                        obj = None
+                        if sType == "str":
+                            setattr(saint,field_name, str_value)
+                        elif sType == "bool":
+                            bool_value = True if str_value == "true" else False
+                            setattr(saint, field_name, bool_value)
+                        elif sType == "fk_id":
+                            obj = cls_fk.objects.filter(id=str_value).first()
+                            setattr(saint, field_name, obj)
+                        elif sType == "fk_str":
+                            if str_value != "":
+                                obj = cls_fk.objects.filter(name=str_value).first()
+                                if obj is None:
+                                    # Add this item...
+                                    obj = cls_fk.objects.create(name=str_value)
+                            setattr(saint, field_name, obj)
+                        # Now save this object
+                        saint.save()
+
 
                 # Indicate we have read it
                 self.set_status("Processed information at: {}".format(get_crpp_date(get_current_datetime(), True)))
@@ -262,15 +334,19 @@ class Upload(models.Model):
                             sBase, sExt = os.path.splitext(sBasename)
                             sExt = sExt.lower()
 
-                            if sExt == "json":
+                            if sExt == ".json":
                                 with open(sFilename, "r", encoding="utf-8") as f:
                                     oResult = json.load(f)
                                 sBack = json.dumps(oResult, indent=2)
-                            elif sExt == "xlsx" and not lExcel is None:
+                            elif sExt == ".xlsx" and not lExcel is None:
                                 bResult, lst_row, msg = excel_to_list(sFilename, lExcel)
 
                                 if bResult:
                                     sBack = json.dumps(lst_row, indent=2)
+                                else:
+                                    sBack = "Sorry, there is a problem: [{}]".format(msg)
+                                    return bResult, sBack
+
                             else:
                                 # We do not know the file extension
                                 sBack = "Sorry, cannot read file. Is it in UTF-8? [{}]".format(sBasename)

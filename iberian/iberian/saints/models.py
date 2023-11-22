@@ -233,12 +233,17 @@ class Saint(models.Model):
     status = models.BooleanField("Completed", default=False, help_text="Complete")
 
     # ============= FK Links to other items ======================
+    # [0-1] Optional link to a Saint Type (or is it not optional??)
     type = models.ForeignKey(SaintType, related_name='saints', on_delete=models.CASCADE, blank=True, default='',
                              null=True)
+    # [0-1] Optional link to Liturgical Type
     ltype = models.ForeignKey(LiturgicalType, related_name='ltypesaints', on_delete=models.CASCADE, blank=True, default='',
                              null=True)
+    # [0-1] Optional link to a region
     location_region = models.ForeignKey(Region, related_name='loc_region_saints',
                                           on_delete=models.SET_NULL, blank=True, default='', null=True)
+    # [0-1] Optional link to a city
+    city = models.ForeignKey(City, related_name='cities', on_delete=models.SET_NULL, blank=True, null=True)
 
     # ============= MANY-TO-MANY links =============================
 
