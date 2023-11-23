@@ -19,7 +19,7 @@ import openpyxl
 # From own application
 from iberian.basic.utils import ErrHandle
 from iberian.settings import MEDIA_ROOT, TIME_ZONE
-from iberian.saints.models import Saint
+from iberian.saints.models import Saint, SaintType
 
 # constants
 STANDARD_LENGTH=100
@@ -128,10 +128,11 @@ def excel_to_list(filename, lExcel):
                         # Cannot read this
                         msg = "Don't understand column header [{}]".format(sValue)
                         return False, [], msg
-                    elif not sKey is None:
-                        lHeader.append(sKey)
+                    #elif not sKey is None:
+                    #    lHeader.append(sKey)
+                    lHeader.append(sKey)
                 bFirst = False
-            elif row[0].value != None:
+            elif row[0].value != None and len(lHeader) > 0:
                 oRow = {}
                 for idx, key in enumerate(lHeader):
                     # Get the processing element for this column
@@ -209,6 +210,10 @@ class Upload(models.Model):
 
         bResult = True
         oErr = ErrHandle()
+        oSaintType = {
+            "MA": "Mary", "C": "Confessor", "M": "Martyr", "Mary": "Mary", "NM": "Neomartyr",
+            "NT": "New Testament", "OT": "Old Testament", "T": "Temporale",
+            "OT, NT": "Old and New Testament"}
         try:
             sText = self.fullinfo
             if not sText is None and sText != "":
@@ -225,21 +230,24 @@ class Upload(models.Model):
                 for oField in lFields:
                     clsFK = oField.get("cls")
                     if not clsFK is None:
-                        cls_fk = apps.get_model(clsFK, "saints")
+                        cls_fk = apps.get_model("saints", clsFK)
                         oField["cls_fk"] = cls_fk
                     # Add to [oFields]
-                    oFields[oField.get("lfield")] = copy.copy(oField)
+                    if not oField.get("lfield") is None:
+                        oFields[oField.get("lfield")] = copy.copy(oField)
 
                 # (3) Walk through all the data
+                lst_visited = []
                 for oRow in lData:
                     # First get the id and the name
                     id = oRow['id']
                     name = oRow['name']
                     # Check if this item is already present
                     saint = Saint.objects.filter(id=id).first()
-                    if saint is None:
+                    if saint is None or int(id) > 269:
                         # Create it
-                        saint = Saint.object.create(name=name)
+                        saint = Saint.objects.create(name=name)
+                    custom = []
                     # Process the data in this row by looking at the appropriate field
                     for field_name, oHandle in oFields.items():
                         # Get the field value as string
@@ -251,11 +259,15 @@ class Upload(models.Model):
                         if sType == "str":
                             setattr(saint,field_name, str_value)
                         elif sType == "bool":
-                            bool_value = True if str_value == "true" else False
+                            bool_value = True if str_value == "true" or str_value == "1" else False
                             setattr(saint, field_name, bool_value)
+                        elif sType == "date":
+                            date_value = None if str_value == "" else str_value.zfill(4)
+                            setattr(saint,field_name, date_value)
                         elif sType == "fk_id":
-                            obj = cls_fk.objects.filter(id=str_value).first()
-                            setattr(saint, field_name, obj)
+                            if str_value != "":
+                                obj = cls_fk.objects.filter(id=str_value).first()
+                                setattr(saint, field_name, obj)
                         elif sType == "fk_str":
                             if str_value != "":
                                 obj = cls_fk.objects.filter(name=str_value).first()
@@ -263,8 +275,41 @@ class Upload(models.Model):
                                     # Add this item...
                                     obj = cls_fk.objects.create(name=str_value)
                             setattr(saint, field_name, obj)
-                        # Now save this object
-                        saint.save()
+                        elif sType == "custom":
+                            # This requires custom processing, depending on the field_name
+                            oCustom = dict(lfield=oHandle['lfield'], value=str_value)
+                            custom.append(oCustom)
+
+                    # Process any custom items
+                    for oCustom in custom:
+                        iStop = 1
+                        if oCustom['lfield'] == "type_abbr":
+                            str_value = oCustom['value']
+                            # This is the (abbreviation of a) saint type
+                            # (1) Do we have an ID?
+                            if saint.type_id == "" and str_value != "":
+                                # There is no saint type FK yet, but we have an abbreviation
+                                full_name = oSaintType.get(str_value)
+                                if not full_name is None:
+                                    # Get this Saint Type
+                                    obj = SaintType.objects.filter(name__iexact=full_name).first()
+                                    if obj is None:
+                                        obj = SaintType.objects.create(name=full_name)
+                                    saint.type = obj
+                    # Now save this object
+                    saint.save()
+                    # Add this id to lst_visited
+                    lst_visited.append(saint.id)
+
+                # Find out which id's have not been visited
+                lst_delete = []
+                lst_ids = [x['id'] for x in Saint.objects.all().values('id')]
+                for id in lst_ids:
+                    if not id in lst_visited:
+                        lst_delete.append(id)
+                # Anything left to delete?
+                if len(lst_delete) > 0:
+                    Saint.object.filter(id__in=lst_delete).delete()
 
 
                 # Indicate we have read it
@@ -315,7 +360,7 @@ class Upload(models.Model):
             oErr.DoError("get_upload_file")
         return sBack
 
-    def read_fullinfo(self, lExcel = None):
+    def read_fullinfo(self, lExcel = None, force=False):
         sBack = ""
         bResult = True
         oErr = ErrHandle()
@@ -323,7 +368,7 @@ class Upload(models.Model):
             if not self.upfile is None and not self.upfile.name is None and self.upfile.name != "":
                 # Okay, a file has been uploaded
                 # Check if there is any contents
-                if self.fullinfo is None or self.fullinfo == "":
+                if force or self.fullinfo is None or self.fullinfo == "":
                     # Try to read the file as text
                     sBasename = os.path.basename(self.upfile.name)
                     sFilename = os.path.abspath(os.path.join(MEDIA_ROOT, "upload", sBasename))
