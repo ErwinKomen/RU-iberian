@@ -405,6 +405,8 @@ def edit_saint(request, pk=None, focus='', view='complete'):
     def before_save(form, instance):
         # Check for death_year vs death_date
         partial_year_to_date(form, instance, "death_date", "death_year")
+        # Check for death_year vs death_date
+        partial_year_to_date(form, instance, "death_date_last", "death_year_last")
 
     names = 'saintchurch_formset,saintinscription_formset,saintobject_formset,saintliturgicalmanuscript_formset,saintlink_formset'
     return edit_model(request, __name__, 'Saint', 'saints', pk, formset_names=names,

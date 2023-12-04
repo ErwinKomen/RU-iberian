@@ -16,11 +16,16 @@
     </tr>
     <tr class="d-flex">
         <th class="col-2">Death date:</th>
-        <td class="col-8">{% if saint.death_date %}{{saint.death_date}}{% endif %}</td>
+        <td class="col-8">
+          {% if saint.death_date %}{{saint.death_date}}
+            {% if saint.death_date_last != saint.death_date %}- {{saint.death_date_last}}
+            {% endif %}
+          {% endif %}
+        </td>
     </tr>
     <tr class="d-flex">
         <th class="col-2">Death place:</th>
-        <td class="col-8">{% if saint.death_place %}{{saint.death_place}}{% endif %}</td>
+        <td class="col-8">{% if saint.death_city %}{{saint.death_city}}{% endif %}</td>
     </tr>
     <tr class="d-flex">
         <th class="col-2">Saint type:</th>

@@ -1,6 +1,7 @@
 """Models for the SEEKER app.
 
 """
+from ipaddress import AddressValueError
 from unittest.result import failfast
 from django.apps.config import AppConfig
 from django.apps import apps
@@ -19,7 +20,10 @@ import openpyxl
 # From own application
 from iberian.basic.utils import ErrHandle
 from iberian.settings import MEDIA_ROOT, TIME_ZONE
-from iberian.saints.models import Saint, SaintType
+from iberian.saints.models import Saint, SaintType, \
+    SaintChurchRelation, SaintInscriptionRelation, SaintObjectRelation, \
+    SaintLitManuscriptRelation, SaintLinkRelation
+
 
 # constants
 STANDARD_LENGTH=100
@@ -135,21 +139,23 @@ def excel_to_list(filename, lExcel):
             elif row[0].value != None and len(lHeader) > 0:
                 oRow = {}
                 for idx, key in enumerate(lHeader):
-                    # Get the processing element for this column
-                    oColumn = lExcel[idx]
-                    sType = oColumn.get("type")
-                    sField = oColumn.get("lfield")
-                    clsFK = oColumn.get("cls")
+                    # Make sure to skip empty stuff
+                    if not key is None:
+                        # Get the processing element for this column
+                        oColumn = lExcel[idx]
+                        sType = oColumn.get("type")
+                        sField = oColumn.get("lfield")
+                        clsFK = oColumn.get("cls")
 
-                    # Get this cell
-                    cell = row[idx]
-                    # Get the value as a string
-                    cv = "" if cell.value == None else "{}".format(cell.value).strip()
+                        # Get this cell
+                        cell = row[idx]
+                        # Get the value as a string
+                        cv = "" if cell.value == None else "{}".format(cell.value).strip()
 
-                    # Processing depends on what the oColumn says
-                    if sType != "skip":
-                        cv_str = "" if cell.value == None else "{}".format(cell.value).strip()
-                        oRow[key] = cv_str
+                        # Processing depends on what the oColumn says
+                        if sType != "skip":
+                            cv_str = "" if cell.value == None else "{}".format(cell.value).strip()
+                            oRow[key] = cv_str
                 # Also add the row number (as string)
                 oRow['row_number'] = "{}".format(row[0].row)
                 oData['data'].append(oRow)
@@ -261,7 +267,14 @@ class Upload(models.Model):
                         elif sType == "bool":
                             bool_value = True if str_value == "true" or str_value == "1" else False
                             setattr(saint, field_name, bool_value)
-                        elif sType == "date":
+                        elif sType == "date":                            
+                            date_value = None
+                            #if str_value != "":
+                            #    # Determine what it is
+                            #    arValue = str_value.split("-")
+                            #    for idx, sValue in enumerate(arValue):
+                            #        arValue[idx] = sValue.zfill(4)
+
                             date_value = None if str_value == "" else str_value.zfill(4)
                             setattr(saint,field_name, date_value)
                         elif sType == "fk_id":
@@ -283,7 +296,26 @@ class Upload(models.Model):
                     # Process any custom items
                     for oCustom in custom:
                         iStop = 1
-                        if oCustom['lfield'] == "type_abbr":
+                        lfield = oCustom['lfield']
+                        if lfield == "death_date":
+                            # Process the death-date range
+                            str_value = oCustom['value']                           
+                            date_value = None
+                            if str_value != "":
+                                # Determine what it is
+                                arValue = str_value.split("-")
+                                for idx, sValue in enumerate(arValue):
+                                    sValue = sValue.replace("?", "")
+                                    arValue[idx] = sValue.zfill(4)
+                                # First set the first date
+                                saint.death_date = arValue[0]
+                                # Check if there is a second value
+                                if len(arValue) > 1:
+                                    saint.death_date_last = arValue[1]
+                                else:
+                                    saint.death_date_last = arValue[0]
+
+                        elif lfield == "type_abbr":
                             str_value = oCustom['value']
                             # This is the (abbreviation of a) saint type
                             # (1) Do we have an ID?
@@ -296,6 +328,9 @@ class Upload(models.Model):
                                     if obj is None:
                                         obj = SaintType.objects.create(name=full_name)
                                     saint.type = obj
+                        else:
+                            # This one is not recognized
+                            oErr.Status("WARNING: don't recognize custom field [{}]".format(oCustom['lfield']))
                     # Now save this object
                     saint.save()
                     # Add this id to lst_visited
@@ -306,10 +341,36 @@ class Upload(models.Model):
                 lst_ids = [x['id'] for x in Saint.objects.all().values('id')]
                 for id in lst_ids:
                     if not id in lst_visited:
-                        lst_delete.append(id)
+                        # Check that this Saint is, in fact, existing
+                        obj = Saint.objects.filter(id=id).first()
+                        if obj is None:
+                            oErr.Status("Looking to delete a non-existing saint record of id: {}".format(id))
+                        else:
+                            lst_delete.append(id)
                 # Anything left to delete?
                 if len(lst_delete) > 0:
-                    Saint.object.filter(id__in=lst_delete).delete()
+                    # First delete the relations in which SAINT is an FK
+                    SaintChurchRelation.objects.filter(saint__id__in=lst_delete).delete()
+                    SaintInscriptionRelation.objects.filter(saint__id__in=lst_delete).delete()
+                    SaintObjectRelation.objects.filter(saint__id__in=lst_delete).delete()
+                    SaintLitManuscriptRelation.objects.filter(saint__id__in=lst_delete).delete()
+                    SaintLinkRelation.objects.filter(saint__id__in=lst_delete).delete()
+
+                    # Now remove the saints themselves
+                    Saint.objects.filter(id__in=lst_delete).delete()
+
+                    #oErr.Status("Trying to delete saints: {}".format(json.dumps(lst_delete)))
+                    #for intId in lst_delete:
+                    #    oErr.Status("Trying to delete saint: {}".format(intId))
+                    #    obj = Saint.objects.filter(id=intId).first()
+                    #    if obj is None:
+                    #        oErr.Status("Cannot find saint {}".format(intId))
+                    #    else:
+                    #        obj.delete()
+                    #        oErr.Status("Deleted saint {}".format(intId))
+                    ## This goes too fast or so??
+                    ## Saint.objects.filter(id__in=lst_delete).delete()
+                    #oErr.Status("Saints have been deleted")
 
 
                 # Indicate we have read it

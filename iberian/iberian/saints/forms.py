@@ -252,6 +252,7 @@ class SaintForm(forms.ModelForm):
 
     # Add a separate input for the YEAR
     death_year = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
+    death_year_last = forms.CharField(required=False,widget=forms.TextInput(attrs={'placeholder': 'Please enter a year'}))
 
     class Meta:
         model = Saint
@@ -299,6 +300,12 @@ class SaintForm(forms.ModelForm):
                 # This is just collecting what we have
                 death_year = str(instance.death_date.date.year)
                 self.fields['death_year'].initial = death_year
+
+            # Fill in the correct value for the death_year_last
+            if not instance.death_date_last is None:
+                # This is just collecting what we have
+                death_year_last = str(instance.death_date_last.date.year)
+                self.fields['death_year_last'].initial = death_year_last
 
 
 class ChurchForm(ModelForm):

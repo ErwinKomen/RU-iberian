@@ -19,14 +19,18 @@
     </tr>
     <tr class="d-flex">
         <th class="col-2">Death date</th>
-        <td class="col-8">{{form.death_year}}</td>
+        <td class="col-8">
+          {{form.death_year}}
+          <spann>-</spann>
+          {{form.death_year_last}}
+        </td>
         <!--
         <td class="col-8">{{form.death_date}}</td>
           -->
     </tr>
     <tr class="d-flex">
         <th class="col-2">Death place</th>
-        <td class="col-8">{{form.death_place}}</td>
+        <td class="col-8">{{form.death_city}}</td>
     </tr>
     <tr class="d-flex">
         <th class="col-2">Saint type</th>

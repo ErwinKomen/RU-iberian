@@ -4,7 +4,7 @@ from partial_date import PartialDateField
 from django.contrib.auth.models import User
 
 # Create your models here.
-from django.db.models import ForeignKey
+from django.db.models import ForeignKey, IntegerField
 
 SUPER_LONG_TEXT = 500
 LONG_TEXT = 256
@@ -222,6 +222,7 @@ class Saint(models.Model):
     feast_day_old = PartialDateField(blank=True, null=True)
     # [0-1] Date and place where this saint has died
     death_date = PartialDateField(blank=True, null=True)
+    death_date_last = PartialDateField(blank=True, null=True)
     death_place = models.CharField(max_length=LONG_TEXT, blank=True, null=True)
 
     # OBSOLETE
@@ -242,8 +243,8 @@ class Saint(models.Model):
     # [0-1] Optional link to a region
     location_region = models.ForeignKey(Region, related_name='loc_region_saints',
                                           on_delete=models.SET_NULL, blank=True, default='', null=True)
-    # [0-1] Optional link to a city
-    city = models.ForeignKey(City, related_name='cities', on_delete=models.SET_NULL, blank=True, null=True)
+    # [0-1] Optional link to a city: this is the city, where the saint has died (death_city)
+    death_city = models.ForeignKey(City, related_name='cities', on_delete=models.SET_NULL, blank=True, null=True)
 
     # ============= MANY-TO-MANY links =============================
 
@@ -518,7 +519,10 @@ class SaintLitManuscriptRelation(models.Model):
     liturgical_manuscript = models.ForeignKey(LiturgicalManuscript, on_delete=models.CASCADE, blank=True)
 
     def __str__(self):
-        message = "{} and {}".format(self.saint, self.liturgical_manuscript)
+        if self.saint_id is None:
+            message = "NONE and {}".format(self.liturgical_manuscript)
+        else:
+            message = "{} and {}".format(self.saint, self.liturgical_manuscript)
         return message
 
 
