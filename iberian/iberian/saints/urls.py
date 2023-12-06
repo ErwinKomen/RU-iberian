@@ -108,6 +108,7 @@ urlpatterns = [
     re_path(r'^city/new/$', views.CityCreatView.as_view(), name='city-insert'),
     re_path(r'^city/new/(?P<pk>\d+)/$', views.CityUpdateView.as_view(), name='city-update'),
     re_path(r'^city/delete/(?P<pk>\d+)/$', views.CityDeleteView.as_view(), name='city-delete'),
+    path('city/<int:pk>', views.CityDetailView.as_view(), name='city-detail'),
     path('city/list', views.CityListView.as_view(), name='city-list'),
 
     re_path(r'^region/new/$', views.RegionCreatView.as_view(), name='region-insert'),

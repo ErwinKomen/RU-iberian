@@ -807,6 +807,10 @@ class CityListView(ListView):
     template_name = 'installations/city_list.html'
     context_object_name = 'city_list'
 
+    def get_queryset(self):
+        qs = City.objects.all().order_by('name')
+        return qs
+
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class CityCreatView(CreateView):
@@ -814,6 +818,11 @@ class CityCreatView(CreateView):
     fields = '__all__'
     template_name = 'saints/city_form.html'
     success_url = reverse_lazy('saints:city-list')
+
+
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class CityDetailView(DetailView):
+    model = City
 
 
 @method_decorator(login_required(login_url='/login/'), name='dispatch')

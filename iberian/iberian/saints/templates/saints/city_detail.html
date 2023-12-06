@@ -1,0 +1,20 @@
+{% extends 'saints/base.html' %}
+
+{% block main_content %}
+    <table class="table table-borderless" >
+      <tr class="d-flex">
+          <th class="col-2">Name:</th>
+          <td class="col-8">{{city.name}}</td>
+      </tr>
+      <tr class="d-flex">
+          <th class="col-2">Latitude:</th>
+          <td class="col-8">{{city.latitude}}</td>
+      </tr>
+      <tr class="d-flex">
+          <th class="col-2">Longitude:</th>
+          <td class="col-8">{{city.longitude}}</td>
+      </tr>
+
+    </table>
+    <hr>
+{% endblock main_content %}
