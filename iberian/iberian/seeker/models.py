@@ -359,20 +359,6 @@ class Upload(models.Model):
                     # Now remove the saints themselves
                     Saint.objects.filter(id__in=lst_delete).delete()
 
-                    #oErr.Status("Trying to delete saints: {}".format(json.dumps(lst_delete)))
-                    #for intId in lst_delete:
-                    #    oErr.Status("Trying to delete saint: {}".format(intId))
-                    #    obj = Saint.objects.filter(id=intId).first()
-                    #    if obj is None:
-                    #        oErr.Status("Cannot find saint {}".format(intId))
-                    #    else:
-                    #        obj.delete()
-                    #        oErr.Status("Deleted saint {}".format(intId))
-                    ## This goes too fast or so??
-                    ## Saint.objects.filter(id__in=lst_delete).delete()
-                    #oErr.Status("Saints have been deleted")
-
-
                 # Indicate we have read it
                 self.set_status("Processed information at: {}".format(get_crpp_date(get_current_datetime(), True)))
         except:
