@@ -1,5 +1,5 @@
 # ===========================================================
-# Requirements for ISTANBUL
+# Requirements for IBERIAN
 # Date:     4/sep/2024 ERK
 #
 # Python version this works for: 3.9 / Ubuntu 22.04

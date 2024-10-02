@@ -2,7 +2,28 @@
 {% load widget_tweaks %}
 
 {% block main_content %}
-{% include 'utilities/list_search_bar.html' %}
+
+<div id="basicmap" class="container-small hidden">
+
+    <div id="iberian_map" class="iberian-map">
+        <!-- This is where the map comes -->
+    </div>
+
+    <div class="inner-map">
+        <div class="pull-right">
+          {% include 'seeker/map_list_switch.html' with mode='map' %}
+        </div>
+    </div>      
+
+</div>
+
+<div id="mainlistview">
+
+    <div class="pull-right">
+        {% include 'seeker/map_list_switch.html' with mode='list' %}
+    </div>
+
+    {% include 'utilities/list_search_bar.html' %}
 
     <h2>Saint list</h2>
     <table class="table table-borderless">
@@ -118,4 +139,7 @@
             {% endfor %}
         </tbody>
     </table>
+
+</div>
+
 {% endblock %}

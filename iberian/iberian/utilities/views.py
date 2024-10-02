@@ -264,6 +264,8 @@ def saintsimplesearch(request, app_name, model_name):
 
     return response
 
+# Hoe verder? Doorheen stappen. Objecten gelinked aan de heilige(n) moeten opgevraagd worden en meegestuurd worden. Waar moet dit gebeuren? En Hoe?
+# Ok Kerken komen meteen meer, moet die nog aan de Cities linken en die meegeven, zie in RIPD hoe dat moet..
 
 def ltextsimplesearch(request, app_name, model_name):
     '''Search function between all fields in a model.

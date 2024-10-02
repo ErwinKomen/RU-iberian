@@ -110,3 +110,97 @@ body
     border: none;
     background-color: transparent;
 }
+
+
+/* MAP
+*/
+
+.map-list-switch {
+    height: 44px;
+    border-radius: 22px;
+    padding: 2px;
+    background-color: #ddd;
+    top: 18px;
+    z-index: 500;
+    position: sticky;
+    color: #000;
+    box-sizing: border-box;
+    font-size: 18px;
+}
+
+    .map-list-switch.map-active {
+        background-color: #000;
+        color: #fff;
+    }
+
+    .map-list-switch ul {
+        list-style: none;
+        display: flex;
+        padding: 0;
+    }
+
+    .map-list-switch li {
+        height: 40px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+    }
+
+        .map-list-switch li.list-switch {
+            background-color: #fff;
+        }
+
+    .map-list-switch.map-active li.map-switch {
+        background-color: #fff;
+    }
+
+    .map-list-switch.map-active li.list-switch {
+        background-color: transparent;
+    }
+
+        .map-list-switch.map-active li.list-switch .switch-item {
+            color: #fff;
+        }
+
+    .map-list-switch .switch-item {
+        display: flex;
+        text-decoration: none;
+        color: #000;
+        line-height: 29px;
+    }
+
+        .map-list-switch .switch-item strong {
+            font-weight: 700;
+            margin-right: 7px;
+        }
+
+.iberian-map {
+    z-index: 5;
+    top: 55px; /* -45px; */
+    position: absolute;
+}
+
+.inner-map {
+    margin-left: 15px;
+    margin-right: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    position: absolute;
+    right: 0px;
+    margin-top: 0px;
+}
+
+.leaflet-top {
+    margin-top: 125px;
+    margin-right: 15px;
+}
+
+.btn {
+    font-size: large;
+}
+
+.leaflet-marker-icon .fa-map-marker-alt {
+    font-size: x-large;
+    color: #2b92ec;
+}

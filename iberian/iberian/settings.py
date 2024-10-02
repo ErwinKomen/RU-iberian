@@ -116,7 +116,8 @@ INSTALLED_APPS = [
     'iberian.basic',
     'iberian.seeker',
     'iberian.saints',
-    'iberian.utilities'
+    'iberian.utilities',
+    'iberian.mapview',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

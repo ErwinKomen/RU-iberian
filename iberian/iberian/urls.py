@@ -61,6 +61,9 @@ urlpatterns = [
     re_path(r'^upload/edit(?:/(?P<pk>\d+))?/$', UploadEdit.as_view(), name='upload_edit'),
     re_path(r'^upload/process(?:/(?P<pk>\d+))?/$', UploadProcess.as_view(), name='upload_process'),
 
+    # ============ MAP views =======================
+    re_path(r'^iberian/map/', csrf_exempt(IberianMapView.as_view()), name='iberian_map'),
+
     # =============================================================================================
 
     # For working with ModelWidgets from the select2 package https://django-select2.readthedocs.io

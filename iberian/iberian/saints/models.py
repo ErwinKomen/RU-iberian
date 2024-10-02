@@ -205,6 +205,7 @@ class Church(models.Model):
 
     def __str__(self):
         return self.name
+        print(self.name)
 
 
 # ================================ MAIN MODELS =========================================================================
@@ -250,6 +251,7 @@ class Saint(models.Model):
 
     def __str__(self):
         return self.name
+        print(self.name)
 
 
 class Inscription(models.Model):

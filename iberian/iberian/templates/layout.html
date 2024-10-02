@@ -1,45 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title }}</title>
-  {% load static %}
-  <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/bootstrap.css' %}" />
-  <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/ru-base.css' %}" />
-  <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/ru-form.css' %}" />
-  <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/ru-widgets.css' %}" />
-  <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/site.css' %}" />
-  <script src="{% static 'seeker/scripts/modernizr-2.6.2.js' %}"></script>
-  <script src="{% static 'seeker/scripts/jquery-1.10.2.js' %}"></script>
-  <script src="{% static 'seeker/scripts/bootstrap.js' %}"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/bootstrap.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/ru-base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/ru-form.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/ru-widgets.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'seeker/content/site.css' %}" />
+    <script src="{% static 'seeker/scripts/modernizr-2.6.2.js' %}"></script>
+    <script src="{% static 'seeker/scripts/jquery-1.10.2.js' %}"></script>
+    <script src="{% static 'seeker/scripts/bootstrap.js' %}"></script>
 
-  <!-- Original code -->
+    <!-- Original code -->
+    <!-- Original code -->
+    <script src="{% static 'saints/scripts/iberian.js' %}"></script>
 
-  {% block scripts %}{% endblock %}
+    {% block scripts %}{% endblock %}
 </head>
 
-<body>
-  {% load i18n %}
-  {% include 'topnav.html' %}
+    <body>
+      {% load i18n %}
+      {% include 'topnav.html' %}
 
-  {% block breadcrumbs %}{% endblock %}
+      {% block breadcrumbs %}{% endblock %}
 
-  <div class="container-fluid body-content">
-    <div id="__baseurl__" class="hidden" url_home="{% url 'myhome' %}">{% url 'myhome' %}</div>
-    <div class="hidden" id="__typeaheads__">{{typeaheads}}</div>
-    <div id="__form__" class="hidden"><form></form></div>
-    <!-- room for all errors -->
+      <div class="container-fluid body-content">
+        <div id="__baseurl__" class="hidden" url_home="{% url 'myhome' %}">{% url 'myhome' %}</div>
+        <div class="hidden" id="__typeaheads__">{{typeaheads}}</div>
+        <div id="__form__" class="hidden"><form></form></div>
+        <!-- room for all errors -->
     <div id="passim_err"></div>
 
     {% block content %}{% endblock %}
 
     <hr />
-  </div>
-  <div>
-    {% include 'saints/footer.html' %}
+    </div>
+    <div>
+        {% include 'saints/footer.html' %}
 
-  </div>
-  {% block endcontent %}{% endblock %}
-</body>
+    </div>
+    {% block endcontent %}{% endblock %}
+    </body>
 </html>

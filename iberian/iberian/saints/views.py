@@ -387,7 +387,7 @@ class InscriptionDetailView(DetailView):
 # Saint
 @login_required(login_url='/login/')
 def SaintList(request):
-    query_set = saintsimplesearch(request, 'saints', 'saint')
+    query_set = saintsimplesearch(request, 'saints', 'saint') # Hier komt het request vanaf utilities/views.py
     query = request.GET.get("q", "")
     # query_set = Installation.objects.all()
     # if query is not None:
