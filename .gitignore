@@ -379,8 +379,8 @@ secret_key.py
 !*/migrations/__init__.py
 
 # static folder
-/static/
-static/
+# /static/
+# static/
 media/
 
 # Python Tools for Visual Studio (PTVS)
@@ -398,3 +398,4 @@ __pycache__/
 /iberian/iberian/utilities/migrations
 /iberian/iberian/basic/migrations
 /iberian/iberian/seeker/migrations
+/iberian/static
