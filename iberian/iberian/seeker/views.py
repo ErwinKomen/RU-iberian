@@ -23,13 +23,14 @@ from django.views.generic.detail import DetailView
 from django.views.generic.base import RedirectView
 from django.views.generic import ListView, View
 from django.views.decorators.csrf import csrf_exempt
-import os, json
+import os, json, copy
 
 # ======= imports from my own application ======
 from iberian.basic.utils import ErrHandle
 from iberian.seeker.models import Upload, get_current_datetime
 from iberian.seeker.forms import SignUpForm, UploadForm
 from iberian.saints.views import home
+from iberian.utilities.views import saintsimplesearch
 
 # ======= from RU-Basic ========================
 from iberian.basic.views import BasicPart, BasicList, BasicDetails, make_search_list, add_rel_item, adapt_search
@@ -37,8 +38,8 @@ from iberian.settings import MEDIA_ROOT
 
 # RIPD: forms and models
 from iberian.saints.forms import SaintForm
-from iberian.saints.models import Saint, City
-
+from iberian.saints.models import Saint, City, SaintChurchRelation, SaintInscriptionRelation, \
+    SaintLitManuscriptRelation
 
 # IBERIAN: mapview app
 from iberian.mapview.views import MapView 
@@ -387,78 +388,39 @@ class UploadProcess(UploadDetails):
 # =================================== MAP ===================================================
 
 class IberianMapView(MapView):
-    model = Saint
+    model = Saint 
     modEntry = City
-    frmSearch = SaintForm #?
+    frmSearch = None 
     order_by = []
     use_object = False
     use_own_entries = True
     label = ""
     language = ""
     param_list = ""
-    prefix = "prt"
+    prefix = "ibn"
     filterQ = None
+    city_count = 0
 
     def initialize(self):
         super(IberianMapView, self).initialize()
         
-        # Entries with a 'form' value # AANPASSEN
+        # Entries with a 'form' value # AANPASSEN kijk, hier is selectie verdwenen
         self.entry_list = []
 
-
-
+        # Moet hier niet ook niet lst_church, _inscrip, _etc worden gebruikt? Of allemaal andere mapviews voor Church, Inscription etc?
         
-
-        ## Name of the saint
-        #self.add_entry('name',  'str', 'name',  'name saint')
-        
-        ## Name of the church
-        #self.add_entry('name',  'fk', 'saint_saintchurchrelation_SET.all',  'name church', )
-        
-        ## Name of the city/location
-        #self.add_entry('name', 'fk',  'city', 'findspot', fkfield= 'name')
-        ## meer?
-
-        ##saint_saintchurchrelation_SET.all
-
-        ##self.add_entry('origstr',  'str', 'origstr',  'ripd original id') # aanpassen
-        ##self.add_entry('country',  'fk',  'location__province',  'province', fkfield= 'name')
-
-        ## Examples Stalla?
-        ##self.add_entry('inventarisnummer',  'str', 'inventarisnummer',  'inventarisnummer')
-        ##self.add_entry('locatie',           'fk',  'locatie',           'locatie', fkfield= 'name')
-        ##self.add_entry('country',           'fk',  'locatie__country',  'land', fkfield= 'name')
-        ##self.add_entry('city',              'fk',  'locatie__city',     'stad', fkfield= 'name')
-
-        
-        ## Add a Q-filter: exclude those where location is 'None' 
-        #self.filterQ = ~Q(location__long_coord__isnull=True)
-        ##self.filterQ = ~Q(location__long_coord="None")
-
-        ## This determines the location on the map 
-        #self.add_entry('point_x',   'str', '?__city__latitude') #aanpassen
-        #self.add_entry('point_y',   'str', '?__city__longitude')
-        #self.add_entry('location_name','str', '__city__name') # is dat nodig? of locatie name?
-        ##self.add_entry('soort',     'fk', 'soort', fkfield = "eng" if self.language=="en" else "naam")
-
-        ## Get a version of the current listview         
-        #lv = SaintList() # ??
-        #lv.initializations() # specifieke initialisaties vnaportrait listview
-        ##lv.language = self.language
-        #qs = lv.get_queryset(self.request) # 
-        #self.qs = qs.exclude(Q(location__long_coord__isnull=True)) #aanpassen
-        ## Also get the parameters
-        #self.param_list = lv.param_list
-        #usersearch_id = lv.usersearch_id
-
-        # Repeat the query for ourselves
-        lst_saint = saintsimplesearch(request, 'saints', 'saint').values(
-            'death_city__id', "saintchurchrelation__church__city__id",
-            "saintinscriptionrelation__inscription__original_location_city__id",
+        # Repeat the query for ourselves         
+        lst_saint = saintsimplesearch(self.request, 'saints', 'saint').values(
+            "death_city__id", 
+            "saintchurchrelation__church__city__id",
+            "saintinscriptionrelation__inscription__original_location_city__id", 
             "saintlitmanuscriptrelation__liturgical_manuscript__original_location_city__id"
             )
         # this results in a queryset of saints - but not of cities
+        # maar niet resultaat van query zelf
+        print(lst_saint)
         lst_city = []
+        
         for oSaint in lst_saint:
             city_death = oSaint.get("death_city__id")
             city_church = oSaint.get("saintchurchrelation__church__city__id")
@@ -473,35 +435,48 @@ class IberianMapView(MapView):
                 lst_city.append(city_inscr)
             if not city_lman is None and not city_lman in lst_city:
                 lst_city.append(city_lman)
-        city_count = len(lst_city)
-        qs_city = City.objects.filter(id__in=lst_city)
-        self.qs = qs_city
-
+        city_count = len(lst_city)        
+        qs_city = City.objects.filter(id__in=lst_city) 
+        city_count = len(qs_city)
+        self.qs = qs_city     
 
     def make_entry_list(self):
         """Create a list of entries for the map"""
 
         def add_one_entry(id, city, keyword, saint_name, info):
             """Add one entry int [lst_entry]"""
+            
+            # First combine the the x and y coordinates
+            point_lat = str(city.latitude)
+            #print(point_lat)            
+            point_lon = str(city.longitude)
+            #print(point_lon)        
+            point = point_lat + ", " + point_lon
+            #print(point)
+
             oErr = ErrHandle()
             try:
-                oEntry = dict(saint_id=id, locname=city.name, point_x=city.latitude, point_y=city.longitude,
+                oEntry = dict(saint_id=id, locname=city.name, point = point, point_x=point_lat, point_y=point_lon,
                               keyword=keyword, saint_name=saint_name, info=info)
-                lst_entry.append(oEntry)
+                lst_back.append(oEntry)
             except:
                 msg = oErr.get_error_message()
                 oErr.DoError("SaintMapview/add_one_entry")
-            return lst_entry
+            return lst_back
 
         lst_back = []
         oErr = ErrHandle()
         try:
             qs_city = self.qs
-            for city in qs_city:
+            for city in qs_city: #Automatisch? Voor Kerken moet dat niet.
                 # (1) Check for which saints this is death_city
                 for saint in city.cities.all():
                     # Add this entry
-                    add_one_entry(saint.id, city, "city", saint.name, saint.death_date)
+                    if saint.death_date:
+                        death_year = saint.death_date.date.year
+                    else:
+                        death_year = None
+                    add_one_entry(saint.id, city, "city", saint.name, death_year)
                 # (2) Check for which saints this city has a church
                 for rel in SaintChurchRelation.objects.filter(church__city=city):
                     # Add this entry
@@ -523,6 +498,8 @@ class IberianMapView(MapView):
     def get_popup(self, dialect):
         """Create a popup from the 'key' values defined in [initialize()]"""
 
+        # Wordt dit gebruikt?
+
         pop_up = '<p class="h6">{}</p>'.format(dialect['origstr'])
         pop_up += '<hr style="border: 1px solid green" />'
         pop_up += '<p style="font-size: medium;"><span style="color: purple;">{}</span> </p>'.format(dialect['findspot'])
@@ -532,17 +509,28 @@ class IberianMapView(MapView):
         """Create a popup from the 'key' values defined in [initialize()]"""
 
         # Figure out what the link would be to this list of items
+
+        # Gaat dit wel helemaal goed?
         params = ""
-        if self.param_list != None:
-            params = "&{}".format( "&".join(self.param_list))
-        url = "{}?{}-location={}{}".format(reverse('portrait_list'), self.prefix, oPoint['locid'], params)
-        # Create the popup
-        pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
-        pop_up += '<hr style="border: 1px solid green" />'
-        popup_title_1 = _("Show")
-        popup_title_2 = _("objects in the list")
-        pop_up += '<p style="font-size: large;"><a href="{}" title="{} {} {}"><span style="color: purple;">{}</span> in: {}</a></p>'.format(
-            url, popup_title_1, oPoint['count'],popup_title_2, oPoint['count'], oPoint['findspot'])
+        oErr = ErrHandle()
+        try:
+            if self.param_list != None:
+                params = "&{}".format( "&".join(self.param_list))
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+
+            # Create the popup
+            pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
+            pop_up += '<hr style="border: 1px solid green" />'
+
+            popup_title_1 = "Show" 
+            popup_title_2 = "objects in the list" 
+                                
+            pop_up += '<p style="font-size: large;"><a href="{}" title="{} {} {}"><span style="color: purple;">{}</span> in: {}</a></p>'.format(
+                url, popup_title_1, oPoint['count'], popup_title_2, oPoint['count'], oPoint['findspot']) 
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("get_group_popup")
+        #print(pop_up)
         return pop_up
 
     def group_entries(self, lst_this):
@@ -553,43 +541,48 @@ class IberianMapView(MapView):
         try:
             # We need to create a new list, based on the 'point' parameter 
             set_point = {}
-            for oEntry in lst_this:
+            for oEntry in lst_this: # ok in lst_this zit alles wel ok volgens mij
+                #print(oEntry)
                 point = oEntry['point']
-                if not point in set_point:
-                    # Create a new entry 
-                    set_point[point] = dict(count=0, items=[], point=point, 
-                                            trefwoord=oEntry['findspot'],
-                                            #locatie=oEntry['locatie'],
-                                            locid=oEntry['location_id'],
-                                            #country=oEntry['country'],
-                                            findspot=oEntry['findspot']
-                                            )
+                #if not point in set_point:
+                # Create a new entry 
+                set_point[point] = dict(count=0, items=[], point=point,                                                                                      
+                                        trefwoord=oEntry['keyword'],                                            
+                                        locid=oEntry['info'],                                            
+                                        findspot=oEntry['locname'] 
+                                        )
                 # Retrieve the item from the set
                 oPoint = set_point[point]
                 # Add this entry
                 oPoint['count'] += 1
                 oItem = {}
                 for k,v in oEntry.items():
+                    print(k, v) # hier zitten de kw's er in
                     if not k in exclude_fields:
                         oItem[k] = v
-                oPoint['items'].append(oItem)
+                oPoint['items'].append(oItem) # Ok wat gebeurt hier precies?
 
             # Review them again
             lst_back = []
             for point, oEntry in set_point.items():
                 # Create the popup
-                oEntry['pop_up'] = self.get_group_popup(oEntry)
+                # print name?
+                oEntry['pop_up'] = self.get_group_popup(oEntry) 
                 # Add it to the list we return
                 lst_back.append(oEntry)
+                #print(lst_back)
 
             total_count = len(lst_back)
+
+            # 131 voor:
             # Return the new list TH hierna mis
             lst_this = copy.copy(lst_back)
+            print(lst_this)
         except:
             msg = oErr.get_error_message()
             oErr.DoError("group_entries")
 
-        return lst_this
+        return lst_this # dit klopt, maar
 
 
 

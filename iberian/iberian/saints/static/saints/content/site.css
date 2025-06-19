@@ -167,17 +167,47 @@ body
         display: flex;
         text-decoration: none;
         color: #000;
-        line-height: 29px;
+        /* line-height: 29px;*/
+        font-size: 24px;
+        line-height: 50px; /* was 1.5em */
+        border-top-right-radius: 7px; /* nieuw */
+        border-bottom-right-radius: 7px; /* nieuw */
     }
 
         .map-list-switch .switch-item strong {
             font-weight: 700;
             margin-right: 7px;
+            border-top-right-radius: 7px; /* nieuw */
+            border-bottom-right-radius: 7px; /* nieuw */
         }
+
+.fa-list {
+    /* background-color: #e4e3e3;*/
+    /*display: inline-block;*/
+    float: left;
+    line-height: 50px;
+    border-right: 0;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    /*color: #555;*/
+}
+
+.fa-map {
+    /* background-color: #e4e3e3;*/
+    /*display: inline-block;*/
+    float: left;
+    line-height: 50px;
+    border-right: 0;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+    /*color: #555;*/
+}
 
 .iberian-map {
     z-index: 5;
-    top: 55px; /* -45px; */
+    top: -38px;
+    /* bottom: 100px; */
+    /* -45px; */
     position: absolute;
 }
 
@@ -192,8 +222,8 @@ body
 }
 
 .leaflet-top {
-    margin-top: 125px;
-    margin-right: 15px;
+    margin-top: 65px;
+    margin-right: 35px;
 }
 
 .btn {
@@ -203,4 +233,43 @@ body
 .leaflet-marker-icon .fa-map-marker-alt {
     font-size: x-large;
     color: #2b92ec;
+}
+
+.fa-map-marker-alt {
+    font-size: 10px;
+    color: black;
+}
+
+
+.fa-map-marker:before {
+    font-size: 25px;
+    /*color: orange;*/
+}
+
+.fa-map-marker-switch {
+    font-size: 18px;
+    color: orange;
+}
+
+
+/* Added based on RIPD helpt niet */
+    .glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1.5; /* This is the correct measure for btn-xs */
+
+    -webkit-font-smoothing: antialiased;
+    /*-moz-osx-font-smoothing: grayscale; */
+}
+.hidden {
+    display: none;
+}
+
+.jumbotron {
+    padding-right: 20px;
+    padding-left: 20px;
 }

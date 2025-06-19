@@ -45,7 +45,7 @@ if "d:" in WRITABLE_DIR or "D:" in WRITABLE_DIR or "c:" in WRITABLE_DIR or "C:" 
     # admin.site.site_url = '/'
     ADMIN_SITE_URL = "/"
     # Specific differentiation
-    if "d:" in WRITABLE_DIR or "D:" in WRITABLE_DIR:
+    if "d:" in WRITABLE_DIR.lower() or "c:" in WRITABLE_DIR.lower():
         USE_REDIS = True
         DEBUG = True
 elif "131.174" in hst or "/var/www" in WRITABLE_DIR:
@@ -217,11 +217,13 @@ if ("/var/www" in WRITABLE_DIR and not bUseTunnel):
     STATIC_URL = "/" + APP_PREFIX + "static/"
 
 STATIC_ROOT = os.path.abspath(os.path.join("/", posixpath.join(*(BASE_DIR.split(os.path.sep) + ['static']))))
+# STATIC_ROOT = posixpath.join(*(BASE_DIR.split(os.path.sep) + ['static']))
 
 # ========= DEBUGGING =================
 print("WRITABLE = {}".format(WRITABLE_DIR))
 print("APP_PREFIX = {}".format(APP_PREFIX))
 print("STATIC_ROOT = {}".format(STATIC_ROOT))
 
-
+print("Static url = [{}]".format(STATIC_URL))
+print("Static root = [{}]".format(STATIC_ROOT))
 # print("Writable dir = [{}]".format(WRITABLE_DIR))

@@ -2,7 +2,10 @@
 {% load widget_tweaks %}
 
 {% block main_content %}
-{% include 'utilities/list_search_bar.html' %}
+
+<div id="mainlistview">    
+
+    {% include 'utilities/list_search_bar.html' %}
 
     <h2>Object list</h2>
     <table class="table table-borderless">
@@ -10,28 +13,28 @@
             <tr>
                 <th scope="col"></th>
                 <th scope="col">Name
-                    <a href="?q={{query}}&order_by=name"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-name"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=name"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-name"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Saints
-                    <a href="?q={{query}}&order_by=saintobjectrelation__saint"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-saintobjectrelation__saint"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=saintobjectrelation__saint"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-saintobjectrelation__saint"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Original location
-                    <a href="?q={{query}}&order_by=original_location"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-original_location"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=original_location"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-original_location"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Current location
-                    <a href="?q={{query}}&order_by=current_location"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-current_location"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=current_location"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-current_location"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Date
-                    <a href="?q={{query}}&order_by=date_lower"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-date_lower"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=date_lower"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-date_lower"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">type
-                    <a href="?q={{query}}&order_by=type"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-type"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=type"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-type"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
 
                 <td>
@@ -107,4 +110,6 @@
             {% endfor %}
         </tbody>
     </table>
+
+</div>
 {% endblock %}

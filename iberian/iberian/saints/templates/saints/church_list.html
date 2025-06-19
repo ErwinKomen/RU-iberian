@@ -1,90 +1,99 @@
 {% extends 'saints/base.html' %}
+{% load static %}
 {% load widget_tweaks %}
+
+
+
 {% block main_content %}
-{% include 'utilities/list_search_bar.html' %}
-<h2>Church list</h2>
-<table class="table table-borderless">
-    <thead class="border-bottom font-weight-bold">
-        <tr>
-            <th scope="col"></th>
-            <th scope="col">Name
-                <a href="?q={{query}}&order_by=name"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                <a href="?q={{query}}&order_by=-name"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
-            </th>
-            <th scope="col">Saints
-                <a href="?q={{query}}&order_by=saintchurchrelation__saint"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                <a href="?q={{query}}&order_by=-saintchurchrelation__saint"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
-            </th>
-            <th scope="col">Date
-                <a href="?q={{query}}&order_by=date_lower"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                <a href="?q={{query}}&order_by=-date_lower"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
-            </th>
-            <th scope="col">Type
-                <a href="?q={{query}}&order_by=institution_type"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                <a href="?q={{query}}&order_by=-institution_type"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
-            </th>
+<div id="mainlistview">    
 
-            <td>
-                 <a href="{% url 'saints:church-insert' %}" class="btn btn-outline-success"> <i class="fa fa-plus"></i> Add New</a>
-            </td>
-        </tr>
-    </thead>
-    <tbody>
-        {% for church in church_list %}
-            <tr style="border-bottom:1px solid lightgrey">
-                <td>
-                    {% if church.status %}
-                        <span class="Gdot"></span>
-                    {% else %}
-                        <span class="Rdot"></span>
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{% url 'saints:church-detail' church.id %}"> {{church.name }} </a>
-                </td>
-                <td>
-                    {% for t in church.saintchurchrelation_set.all %}
-                        {% if t %}
-                            <a href="{% url 'saints:saint-detail' t.saint.id %}"> {{ t.saint }} </a><br>
-                        {% else %}
-                            &nbsp;
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                <td>
-                    {% if church.date_lower and church.date_upper %}
-                        {% if church.date_lower == church.date_upper %}
-                            {{church.end_date_lower}}
-                        {% else %}
-                            {{church.date_lower}} - {{church.date_upper}}
-                        {% endif %}
-                    {% elif church.date_lower %}
-                        {{church.date_lower}}
-                    {% elif church.date_upper %}
-                        {{church.date_upper}}
-                    {% endif %}
+    {% include 'utilities/list_search_bar.html' %}
 
-                </td>
-                <td>
-                    {% if church.institution_type %}
-                        {{church.institution_type}}
-                    {% endif %}
-                </td>
+    <h2>Church list</h2>
+    <table class="table table-borderless">
+        <thead class="border-bottom font-weight-bold">
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name
+                    <a href="?q={{query}}&order_by=name"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-name"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
+                </th>
+                <th scope="col">Saints
+                    <a href="?q={{query}}&order_by=saintchurchrelation__saint"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-saintchurchrelation__saint"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
+                </th>
+                <th scope="col">Date
+                    <a href="?q={{query}}&order_by=date_lower"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-date_lower"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
+                </th>
+                <th scope="col">Type
+                    <a href="?q={{query}}&order_by=institution_type"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-institution_type"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
+                </th>
 
                 <td>
-                    <a href="{% url 'saints:church-update' church.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a>
-                    <form action="{% url 'saints:church-delete' church.id %}" method="post" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn" onclick="return confirm('Are you sure you want to delete all entities connected to this from the database?')">
-<!--                        <button type="submit" class="btn">-->
-                        <i class="fa fa-trash fa-lg text-danger float-right"></i>
-                        </button>
-                    </form>
+                     <a href="{% url 'saints:church-insert' %}" class="btn btn-outline-success"> <i class="fa fa-plus"></i> Add New</a>
                 </td>
             </tr>
-        {% endfor%}
-    </tbody>
+        </thead>
+        <tbody>
+            {% for church in church_list %}
+                <tr style="border-bottom:1px solid lightgrey">
+                    <td>
+                        {% if church.status %}
+                            <span class="Gdot"></span>
+                        {% else %}
+                            <span class="Rdot"></span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'saints:church-detail' church.id %}"> {{church.name }} </a>
+                    </td>
+                    <td>
+                        {% for t in church.saintchurchrelation_set.all %}
+                            {% if t %}
+                                <a href="{% url 'saints:saint-detail' t.saint.id %}"> {{ t.saint }} </a><br>
+                            {% else %}
+                                &nbsp;
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if church.date_lower and church.date_upper %}
+                            {% if church.date_lower == church.date_upper %}
+                                {{church.end_date_lower}}
+                            {% else %}
+                                {{church.date_lower}} - {{church.date_upper}}
+                            {% endif %}
+                        {% elif church.date_lower %}
+                            {{church.date_lower}}
+                        {% elif church.date_upper %}
+                            {{church.date_upper}}
+                        {% endif %}
 
-</table>
+                    </td>
+                    <td>
+                        {% if church.institution_type %}
+                            {{church.institution_type}}
+                        {% endif %}
+                    </td>
 
-{% endblock main_content %}
+                    <td>
+                        <a href="{% url 'saints:church-update' church.id %}" class="btn text-secondary px-0"><i class="fa fa-edit fa-lg"></i></a>
+                        <form action="{% url 'saints:church-delete' church.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn" onclick="return confirm('Are you sure you want to delete all entities connected to this from the database?')">
+    <!--                        <button type="submit" class="btn">-->
+                            <i class="fa fa-trash fa-lg text-danger float-right"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor%}
+        </tbody>
+
+    </table>
+
+{% endblock %}
+
+</div>

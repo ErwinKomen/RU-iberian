@@ -7,12 +7,15 @@ from django.urls import reverse
 from django.db.models import Q
 from django.db.models.functions import Lower
 
+
+
 # =================== IMPORT FROM OWN APPS ====================================
 from iberian.utils import view_util
 from iberian.utils.view_util import Crud, Cruds, make_tabs, FormsetFactoryManager
 from .models import copy_complete
 from iberian.utilities.search import Search
 from iberian.basic.utils import ErrHandle
+
 
 
 
@@ -222,16 +225,20 @@ def saintsimplesearch(request, app_name, model_name):
     '''Search function between all fields in a model.
     app_name : saints
     model_name : saint
-    '''
+    '''   
 
     response = None
     oErr = ErrHandle()
-    try:
+    try:        
         model = apps.get_model(app_name, model_name)
-        query = request.GET.get("q", "")
-        order_by = request.GET.get("order_by", "id")
+        
+        get = request.POST if request.POST else request.GET
+        query = get.get("q", "")
+        order_by = get.get("order_by", "id")
+        #query = request.GET.get("q", "")
+        #order_by = request.GET.get("order_by", "id")
         query_set = model.objects.all().order_by(order_by)
-
+                
         # issue #19: remove comma from query
         query = query.replace(",", "")
         # -----------------------------------------------------------
@@ -258,11 +265,14 @@ def saintsimplesearch(request, app_name, model_name):
             query_set = model.objects.all().order_by(order_by)
 
         response = query_set.distinct()
+
     except:
         msg = oErr.get_error_message()
         oErr.DoError("saintsimplesearch")
 
     return response
+
+
 
 # Hoe verder? Doorheen stappen. Objecten gelinked aan de heilige(n) moeten opgevraagd worden en meegestuurd worden. Waar moet dit gebeuren? En Hoe?
 # Ok Kerken komen meteen meer, moet die nog aan de Cities linken en die meegeven, zie in RIPD hoe dat moet..
@@ -320,7 +330,7 @@ def churchsimplesearch(request, app_name, model_name):
         # issue #19: remove comma from query
         query = query.replace(",", "")
         # -----------------------------------------------------------
-        queries = query.split()
+        queries = query.split() # Hier wanneer er een specifieke zoekvraag wordt gesteld
         if query is not None:
             query_setall = model.objects.none()
             for qs in queries:

@@ -1599,7 +1599,7 @@ pre code {
 }
 @media (min-width: 1200px) {
   .container {
-    width: 1170px;
+    width: 1600px;
   }
 }
 .container-fluid {
@@ -2443,7 +2443,7 @@ table th[class*="col-"] {
   min-height: .01%;
   overflow-x: auto;
 }
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 1800px) {
   .table-responsive {
     width: 100%;
     margin-bottom: 15px;
@@ -4990,8 +4990,8 @@ a.badge:focus {
   }
   .container .jumbotron,
   .container-fluid .jumbotron {
-    padding-right: 60px;
-    padding-left: 60px;
+    padding-right: 100px;
+    padding-left: 30px;
   }
   .jumbotron h1,
   .jumbotron .h1 {

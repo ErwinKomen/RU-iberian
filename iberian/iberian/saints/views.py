@@ -241,11 +241,27 @@ def edit_church(request, pk=None, focus='', view='complete'):
 
 
 @login_required(login_url='/login/')
-def churchList(request):
+def ChurchList(request):
     query_set = churchsimplesearch(request, 'saints', 'church')
-    query = request.GET.get("q", "")
+    query = request.GET.get("q", "") 
+
+    # Gewoon de cities pakken die aan de churches zijn gekoppeld.
+    lst_church = churchsimplesearch(request, 'saints', 'church').values("city__id")
+
+    
+    lst_city = [] # Hier komen id's mee
+    # Wat gebeurt hier precies? Wat wordt doorgegeven?
+    for oChurch in lst_church:
+        city_church = oChurch.get("city__id")
+       
+        # Add to list        
+        if not city_church is None and not city_church in lst_city:
+            lst_city.append(city_church)        
+    city_count = len(lst_city) # Waar gaat dit naartoe?              
+
     context = {'church_list': query_set,
                'nentries': len(query_set),
+               'lentries': city_count,
                'query': query}
     return render(request, 'saints/church_list.html', context)
 
@@ -346,8 +362,27 @@ def institutionTypeDelete(request, id):
 def InscriptionList(request):
     query_set = inscriptionsimplesearch(request, 'saints', 'inscription')
     query = request.GET.get("q", "")
+
+    # Gewoon de cities pakken die aan de churches zijn gekoppeld.
+    lst_inscrip = inscriptionsimplesearch(request, 'saints', 'inscription').values("original_location_city_id")
+    print(len(lst_inscrip))    
+    lst_city = [] # Hier komen id's mee
+    # Wat gebeurt hier precies? Wat wordt doorgegeven?
+    for oInscrip in lst_inscrip:
+        #print(lst_city)
+        print(len(lst_city))
+        city_inscrip = oInscrip.get("original_location_city_id")
+       
+        # Add to list        
+        if not city_inscrip is None and not city_inscrip in lst_city:
+            lst_city.append(city_inscrip) # nog dubbele erin        
+    city_count = len(lst_inscrip) # Waar gaat dit naartoe?
+
+        # Nog teveel city
+
     context = {'inscription_list': query_set,
                'nentries': len(query_set),
+               'lentries': city_count,
                'query': query}
     return render(request, 'saints/inscription_list.html', context)
 
@@ -383,18 +418,53 @@ class InscriptionDeleteView(DeleteView):
 class InscriptionDetailView(DetailView):
     model = Inscription
 
+# Er is toch iets wat ik niet begrijp met de locaties, waarom zie ik als ik bij 
+# Inscriptions filter op ICERV307 (2 records, één is gekoppeld aan city 181, Guadix) ik veel meer locaties gekoppeld aan inscriptions zie
+# en allerlei cities en churches
+
+# Ok, het lijkt wel goed te werken als ik zoek naar Hilarius bij Saints, dan 1 resultaat en 1 city
+# Heeft het dan toch te maken met de methode bij Saint? worden daar de dubbele uitgehaald?
+
 
 # Saint
 @login_required(login_url='/login/')
 def SaintList(request):
-    query_set = saintsimplesearch(request, 'saints', 'saint') # Hier komt het request vanaf utilities/views.py
+    query_set = saintsimplesearch(request, 'saints', 'saint') # Hier komt het request vanaf utilities/views.py  
     query = request.GET.get("q", "")
     # query_set = Installation.objects.all()
     # if query is not None:
     #     query_set = query_set.filter(name__icontains=query)
+         
+    lst_saint = saintsimplesearch(request, 'saints', 'saint').values("death_city__id", 
+            "saintchurchrelation__church__city__id",
+            "saintinscriptionrelation__inscription__original_location_city__id", 
+            "saintlitmanuscriptrelation__liturgical_manuscript__original_location_city__id"
+            )
+    # this results in a queryset of saints - but not of cities
+    
+    lst_city = [] # Hier komen id's mee
+    # Wat gebeurt hier precies? Wat wordt doorgegeven?
+    for oSaint in lst_saint:
+        city_death = oSaint.get("death_city__id")
+        city_church = oSaint.get("saintchurchrelation__church__city__id")
+        city_inscr = oSaint.get("saintinscriptionrelation__inscription__original_location_city__id")
+        city_lman = oSaint.get("saintlitmanuscriptrelation__liturgical_manuscript__original_location_city__id")
+        # Add to list
+        if not city_death is None and not city_death in lst_city:
+            lst_city.append(city_death)
+        if not city_church is None and not city_church in lst_city:
+            lst_city.append(city_church)
+        if not city_inscr is None and not city_inscr in lst_city:
+            lst_city.append(city_inscr)
+        if not city_lman is None and not city_lman in lst_city:
+            lst_city.append(city_lman)
+    city_count = len(lst_city) # Waar gaat dit naartoe?       
+
     context = {'saint_list': query_set,
-               'nentries': len(query_set),
+               'nentries': len(query_set), 
+               'lentries': city_count,
                'query': query}
+
     return render(request, 'saints/saint_list.html', context)
 
 
@@ -479,8 +549,28 @@ class LiteraryTextDetailView(DetailView):
 def ObjectList(request):
     query_set = objectsimplesearch(request, 'saints', 'object')
     query = request.GET.get("q", "")
+    
+    # Probleem is dat de objecten niet gelinked zijn aan cities
+    lst_object = objectsimplesearch(request, 'saints', 'object').values("original_location_city__id")
+
+    list_cities=[] # Hier komen de id's in
+    for oObject in lst_object:
+        #print("this works")
+        # dit moet anders, ID's meegeven, dit werkt
+        city_object = oObject.get("city__id")
+        # Wat doet dit?
+        if not city_object is None and not city_object in lst_object: # Haalt er eventuele dubbele eruit.
+            list_cities.append(city_church)
+        # moet nog gefilterd worden, alleen churches doorsturen
+        #list_church.append(oChurch)
+    # Zitten er teveel in, hoe kan dat? Lijkt verdubbeling.
+    # We krijgen de hele tijd de input van Saints...
+    city_count = len(list_cities)
+       
+    
     context = {'object_list': query_set,
                'nentries': len(query_set),
+               'lentries': city_count,
                'query': query}
     return render(request, 'saints/object_list.html', context)
 

@@ -17,7 +17,7 @@ urlpatterns = [
     path('church/new/<int:pk>', views.edit_church, name='church-update'), # get and post req. for update operation
     path('church/new/<int:pk>/<str:focus>', views.edit_church, name='church-update'),
     path('church/delete/<int:id>/', views.churchDelete, name='church-delete'),
-    path('church/list/', views.churchList, name='church-list'),  # get request to retrieve and display all records
+    path('church/list/', views.ChurchList, name='church-list'),  # get request to retrieve and display all records
     path('church/<int:pk>', views.ChurchDetailView.as_view(), name='church-detail'),
 
     path('bibliography/new/', views.bibliographyCreate, name='bibliography-insert'), # get and post req. for insert operation

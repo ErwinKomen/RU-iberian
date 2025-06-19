@@ -12,7 +12,7 @@ var $ = jQuery;
       // ru.basic.init_typeahead();
       // Initialize Bootstrap popover
       // Note: this is used when hovering over the question mark button
-      $('[data-toggle="popover"]').popover();
+      //$('[data-toggle="popover"]').popover();
     });
   });
 })(django.jQuery);

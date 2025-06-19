@@ -554,9 +554,21 @@
         {% endif %}
       </div>
     </div>
+  </div>
+  
+  <div id="basicmap" class="container-small hidden">
+
+      <div id="iberian_map" class="iberian-map">
+        <!-- This is where the map comes -->
+      </div>
+
+      <div class="inner-map">
+        <div class="pull-right">
+          {% include 'seeker/map_list_switch.html' with mode='map' %}
+        </div>
+      </div>      
 
   </div>
-       
 
   {% elif authenticated and not permission %}
   <div class="explanation">

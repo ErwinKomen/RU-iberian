@@ -882,7 +882,7 @@ class BasicList(ListView):
     """
 
     paginate_by = 15
-    entrycount = 0
+    entrycount = 0 # test?
     qd = None
     bFilter = False
     basketview = False

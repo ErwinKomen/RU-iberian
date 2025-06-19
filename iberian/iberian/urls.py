@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.conf.urls import include #, url 
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http import HttpResponseNotFound
 from django.urls import path, re_path
 import django.contrib.auth.views
@@ -79,3 +80,5 @@ urlpatterns = [
     re_path(r'^admin/', admin.site.urls, name='admin_base'),
 ]
 
+#if iberian.settings.DEBUG:
+#    urlpatterns += staticfiles_urlpatterns()

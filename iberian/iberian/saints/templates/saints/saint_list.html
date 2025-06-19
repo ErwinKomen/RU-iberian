@@ -1,5 +1,19 @@
 {% extends 'saints/base.html' %}
+{% load static %}
 {% load widget_tweaks %}
+
+{% block scripts %}
+        
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> for icons -->
+    
+    <link rel="stylesheet" href="{% static 'mapview/content/fontawesome-5-all.css' %}" />
+    <link rel="stylesheet" href="{% static 'mapview/content/leaflet.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'mapview/content/ru.mapview.css' %}" type="text/css" />
+    <script src="{% static 'mapview/scripts/leaflet-src.js' %}"></script>
+    <script src="{% static 'mapview/scripts/oms.min.js' %}"></script>
+    <script src="{% static 'mapview/scripts/ru.mapview.js' %}"></script>
+    <script src="{% static 'saints/scripts/iberian.js' %}"></script>
+{% endblock %}
 
 {% block main_content %}
 
@@ -9,7 +23,7 @@
         <!-- This is where the map comes -->
     </div>
 
-    <div class="inner-map">
+    <div class="inner-map row">
         <div class="pull-right">
           {% include 'seeker/map_list_switch.html' with mode='map' %}
         </div>
@@ -18,9 +32,13 @@
 </div>
 
 <div id="mainlistview">
-
-    <div class="pull-right">
-        {% include 'seeker/map_list_switch.html' with mode='list' %}
+    <!-- Main list view version XX12 -->
+    <div  class="row">
+        <div class="col-md-3 offset-md-9">
+          <div class="pull-right">
+              {% include 'seeker/map_list_switch.html' with mode='list' %}
+          </div>
+        </div>
     </div>
 
     {% include 'utilities/list_search_bar.html' %}
@@ -31,32 +49,32 @@
             <tr>
                 <th scope="col"></th>
                 <th scope="col">Name
-                    <a href="?q={{query}}&order_by=name"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-name"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=name"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-name"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Feast
-                    <a href="?q={{query}}&order_by=feast_day"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-feast_day"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=feast_day"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-feast_day"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Type
-                    <a href="?q={{query}}&order_by=type"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-type"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=type"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-type"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Church
-                    <a href="?q={{query}}&order_by=saintchurchrelation__church"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-saintchurchrelation__church"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=saintchurchrelation__church"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-saintchurchrelation__church"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Inscription
-                    <a href="?q={{query}}&order_by=saintinscriptionrelation__inscription"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-saintinscriptionrelation__inscription"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=saintinscriptionrelation__inscription"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-saintinscriptionrelation__inscription"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Object
-                    <a href="?q={{query}}&order_by=saintobjectrelation__object"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-saintobjectrelation__object"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=saintobjectrelation__object"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-saintobjectrelation__object"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <th scope="col">Lit. manuscript
-                    <a href="?q={{query}}&order_by=saintlitmanuscriptrelation__liturgical_manuscript"> <i class="fa fa-arrow-circle-o-down" style="font-size:18px"></i> </a>
-                    <a href="?q={{query}}&order_by=-saintlitmanuscriptrelation__liturgical_manuscript"> <i class="fa fa-arrow-circle-o-up" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=saintlitmanuscriptrelation__liturgical_manuscript"> <i class="fas fa-arrow-alt-circle-down" style="font-size:18px"></i> </a>
+                    <a href="?q={{query}}&order_by=-saintlitmanuscriptrelation__liturgical_manuscript"> <i class="fas fa-arrow-alt-circle-up" style="font-size:18px"></i> </a>
                 </th>
                 <td>
                     <a href= "{% url 'saints:saint-insert' %}"
@@ -139,7 +157,5 @@
             {% endfor %}
         </tbody>
     </table>
-
 </div>
-
 {% endblock %}

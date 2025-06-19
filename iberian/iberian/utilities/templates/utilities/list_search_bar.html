@@ -1,5 +1,8 @@
 <div class="col-11">
-<form method="GET">
+<form id="basiclist_filter" method="GET">
+  <div class="hidden">
+	  {% csrf_token %}
+  </div>
   <div class="d-flex">
 	<input type="text" name="q" placeholder=Search
 		class="col-10 mb-1"

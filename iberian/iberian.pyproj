@@ -43,6 +43,13 @@
     <Compile Include="iberian\basic\middle.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="iberian\mapview\admin.py" />
+    <Compile Include="iberian\mapview\apps.py" />
+    <Compile Include="iberian\mapview\migrations\__init__.py" />
+    <Compile Include="iberian\mapview\models.py" />
+    <Compile Include="iberian\mapview\tests.py" />
+    <Compile Include="iberian\mapview\views.py" />
+    <Compile Include="iberian\mapview\__init__.py" />
     <Compile Include="iberian\saints\admin.py" />
     <Compile Include="iberian\saints\apps.py" />
     <Compile Include="iberian\saints\forms.py" />
@@ -101,15 +108,32 @@
     <Folder Include="iberian\basic\static\basic\scripts\" />
     <Folder Include="iberian\basic\templates\" />
     <Folder Include="iberian\basic\templates\basic\" />
+    <Folder Include="iberian\mapview\" />
+    <Folder Include="iberian\mapview\migrations\" />
+    <Folder Include="iberian\mapview\migrations\__pycache__\" />
+    <Folder Include="iberian\mapview\static\" />
+    <Folder Include="iberian\mapview\static\mapview\" />
+    <Folder Include="iberian\mapview\static\mapview\content\" />
+    <Folder Include="iberian\mapview\static\mapview\scripts\" />
+    <Folder Include="iberian\mapview\static\mapview\webfonts\" />
+    <Folder Include="iberian\mapview\templates\" />
+    <Folder Include="iberian\mapview\templates\mapview\" />
+    <Folder Include="iberian\mapview\__pycache__\" />
     <Folder Include="iberian\saints\" />
     <Folder Include="iberian\saints\migrations\" />
     <Folder Include="iberian\saints\static\" />
     <Folder Include="iberian\saints\static\saints\" />
     <Folder Include="iberian\saints\static\saints\content\" />
+    <Folder Include="iberian\saints\static\saints\scripts\" />
     <Folder Include="iberian\saints\templates\" />
     <Folder Include="iberian\saints\templates\saints\" />
     <Folder Include="iberian\seeker\" />
     <Folder Include="iberian\seeker\migrations\" />
+    <Folder Include="iberian\seeker\static\" />
+    <Folder Include="iberian\seeker\static\seeker\" />
+    <Folder Include="iberian\seeker\static\seeker\content\" />
+    <Folder Include="iberian\seeker\static\seeker\fonts\" />
+    <Folder Include="iberian\seeker\static\seeker\scripts\" />
     <Folder Include="iberian\seeker\templates\" />
     <Folder Include="iberian\seeker\templates\seeker\" />
     <Folder Include="iberian\templates\" />
@@ -127,8 +151,38 @@
     </Content>
     <Content Include="iberian\basic\static\basic\content\basic.css" />
     <Content Include="iberian\basic\static\basic\content\font-awesome.min.css" />
+    <Content Include="iberian\mapview\migrations\__pycache__\__init__.cpython-37.pyc" />
+    <Content Include="iberian\mapview\static\mapview\content\fontawesome-5-all.css" />
+    <Content Include="iberian\mapview\static\mapview\content\leaflet.css" />
+    <Content Include="iberian\mapview\static\mapview\content\ru.mapview.css" />
+    <Content Include="iberian\mapview\static\mapview\scripts\leaflet-src.js" />
+    <Content Include="iberian\mapview\static\mapview\scripts\oms.min.js" />
+    <Content Include="iberian\mapview\static\mapview\scripts\ru.mapview.js" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-brands-400.eot" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-brands-400.svg" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-brands-400.ttf" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-brands-400.woff" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-brands-400.woff2" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-regular-400.eot" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-regular-400.svg" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-regular-400.ttf" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-regular-400.woff" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-regular-400.woff2" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-solid-900.eot" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-solid-900.svg" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-solid-900.ttf" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-solid-900.woff" />
+    <Content Include="iberian\mapview\static\mapview\webfonts\fa-solid-900.woff2" />
+    <Content Include="iberian\mapview\templates\mapview\index.html" />
+    <Content Include="iberian\mapview\templates\mapview\map_view.html" />
+    <Content Include="iberian\mapview\templates\mapview\map_view_full.html" />
+    <Content Include="iberian\mapview\__pycache__\admin.cpython-37.pyc" />
+    <Content Include="iberian\mapview\__pycache__\models.cpython-37.pyc" />
+    <Content Include="iberian\mapview\__pycache__\views.cpython-37.pyc" />
+    <Content Include="iberian\mapview\__pycache__\__init__.cpython-37.pyc" />
     <Content Include="iberian\saints\static\saints\content\favicon.ico" />
     <Content Include="iberian\saints\static\saints\content\site.css" />
+    <Content Include="iberian\saints\static\saints\scripts\iberian.js" />
     <Content Include="iberian\saints\templates\saints\add_church.html" />
     <Content Include="iberian\saints\templates\saints\add_inscription.html" />
     <Content Include="iberian\saints\templates\saints\add_literarytext.html" />
@@ -204,10 +258,28 @@
     <Content Include="iberian\basic\templates\basic\basic_edit.html" />
     <Content Include="iberian\basic\templates\basic\basic_list.html" />
     <Content Include="iberian\basic\templates\basic\filter_help.html" />
+    <Content Include="iberian\seeker\static\seeker\content\bootstrap.css" />
+    <Content Include="iberian\seeker\static\seeker\content\ru-admin.css" />
+    <Content Include="iberian\seeker\static\seeker\content\ru-base.css" />
+    <Content Include="iberian\seeker\static\seeker\content\ru-form.css" />
+    <Content Include="iberian\seeker\static\seeker\content\ru-widgets.css" />
+    <Content Include="iberian\seeker\static\seeker\content\site.css" />
+    <Content Include="iberian\seeker\static\seeker\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="iberian\seeker\static\seeker\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="iberian\seeker\static\seeker\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="iberian\seeker\static\seeker\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="iberian\seeker\static\seeker\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="iberian\seeker\static\seeker\scripts\bootstrap.js" />
+    <Content Include="iberian\seeker\static\seeker\scripts\bootstrap3.js" />
+    <Content Include="iberian\seeker\static\seeker\scripts\bootstrap4.js" />
+    <Content Include="iberian\seeker\static\seeker\scripts\jquery-1.10.2.js" />
+    <Content Include="iberian\seeker\static\seeker\scripts\modernizr-2.6.2.js" />
     <Content Include="iberian\seeker\templates\seeker\index.html" />
+    <Content Include="iberian\seeker\templates\seeker\map_list_switch.html" />
     <Content Include="iberian\templates\guide.html" />
     <Content Include="iberian\templates\about.html" />
     <Content Include="iberian\templates\admin\base.html" />
+    <Content Include="iberian\templates\layout.html" />
     <Content Include="iberian\templates\technical_404.html" />
     <Content Include="iberian\templates\contact.html" />
     <Content Include="iberian\templates\nlogin.html" />
@@ -224,7 +296,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Interpreter Include="..\..\..\..\..\env\iberian\">
+    <Interpreter Include="..\..\..\..\..\..\env\iberian\">
       <Id>iberian</Id>
       <Version>3.9</Version>
       <Description>iberian (Python 3.9 (64-bit))</Description>
