@@ -38,8 +38,8 @@ from iberian.settings import MEDIA_ROOT
 
 # RIPD: forms and models
 from iberian.saints.forms import SaintForm
-from iberian.saints.models import Saint, City, SaintChurchRelation, SaintInscriptionRelation, \
-    SaintLitManuscriptRelation
+from iberian.saints.models import Saint, Church, Inscription, LiturgicalManuscript, Object, LiteraryText, City, SaintChurchRelation, SaintInscriptionRelation, \
+    SaintLitManuscriptRelation, SaintObjectRelation, SaintLiteraryTextRelation
 
 # IBERIAN: mapview app
 from iberian.mapview.views import MapView 
@@ -400,49 +400,79 @@ class IberianMapView(MapView):
     prefix = "ibn"
     filterQ = None
     city_count = 0
+    lst_saint_death_city = []
+    lst_saint_church = []
+    lst_saint_inscription = []
+    lst_saint_manuscript = []
+    lst_saint_object = []
+    lst_saint_literarytext = []
 
     def initialize(self):
         super(IberianMapView, self).initialize()
         
-        # Entries with a 'form' value # AANPASSEN kijk, hier is selectie verdwenen
+        # Entries with a 'form' value
         self.entry_list = []
+           
+        # Create lists
+        self.lst_saint_death_city = []
+        self.lst_saint_church = []
+        self.lst_saint_inscription = []
+        self.lst_saint_manuscript = []
+        self.lst_saint_object = []
+        self.lst_saint_literarytext = []
 
-        # Moet hier niet ook niet lst_church, _inscrip, _etc worden gebruikt? Of allemaal andere mapviews voor Church, Inscription etc?
-        
-        # Repeat the query for ourselves         
-        lst_saint = saintsimplesearch(self.request, 'saints', 'saint').values(
-            "death_city__id", 
-            "saintchurchrelation__church__city__id",
-            "saintinscriptionrelation__inscription__original_location_city__id", 
-            "saintlitmanuscriptrelation__liturgical_manuscript__original_location_city__id"
-            )
-        # this results in a queryset of saints - but not of cities
-        # maar niet resultaat van query zelf
-        print(lst_saint)
-        lst_city = []
-        
-        for oSaint in lst_saint:
-            city_death = oSaint.get("death_city__id")
-            city_church = oSaint.get("saintchurchrelation__church__city__id")
-            city_inscr = oSaint.get("saintinscriptionrelation__inscription__original_location_city__id")
-            city_lman = oSaint.get("saintlitmanuscriptrelation__liturgical_manuscript__original_location_city__id")
-            # Add to list
-            if not city_death is None and not city_death in lst_city:
-                lst_city.append(city_death)
-            if not city_church is None and not city_church in lst_city:
-                lst_city.append(city_church)
-            if not city_inscr is None and not city_inscr in lst_city:
-                lst_city.append(city_inscr)
-            if not city_lman is None and not city_lman in lst_city:
-                lst_city.append(city_lman)
-        city_count = len(lst_city)        
-        qs_city = City.objects.filter(id__in=lst_city) 
-        city_count = len(qs_city)
-        self.qs = qs_city     
+        # Get all the saints in the database
+        qs_saint = saintsimplesearch(self.request, 'saints', 'saint')
+
+        temp_list_manu_locs=[]
+
+        # Now find all relations
+        for obj_saint in qs_saint:
+            count = 0
+            # (1) saint death city relation
+            self.lst_saint_death_city.append(dict(saint=obj_saint, city=obj_saint.death_city))
+
+            # (2) saint church city relation
+            qs_church = Church.objects.filter(saintchurchrelation__saint=obj_saint)
+            for obj_church in qs_church:
+                obj_city = obj_church.city
+                self.lst_saint_church.append(dict(saint=obj_saint, city=obj_city, church=obj_church))
+
+            # (3) saint inscription city relation
+            qs_inscription = Inscription.objects.filter(saintinscriptionrelation__saint=obj_saint)
+            for obj_inscription in qs_inscription:
+                obj_city = obj_inscription.original_location_city
+                self.lst_saint_inscription.append(dict(saint=obj_saint, city=obj_city, inscription=obj_inscription))
+ 
+            # (4) saint manuscript city relation
+            qs_manuscript = LiturgicalManuscript.objects.filter(saintlitmanuscriptrelation__saint=obj_saint)            
+            for obj_manuscript in qs_manuscript:
+                obj_city = obj_manuscript.original_location_city                   
+                self.lst_saint_manuscript.append(dict(saint=obj_saint, city=obj_city, manuscript=obj_manuscript))
+            
+            # (5) saint object city relation
+            qs_object = Object.objects.filter(saintobjectrelation__saint=obj_saint)
+            for obj_object in qs_object:
+                obj_city = obj_object.original_location_city          
+                self.lst_saint_object.append(dict(saint=obj_saint, city=obj_city, object=obj_object))
+
+            # (6) saint literary text city relation
+            qs_literarytext = LiteraryText.objects.filter(saintliterarytextrelation__saint=obj_saint)
+            for obj_literarytext in qs_literarytext:
+                obj_city = obj_literarytext.location_city   
+                self.lst_saint_literarytext.append(dict(saint=obj_saint, city=obj_city, literarytext=obj_literarytext))
+       
+        # Check the number of records for each entity (not all have a location(city) linked to it)      
+        #print("List Saints "+ str(len(self.lst_saint_death_city)))
+        #print(len(self.lst_saint_church))
+        #print(len(self.lst_saint_inscription))
+        #print(len(self.lst_saint_manuscript))
+        #print(len(self.lst_saint_object))
+        #print(len(self.lst_saint_literarytext))
 
     def make_entry_list(self):
         """Create a list of entries for the map"""
-
+                
         def add_one_entry(id, city, keyword, saint_name, info):
             """Add one entry int [lst_entry]"""
             
@@ -453,52 +483,110 @@ class IberianMapView(MapView):
             #print(point_lon)        
             point = point_lat + ", " + point_lon
             #print(point)
-
+            
             oErr = ErrHandle()
             try:
                 oEntry = dict(saint_id=id, locname=city.name, point = point, point_x=point_lat, point_y=point_lon,
                               keyword=keyword, saint_name=saint_name, info=info)
-                lst_back.append(oEntry)
+                lst_back.append(oEntry)  # manuscripten lijken goed toegevoegd te worden              
             except:
                 msg = oErr.get_error_message()
                 oErr.DoError("SaintMapview/add_one_entry")
-            return lst_back
+            return lst_back # check manuscript en verder?
 
         lst_back = []
         oErr = ErrHandle()
-        try:
-            qs_city = self.qs
-            for city in qs_city: #Automatisch? Voor Kerken moet dat niet.
-                # (1) Check for which saints this is death_city
-                for saint in city.cities.all():
-                    # Add this entry
+        try:  
+            for oItem in self.lst_saint_death_city:
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                #print(city)
+                if city != None:
                     if saint.death_date:
                         death_year = saint.death_date.date.year
                     else:
                         death_year = None
-                    add_one_entry(saint.id, city, "city", saint.name, death_year)
-                # (2) Check for which saints this city has a church
-                for rel in SaintChurchRelation.objects.filter(church__city=city):
+                    # Add entry 
+                    add_one_entry(saint.id, city, "saint's death", saint.name, death_year)                    
+                else:
+                    pass
+
+            # (2) Check for which saints this city has a church
+            count_church = 0
+            for oItem in self.lst_saint_church:
+                church = oItem.get("church")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_church += 1
+                #print(count_church)
+                if city != None:                   
+                    # Add entry
+                    add_one_entry(saint.id, city, "church", saint.name, church.name)
+                else: 
+                    pass
+
+            # (3) Check for which saints this city has an inscription
+            count_inscription = 0
+            for oItem in self.lst_saint_inscription:
+                inscription = oItem.get("inscription")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_inscription += 1
+                #print(count_inscription)
+                if city != None:                   
+                    # Add entry
+                    add_one_entry(saint.id, city, "inscription", saint.name, inscription.reference_no)
+                else: 
+                    pass
+
+            #(4) Check which manuscripts are associated with this city via the saint            
+            count_manuscript = 0
+            for oItem in self.lst_saint_manuscript:
+                manuscript = oItem.get("manuscript")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_manuscript += 1
+                #print(count_manuscript)
+                if city != None: 
+                    # Add this entry 
+                    add_one_entry(saint.id, city, "manuscript", saint.name, manuscript.shelf_no)
+                else: 
+                    pass                                          
+        
+            # (5) Check for which saints this city has an object 
+            count_object = 0
+            for oItem in self.lst_saint_object:
+                object = oItem.get("object")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_object += 1
+                
+                if city != None: 
                     # Add this entry
-                    add_one_entry(rel.saint.id, city, "church", rel.saint.name, rel.church.name)
-                # (3) Check for which saints this city has an inscription
-                for rel in SaintInscriptionRelation.objects.filter(inscription__original_location_city=city):
-                    # Add this entry
-                    add_one_entry(rel.saint.id, city, "inscription", rel.saint.name, rel.inscription.reference_no)
-                # (4) Check which manuscripts are associated with this city via the saint
-                for rel in SaintLitManuscriptRelation.objects.filter(liturgical_manuscript__original_location_city=city):
-                    # Add this entry
-                    add_one_entry(rel.saint.id, city, "manuscript", rel.saint.name, rel.liturgical_manuscript.shelf_no)
-            
+                    add_one_entry(saint.id, city, "object", saint.name, object.name)
+                else: 
+                    pass
+
+            # (6) Check for which saints this city has an literary text
+            count_literarytext = 0
+            for oItem in self.lst_saint_literarytext:
+                literarytext = oItem.get("literarytext")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_literarytext += 1
+                #print(count_literarytext )
+                if city != None: 
+                    # Add this entry    
+                    add_one_entry(saint.id, city, "literary text", saint.name, literarytext.title)
+                else: 
+                    pass
         except:
             msg = oErr.get_error_message()
             oErr.DoError("IberianMapView/make_entry_list")
-        return lst_back
+        return lst_back 
         
     def get_popup(self, dialect):
         """Create a popup from the 'key' values defined in [initialize()]"""
-
-        # Wordt dit gebruikt?
 
         pop_up = '<p class="h6">{}</p>'.format(dialect['origstr'])
         pop_up += '<hr style="border: 1px solid green" />'
@@ -510,17 +598,23 @@ class IberianMapView(MapView):
 
         # Figure out what the link would be to this list of items
 
+        # TH: Ok, die pop-ups moeten anders, link naar item zou ik zeggen?
+        # Icons trouwens ook anders want nu steeds andere volgorde.
+
+
         # Gaat dit wel helemaal goed?
         params = ""
         oErr = ErrHandle()
         try:
             if self.param_list != None:
                 params = "&{}".format( "&".join(self.param_list))
+            # Hier wordt de reverse gemaakt
+            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
             url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
 
             # Create the popup
             pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
-            pop_up += '<hr style="border: 1px solid green" />'
+            pop_up += '<hr style="border: 1px solid green" />' # de lijn natuurlijk
 
             popup_title_1 = "Show" 
             popup_title_2 = "objects in the list" 
@@ -530,61 +624,64 @@ class IberianMapView(MapView):
         except:
             msg = oErr.get_error_message()
             oErr.DoError("get_group_popup")
-        #print(pop_up)
         return pop_up
 
     def group_entries(self, lst_this):
         """Allow changing the list of entries"""
-
         oErr = ErrHandle()
         exclude_fields = ['point', 'point_x', 'point_y', 'pop_up', 'locatie', 'country', 'city']
         try:
             # We need to create a new list, based on the 'point' parameter 
-            set_point = {}
-            for oEntry in lst_this: # ok in lst_this zit alles wel ok volgens mij
-                #print(oEntry)
+            keyword_set_points = {}
+            # set_point = {}
+            for oEntry in lst_this: 
+                # Get the keyword and use the dictionary for that keyword
+                keyword = oEntry['keyword']
+                # Get the right dictionary
+                set_point = keyword_set_points.get(keyword)
+                if set_point is None:
+                    keyword_set_points[keyword] = {}
+                    set_point = keyword_set_points[keyword]
+
                 point = oEntry['point']
-                #if not point in set_point:
-                # Create a new entry 
-                set_point[point] = dict(count=0, items=[], point=point,                                                                                      
-                                        trefwoord=oEntry['keyword'],                                            
-                                        locid=oEntry['info'],                                            
-                                        findspot=oEntry['locname'] 
-                                        )
+                if not point in set_point:
+                    # Create a new entry TH: werkt dit?
+                    set_point[point] = dict(count=0, items=[], point=point,                                                                                      
+                                            trefwoord=oEntry['keyword'],                                            
+                                            locid=oEntry['info'],                                            
+                                            findspot=oEntry['locname'] 
+                                            )
                 # Retrieve the item from the set
                 oPoint = set_point[point]
                 # Add this entry
-                oPoint['count'] += 1
+                oPoint['count'] += 1                
                 oItem = {}
                 for k,v in oEntry.items():
-                    print(k, v) # hier zitten de kw's er in
+                    #print(k, v) # hier zitten de kw's er in
                     if not k in exclude_fields:
                         oItem[k] = v
-                oPoint['items'].append(oItem) # Ok wat gebeurt hier precies?
+                oPoint['items'].append(oItem) 
 
-            # Review them again
-            lst_back = []
-            for point, oEntry in set_point.items():
-                # Create the popup
-                # print name?
-                oEntry['pop_up'] = self.get_group_popup(oEntry) 
-                # Add it to the list we return
-                lst_back.append(oEntry)
-                #print(lst_back)
+            # Review them again 
+            lst_back = []            
+
+            for kw, set_point in keyword_set_points.items():
+                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                    # Create the popup                   
+                    oEntry['pop_up'] = self.get_group_popup(oEntry) 
+                    # Add it to the list we return
+                    lst_back.append(oEntry)         
 
             total_count = len(lst_back)
+            print(total_count)
 
-            # 131 voor:
-            # Return the new list TH hierna mis
+            # Return the new list 
             lst_this = copy.copy(lst_back)
-            print(lst_this)
+           
         except:
             msg = oErr.get_error_message()
             oErr.DoError("group_entries")
 
-        return lst_this # dit klopt, maar
-
-
-
+        return lst_this 
 
 # ============= THE END ==============================================================================

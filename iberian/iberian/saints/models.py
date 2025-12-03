@@ -205,7 +205,7 @@ class Church(models.Model):
 
     def __str__(self):
         return self.name
-        print(self.name)
+        #print(self.name)
 
 
 # ================================ MAIN MODELS =========================================================================
@@ -251,7 +251,7 @@ class Saint(models.Model):
 
     def __str__(self):
         return self.name
-        print(self.name)
+        #print(self.name)
 
 
 class Inscription(models.Model):
@@ -513,6 +513,14 @@ class SaintObjectRelation(models.Model):
 
     def __str__(self):
         message = "{} and {}".format(self.saint, self.object)
+        return message
+
+class SaintLiteraryTextRelation(models.Model):
+    saint = models.ForeignKey(Saint, on_delete=models.CASCADE, blank=True)
+    literarytext = models.ForeignKey(LiteraryText, on_delete=models.CASCADE, blank=True)
+
+    def __str__(self):
+        message = "{} and {}".format(self.saint, self.littext)
         return message
 
 

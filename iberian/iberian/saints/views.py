@@ -365,12 +365,12 @@ def InscriptionList(request):
 
     # Gewoon de cities pakken die aan de churches zijn gekoppeld.
     lst_inscrip = inscriptionsimplesearch(request, 'saints', 'inscription').values("original_location_city_id")
-    print(len(lst_inscrip))    
+    #print(len(lst_inscrip))    
     lst_city = [] # Hier komen id's mee
     # Wat gebeurt hier precies? Wat wordt doorgegeven?
     for oInscrip in lst_inscrip:
         #print(lst_city)
-        print(len(lst_city))
+        #print(len(lst_city))
         city_inscrip = oInscrip.get("original_location_city_id")
        
         # Add to list        

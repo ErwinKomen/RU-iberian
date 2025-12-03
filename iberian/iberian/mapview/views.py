@@ -154,11 +154,12 @@ class MapView(DetailView):
             if self.frmSearch is None:
                 # Use our new Iberian Saint method
                 lst_back = self.make_entry_list()
-
-                # Possibly perform grouping 
+                len(lst_back)
+                # Possibly perform grouping TH: geen manuscripten hier
                 lst_back = self.group_entries(lst_back)
+                print(lst_back)
 
-                # Add the data
+                # Add the data TH wat gebeurt hier?
                 data['entries'] = lst_back
                 if self.use_object:
                     data['label'] = getattr(obj, self.labelfield)    
