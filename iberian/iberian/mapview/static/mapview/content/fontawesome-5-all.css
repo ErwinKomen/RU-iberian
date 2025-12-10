@@ -21,6 +21,11 @@
   line-height: 0.75em;
   vertical-align: -.0667em; }
 
+
+.fa-2xs {
+    font-size: .625em;
+}
+
 .fa-xs {
   font-size: .75em; }
 
@@ -2990,7 +2995,8 @@ readers do not read off random characters that represent icons */
   content: "\f5ad"; }
 
 .fa-pen-square:before {
-  content: "\f14b"; }
+  content: "\f14b";  
+}
 
 .fa-pencil-alt:before {
   content: "\f303"; }

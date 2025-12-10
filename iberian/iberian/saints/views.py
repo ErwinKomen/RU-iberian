@@ -247,8 +247,7 @@ def ChurchList(request):
 
     # Gewoon de cities pakken die aan de churches zijn gekoppeld.
     lst_church = churchsimplesearch(request, 'saints', 'church').values("city__id")
-
-    
+        
     lst_city = [] # Hier komen id's mee
     # Wat gebeurt hier precies? Wat wordt doorgegeven?
     for oChurch in lst_church:
@@ -258,9 +257,12 @@ def ChurchList(request):
         if not city_church is None and not city_church in lst_city:
             lst_city.append(city_church)        
     city_count = len(lst_city) # Waar gaat dit naartoe?              
-
+    
+    maplistview = reverse('iberian_map') # MAP
+    
     context = {'church_list': query_set,
                'nentries': len(query_set),
+               'maplistview': maplistview, # MAP
                'lentries': city_count,
                'query': query}
     return render(request, 'saints/church_list.html', context)
@@ -368,21 +370,20 @@ def InscriptionList(request):
     #print(len(lst_inscrip))    
     lst_city = [] # Hier komen id's mee
     # Wat gebeurt hier precies? Wat wordt doorgegeven?
-    for oInscrip in lst_inscrip:
-        #print(lst_city)
-        #print(len(lst_city))
+    for oInscrip in lst_inscrip:        
         city_inscrip = oInscrip.get("original_location_city_id")
        
         # Add to list        
         if not city_inscrip is None and not city_inscrip in lst_city:
             lst_city.append(city_inscrip) # nog dubbele erin        
-    city_count = len(lst_inscrip) # Waar gaat dit naartoe?
-
-        # Nog teveel city
+    city_count = len(lst_city) # Waar gaat dit naartoe?
+        
+    maplistview = reverse('iberian_map') # MAP
 
     context = {'inscription_list': query_set,
                'nentries': len(query_set),
                'lentries': city_count,
+               'maplistview': maplistview, # MAP
                'query': query}
     return render(request, 'saints/inscription_list.html', context)
 
@@ -458,10 +459,13 @@ def SaintList(request):
             lst_city.append(city_inscr)
         if not city_lman is None and not city_lman in lst_city:
             lst_city.append(city_lman)
-    city_count = len(lst_city) # Waar gaat dit naartoe?       
+    city_count = len(lst_city) # Waar gaat dit naartoe?      
+    
+    maplistview = reverse('iberian_map')
 
     context = {'saint_list': query_set,
                'nentries': len(query_set), 
+               'maplistview': maplistview,
                'lentries': city_count,
                'query': query}
 
@@ -506,8 +510,26 @@ class SaintDetailView(DetailView):
 def LiteraryTextList(request):
     query_set = ltextsimplesearch(request, 'saints', 'literarytext')
     query = request.GET.get("q", "")
+
+    # Gewoon de cities pakken die aan de literary texts zijn gekoppeld.
+    lst_littext = ltextsimplesearch(request, 'saints', 'literarytext').values("location_city_id")
+    
+    lst_city = [] # Hier komen id's mee
+    # Wat gebeurt hier precies? Wat wordt doorgegeven?
+    for oLitText in lst_littext:        
+        city_littext = oLitText.get("location_city_id")
+       
+        # Add to list        
+        if not city_littext is None and not city_littext in lst_city:
+            lst_city.append(city_littext) # nog dubbele erin        
+    city_count = len(lst_city) # Waar gaat dit naartoe?
+
+    maplistview = reverse('iberian_map') # MAP
+
     context = {'ltext_list': query_set,
                'nentries': len(query_set),
+               'lentries': city_count,
+               'maplistview': maplistview, # MAP
                'query': query}
     return render(request, 'saints/literarytext_list.html', context)
 
@@ -552,24 +574,26 @@ def ObjectList(request):
     
     # Probleem is dat de objecten niet gelinked zijn aan cities
     lst_object = objectsimplesearch(request, 'saints', 'object').values("original_location_city__id")
-
-    list_cities=[] # Hier komen de id's in
+       
+    lst_city = [] # Hier komen id's in
+    
     for oObject in lst_object:
-        #print("this works")
         # dit moet anders, ID's meegeven, dit werkt
-        city_object = oObject.get("city__id")
+        city_object = oObject.get("original_location_city__id")
         # Wat doet dit?
+
         if not city_object is None and not city_object in lst_object: # Haalt er eventuele dubbele eruit.
-            list_cities.append(city_church)
-        # moet nog gefilterd worden, alleen churches doorsturen
-        #list_church.append(oChurch)
+            lst_cities.append(city_object)
+        
     # Zitten er teveel in, hoe kan dat? Lijkt verdubbeling.
     # We krijgen de hele tijd de input van Saints...
-    city_count = len(list_cities)
-       
+    city_count = len(lst_city)
+    
+    maplistview = reverse('iberian_map') # MAP
     
     context = {'object_list': query_set,
                'nentries': len(query_set),
+               'maplistview': maplistview, # MAP
                'lentries': city_count,
                'query': query}
     return render(request, 'saints/object_list.html', context)
@@ -678,8 +702,27 @@ class AuthorAncientDeleteView(DeleteView):
 def LiturgicalManuscriptList(request):
     query_set = liturgicalmanuscriptsimplesearch(request, 'saints', 'liturgicalmanuscript')
     query = request.GET.get("q", "")
+        
+    # Gewoon de cities pakken die aan de liturgical manuscripts zijn gekoppeld.
+    lst_litmanuscript = liturgicalmanuscriptsimplesearch(request, 'saints', 'liturgicalmanuscript').values("original_location_city_id")
+
+    lst_city = [] # Hier komen id's in
+    
+    # Wat gebeurt hier precies? Wat wordt doorgegeven?
+    for oLitMan in lst_litmanuscript:
+        city_litman = oLitMan.get("original_location_city_id")
+       
+        # Add to list        
+        if not city_litman is None and not city_litman in lst_city:
+            lst_city.append(city_litman)        
+    city_count = len(lst_city) # Waar gaat dit naartoe?        
+
+    maplistview = reverse('iberian_map') # MAP
+
     context = {'liturgicalmanuscript_list': query_set,
                'nentries': len(query_set),
+               'maplistview': maplistview, # MAP
+               'lentries': city_count,
                'query': query}
     return render(request, 'saints/liturgicalmanuscript_list.html', context)
 

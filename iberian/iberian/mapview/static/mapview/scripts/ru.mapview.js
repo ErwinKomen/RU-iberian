@@ -40,11 +40,11 @@ var ru = (function ($, ru) {
         loc_overlayMarkers = {},
         loc_colorDict = {},
         loc_iconDict = {},
-        loc_trefwoord = [],
-        // De markers ook     fa-church for churches, fa-city for city, fa-columns for manuscript (works)   , for inscriptions
-        loc_icons = 'fas fa-cross,fas fa-pen-square,fas fa-book-open,fas fa-city'.split(','),
+        loc_trefwoord = ["Saint's place of death", "Church", "Inscription", "Manuscript"], // Object and Literary Text
+        // Of we skippen de aparte icons? 
+        loc_icons = 'fas fa-city fa-2xs, fas fa-church fa-2xs, fas fa-pen-square fa-2xs, fas fa-book-open fa-2xs'.split(','), // Add the other two! Which ones?
         // De kleuren kunnen nog anders, en de markers ook  <i class="fa-solid fa-arrow-right-to-city"></i>
-        loc_colors = '#007bff,#dc3545,#28a745,#6f42c1'.split(',');
+        loc_colors = '#6f42c1, #dc3545, #28a745, #ffc107'.split(','); // Add the other two!
         
     
     // Private methods specifiction
@@ -126,7 +126,7 @@ var ru = (function ($, ru) {
         try {
           // Validate
           if (entry.point === null || entry.point === "") { return false; }
-          // Get the trefwoord
+          // Get the trefwoord TH: is het mogelijk om dit te alfabetiseren?
           trefwoord = entry.trefwoord;
           if (loc_trefwoord.indexOf(trefwoord) < 0) {
             // Add it

@@ -1,8 +1,46 @@
 {% extends 'saints/base.html' %}
+{% load static %}
 {% load widget_tweaks %}
 
+{% block scripts %}        
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> for icons -->
+    <link rel="stylesheet" href="{% static 'mapview/content/fontawesome-5-all.css' %}" />
+    <link rel="stylesheet" href="{% static 'mapview/content/leaflet.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'mapview/content/ru.mapview.css' %}" type="text/css" />
+    <script src="{% static 'mapview/scripts/leaflet-src.js' %}"></script>
+    <script src="{% static 'mapview/scripts/oms.min.js' %}"></script>
+    <script src="{% static 'mapview/scripts/ru.mapview.js' %}"></script>
+    <script src="{% static 'saints/scripts/iberian.js' %}"></script>
+{% endblock %}
+
 {% block main_content %}
-{% include 'utilities/list_search_bar.html' %}
+
+<div id="basicmap" class="container-small hidden">
+
+    <div id="iberian_map" class="iberian-map">
+        <!-- This is where the map comes -->
+    </div>
+
+    <div class="inner-map row">
+        <div class="pull-right">
+          {% include 'seeker/map_list_switch.html' with mode='map' %}
+        </div>
+    </div>      
+
+</div>
+
+<div id="mainlistview">  
+    
+    <!-- Main list view version XX12 -->
+    <div  class="row">
+        <div class="col-md-3 offset-md-9">
+          <div class="pull-right">
+              {% include 'seeker/map_list_switch.html' with mode='list' %}
+          </div>
+        </div>
+    </div>
+
+    {% include 'utilities/list_search_bar.html' %}
 
     <h2>Literary text list</h2>
     <table class="table table-borderless">
@@ -59,4 +97,5 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 {% endblock %}

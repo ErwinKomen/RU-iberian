@@ -386,6 +386,11 @@ class UploadProcess(UploadDetails):
         return None
 
 # =================================== MAP ===================================================
+# class ChurchMapView(MapView):
+# class InscriptionMapView(MapView):
+# class ManuscriptMapView(MapView):
+# class ObjectMapView(MapView):
+# class LiteraryMapView(MapView):
 
 class IberianMapView(MapView):
     model = Saint 
@@ -461,14 +466,6 @@ class IberianMapView(MapView):
             for obj_literarytext in qs_literarytext:
                 obj_city = obj_literarytext.location_city   
                 self.lst_saint_literarytext.append(dict(saint=obj_saint, city=obj_city, literarytext=obj_literarytext))
-       
-        # Check the number of records for each entity (not all have a location(city) linked to it)      
-        #print("List Saints "+ str(len(self.lst_saint_death_city)))
-        #print(len(self.lst_saint_church))
-        #print(len(self.lst_saint_inscription))
-        #print(len(self.lst_saint_manuscript))
-        #print(len(self.lst_saint_object))
-        #print(len(self.lst_saint_literarytext))
 
     def make_entry_list(self):
         """Create a list of entries for the map"""
@@ -507,7 +504,7 @@ class IberianMapView(MapView):
                     else:
                         death_year = None
                     # Add entry 
-                    add_one_entry(saint.id, city, "saint's death", saint.name, death_year)                    
+                    add_one_entry(saint.id, city, "Saint's place of death", saint.name, death_year)                    
                 else:
                     pass
 
@@ -521,7 +518,7 @@ class IberianMapView(MapView):
                 #print(count_church)
                 if city != None:                   
                     # Add entry
-                    add_one_entry(saint.id, city, "church", saint.name, church.name)
+                    add_one_entry(saint.id, city, "Church", saint.name, church.name)
                 else: 
                     pass
 
@@ -535,7 +532,7 @@ class IberianMapView(MapView):
                 #print(count_inscription)
                 if city != None:                   
                     # Add entry
-                    add_one_entry(saint.id, city, "inscription", saint.name, inscription.reference_no)
+                    add_one_entry(saint.id, city, "Inscription", saint.name, inscription.reference_no)
                 else: 
                     pass
 
@@ -549,7 +546,7 @@ class IberianMapView(MapView):
                 #print(count_manuscript)
                 if city != None: 
                     # Add this entry 
-                    add_one_entry(saint.id, city, "manuscript", saint.name, manuscript.shelf_no)
+                    add_one_entry(saint.id, city, "Manuscript", saint.name, manuscript.shelf_no)
                 else: 
                     pass                                          
         
@@ -563,7 +560,7 @@ class IberianMapView(MapView):
                 
                 if city != None: 
                     # Add this entry
-                    add_one_entry(saint.id, city, "object", saint.name, object.name)
+                    add_one_entry(saint.id, city, "Object", saint.name, object.name)
                 else: 
                     pass
 
@@ -577,7 +574,7 @@ class IberianMapView(MapView):
                 #print(count_literarytext )
                 if city != None: 
                     # Add this entry    
-                    add_one_entry(saint.id, city, "literary text", saint.name, literarytext.title)
+                    add_one_entry(saint.id, city, "Literary Text", saint.name, literarytext.title)
                 else: 
                     pass
         except:
@@ -614,13 +611,16 @@ class IberianMapView(MapView):
 
             # Create the popup
             pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
-            pop_up += '<hr style="border: 1px solid green" />' # de lijn natuurlijk
+            pop_up += '<hr style="border: 1px solid black" />' # de lijn natuurlijk
 
-            popup_title_1 = "Show" 
-            popup_title_2 = "objects in the list" 
-                                
-            pop_up += '<p style="font-size: large;"><a href="{}" title="{} {} {}"><span style="color: purple;">{}</span> in: {}</a></p>'.format(
-                url, popup_title_1, oPoint['count'], popup_title_2, oPoint['count'], oPoint['findspot']) 
+            popup_title_1 = "Number of" 
+            popup_title_2 = "object(s) on this location:" 
+
+            # TH:locatie laten zien, boven in. 
+            # Onderin: ref eruit, trefwoord noemen                              
+            pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+        
         except:
             msg = oErr.get_error_message()
             oErr.DoError("get_group_popup")

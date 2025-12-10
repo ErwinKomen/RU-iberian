@@ -19,7 +19,7 @@
         </div>
         <a class="switch-item" 
           {% if mode == "list" %}
-            targeturl="{% url 'iberian_map' %}"
+            targeturl="{{maplistview}}"
             onclick="ru.iberian.goto_view(this, 'map');" 
             style="cursor: pointer;" 
           {% endif %} >        
