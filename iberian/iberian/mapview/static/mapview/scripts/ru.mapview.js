@@ -40,11 +40,13 @@ var ru = (function ($, ru) {
         loc_overlayMarkers = {},
         loc_colorDict = {},
         loc_iconDict = {},
-        loc_trefwoord = ["Saint's place of death", "Church", "Inscription", "Manuscript"], // Object and Literary Text
+        loc_trefwoord = ["Saint's place of death", "Church", "Inscription", "Manuscript"], // "Object",  "Literary Text"
         // Of we skippen de aparte icons? 
-        loc_icons = 'fas fa-city fa-2xs, fas fa-church fa-2xs, fas fa-pen-square fa-2xs, fas fa-book-open fa-2xs'.split(','), // Add the other two! Which ones?
+        loc_icons = 'fas fa-city fa-2xs, fas fa-church fa-2xs, fas fa-pen-square fa-2xs, fas fa-book-open fa-2xs'.split(','), // fas fa-object-group fa-2xs, fas fa-book fa-2xs
         // De kleuren kunnen nog anders, en de markers ook  <i class="fa-solid fa-arrow-right-to-city"></i>
-        loc_colors = '#6f42c1, #dc3545, #28a745, #ffc107'.split(','); // Add the other two!
+        loc_colors = '#6f42c1, #dc3545, #28a745, #ffc107'.split(','); // Add the other two! #fd7e14, #dc3545
+
+      // igv de andere 5 entiteiten komt er steeds wel het eerste icon naar voren
         
     
     // Private methods specifiction

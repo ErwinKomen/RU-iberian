@@ -64,6 +64,11 @@ urlpatterns = [
 
     # ============ MAP views =======================
     re_path(r'^iberian/map/', csrf_exempt(IberianMapView.as_view()), name='iberian_map'),
+    re_path(r'^church/map/', csrf_exempt(ChurchMapView.as_view()), name='church_map'), # OK?
+    re_path(r'^manuscript/map/', csrf_exempt(ManuscriptMapView.as_view()), name='manuscript_map'), # OK?
+    re_path(r'^inscription/map/', csrf_exempt(InscriptionMapView.as_view()), name='inscription_map'), # OK?
+    re_path(r'^object/map/', csrf_exempt(ObjectMapView.as_view()), name='object_map'), # OK?
+    re_path(r'^littext/map/', csrf_exempt(LiteraryMapView.as_view()), name='littext_map'), # OK?
 
     # =============================================================================================
 

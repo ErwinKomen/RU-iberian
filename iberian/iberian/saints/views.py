@@ -258,7 +258,7 @@ def ChurchList(request):
             lst_city.append(city_church)        
     city_count = len(lst_city) # Waar gaat dit naartoe?              
     
-    maplistview = reverse('iberian_map') # MAP
+    maplistview = reverse('church_map') # MAP
     
     context = {'church_list': query_set,
                'nentries': len(query_set),
@@ -378,7 +378,7 @@ def InscriptionList(request):
             lst_city.append(city_inscrip) # nog dubbele erin        
     city_count = len(lst_city) # Waar gaat dit naartoe?
         
-    maplistview = reverse('iberian_map') # MAP
+    maplistview = reverse('inscription_map') # MAP
 
     context = {'inscription_list': query_set,
                'nentries': len(query_set),
@@ -524,7 +524,7 @@ def LiteraryTextList(request):
             lst_city.append(city_littext) # nog dubbele erin        
     city_count = len(lst_city) # Waar gaat dit naartoe?
 
-    maplistview = reverse('iberian_map') # MAP
+    maplistview = reverse('littext_map') # MAP
 
     context = {'ltext_list': query_set,
                'nentries': len(query_set),
@@ -582,14 +582,14 @@ def ObjectList(request):
         city_object = oObject.get("original_location_city__id")
         # Wat doet dit?
 
-        if not city_object is None and not city_object in lst_object: # Haalt er eventuele dubbele eruit.
+        if not city_object is None and not city_object in lst_object: # Haalt er eventuele dubbele en None eruit.
             lst_cities.append(city_object)
         
     # Zitten er teveel in, hoe kan dat? Lijkt verdubbeling.
     # We krijgen de hele tijd de input van Saints...
     city_count = len(lst_city)
     
-    maplistview = reverse('iberian_map') # MAP
+    maplistview = reverse('object_map') # MAP
     
     context = {'object_list': query_set,
                'nentries': len(query_set),
@@ -717,7 +717,7 @@ def LiturgicalManuscriptList(request):
             lst_city.append(city_litman)        
     city_count = len(lst_city) # Waar gaat dit naartoe?        
 
-    maplistview = reverse('iberian_map') # MAP
+    maplistview = reverse('manuscript_map') # MAP
 
     context = {'liturgicalmanuscript_list': query_set,
                'nentries': len(query_set),

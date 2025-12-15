@@ -30,7 +30,7 @@ from iberian.basic.utils import ErrHandle
 from iberian.seeker.models import Upload, get_current_datetime
 from iberian.seeker.forms import SignUpForm, UploadForm
 from iberian.saints.views import home
-from iberian.utilities.views import saintsimplesearch
+from iberian.utilities.views import saintsimplesearch, churchsimplesearch
 
 # ======= from RU-Basic ========================
 from iberian.basic.views import BasicPart, BasicList, BasicDetails, make_search_list, add_rel_item, adapt_search
@@ -386,11 +386,881 @@ class UploadProcess(UploadDetails):
         return None
 
 # =================================== MAP ===================================================
-# class ChurchMapView(MapView):
-# class InscriptionMapView(MapView):
-# class ManuscriptMapView(MapView):
-# class ObjectMapView(MapView):
-# class LiteraryMapView(MapView):
+
+class LiteraryMapView(MapView):
+    model = Saint 
+    modEntry = City
+    frmSearch = None 
+    order_by = []
+    use_object = False
+    use_own_entries = True
+    label = ""
+    language = ""
+    param_list = ""
+    prefix = "ibn"
+    filterQ = None
+    city_count = 0   
+    lst_saint_church = []
+    
+    def initialize(self):
+        super(LiteraryMapView, self).initialize()
+        
+        # Entries with a 'form' value
+        self.entry_list = []
+           
+        # Create lists
+        self.lst_saint_church = []     
+
+        # Get all the saints in the database
+        qs_saint = saintsimplesearch(self.request, 'saints', 'saint')
+               
+        # Now find all relations
+        for obj_saint in qs_saint:
+            count = 0            
+
+            # (1) saint literary text city relation
+            qs_literarytext = LiteraryText.objects.filter(saintliterarytextrelation__saint=obj_saint)
+            for obj_literarytext in qs_literarytext:
+                obj_city = obj_literarytext.location_city   
+                self.lst_saint_literarytext.append(dict(saint=obj_saint, city=obj_city, literarytext=obj_literarytext))
+
+    def make_entry_list(self):
+        """Create a list of entries for the map"""
+                
+        def add_one_entry(id, city, keyword, saint_name, info):
+            """Add one entry int [lst_entry]"""
+            
+            # First combine the the x and y coordinates
+            point_lat = str(city.latitude)          
+            point_lon = str(city.longitude)           
+            point = point_lat + ", " + point_lon
+            
+            oErr = ErrHandle()
+            try:
+                oEntry = dict(saint_id=id, locname=city.name, point = point, point_x=point_lat, point_y=point_lon,
+                              keyword=keyword, saint_name=saint_name, info=info)
+                lst_back.append(oEntry)            
+            except:
+                msg = oErr.get_error_message()
+                oErr.DoError("SaintMapview/add_one_entry")
+            return lst_back 
+
+        lst_back = []
+        oErr = ErrHandle()
+        try: 
+            # (1) Check for which saints this city has an literary text
+            count_literarytext = 0
+            for oItem in self.lst_saint_literarytext:
+                literarytext = oItem.get("literarytext")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_literarytext += 1
+                #print(count_literarytext )
+                if city != None: 
+                    # Add this entry    
+                    add_one_entry(saint.id, city, "Literary Text", saint.name, literarytext.title)
+                else: 
+                    pass
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("LiteraryMapView/make_entry_list")
+        return lst_back 
+    
+    def get_popup(self, dialect):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        pop_up = '<p class="h6">{}</p>'.format(dialect['origstr'])
+        pop_up += '<hr style="border: 1px solid green" />'
+        pop_up += '<p style="font-size: medium;"><span style="color: purple;">{}</span> </p>'.format(dialect['findspot'])
+        return pop_up
+
+    def get_group_popup(self, oPoint):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        # Gaat dit wel helemaal goed?
+        params = ""
+        oErr = ErrHandle()
+        try:
+            if self.param_list != None:
+                params = "&{}".format( "&".join(self.param_list))
+            # Hier wordt de reverse gemaakt
+            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+
+            # Create the popup
+            pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
+            pop_up += '<hr style="border: 1px solid black" />' # de lijn natuurlijk
+
+            popup_title_1 = "Number of" 
+            popup_title_2 = "object(s) on this location:" 
+
+            # TH:locatie laten zien, boven in. 
+            # Onderin: ref eruit, trefwoord noemen                              
+            pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+        
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("get_group_popup")
+        return pop_up
+
+    def group_entries(self, lst_this):
+        """Allow changing the list of entries"""
+        oErr = ErrHandle()
+        exclude_fields = ['point', 'point_x', 'point_y', 'pop_up', 'locatie', 'country', 'city']
+        try:
+            # We need to create a new list, based on the 'point' parameter 
+            keyword_set_points = {}
+            # set_point = {}
+            for oEntry in lst_this: 
+                # Get the keyword and use the dictionary for that keyword
+                keyword = oEntry['keyword']
+                # Get the right dictionary
+                set_point = keyword_set_points.get(keyword)
+                if set_point is None:
+                    keyword_set_points[keyword] = {}
+                    set_point = keyword_set_points[keyword]
+
+                point = oEntry['point']
+                if not point in set_point:
+                    # Create a new entry TH: werkt dit?
+                    set_point[point] = dict(count=0, items=[], point=point,                                                                                      
+                                            trefwoord=oEntry['keyword'],                                            
+                                            locid=oEntry['info'],                                            
+                                            findspot=oEntry['locname'] 
+                                            )
+                # Retrieve the item from the set
+                oPoint = set_point[point]
+                # Add this entry
+                oPoint['count'] += 1                
+                oItem = {}
+                for k,v in oEntry.items():
+                    #print(k, v) # hier zitten de kw's er in
+                    if not k in exclude_fields:
+                        oItem[k] = v
+                oPoint['items'].append(oItem) 
+
+            # Review them again 
+            lst_back = []            
+
+            for kw, set_point in keyword_set_points.items():
+                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                    # Create the popup                   
+                    oEntry['pop_up'] = self.get_group_popup(oEntry) 
+                    # Add it to the list we return
+                    lst_back.append(oEntry)         
+
+            total_count = len(lst_back)
+            #print(total_count)
+
+            # Return the new list 
+            lst_this = copy.copy(lst_back)
+
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("group_entries")
+
+        return lst_this
+class ObjectMapView(MapView):
+    model = Saint 
+    modEntry = City
+    frmSearch = None 
+    order_by = []
+    use_object = False
+    use_own_entries = True
+    label = ""
+    language = ""
+    param_list = ""
+    prefix = "ibn"
+    filterQ = None
+    city_count = 0   
+    lst_saint_object = []
+    
+    def initialize(self):
+        super(ObjectMapView, self).initialize()
+        
+        # Entries with a 'form' value
+        self.entry_list = []
+           
+        # Create lists
+        self.lst_saint_church = []     
+
+        # Get all the saints in the database
+        qs_saint = saintsimplesearch(self.request, 'saints', 'saint')
+               
+        # Now find all relations
+        for obj_saint in qs_saint:
+            count = 0            
+
+            # (1) saint object city relation
+            qs_object = Object.objects.filter(saintobjectrelation__saint=obj_saint)
+            for obj_object in qs_object:
+                obj_city = obj_object.original_location_city          
+                self.lst_saint_object.append(dict(saint=obj_saint, city=obj_city, object=obj_object))
+
+    def make_entry_list(self):
+        """Create a list of entries for the map"""
+                
+        def add_one_entry(id, city, keyword, saint_name, info):
+            """Add one entry int [lst_entry]"""
+            
+            # First combine the the x and y coordinates
+            point_lat = str(city.latitude)          
+            point_lon = str(city.longitude)           
+            point = point_lat + ", " + point_lon
+            
+            oErr = ErrHandle()
+            try:
+                oEntry = dict(saint_id=id, locname=city.name, point = point, point_x=point_lat, point_y=point_lon,
+                              keyword=keyword, saint_name=saint_name, info=info)
+                lst_back.append(oEntry)            
+            except:
+                msg = oErr.get_error_message()
+                oErr.DoError("SaintMapview/add_one_entry")
+            return lst_back 
+
+        lst_back = []
+        oErr = ErrHandle()
+        try: 
+            # (5) Check for which saints this city has an object 
+            count_object = 0
+            for oItem in self.lst_saint_object:
+                object = oItem.get("object")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_object += 1
+                
+                if city != None: 
+                    # Add this entry
+                    add_one_entry(saint.id, city, "Object", saint.name, object.name)
+                else: 
+                    pass
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("ObjectMapView/make_entry_list")
+        return lst_back 
+    
+    def get_popup(self, dialect):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        pop_up = '<p class="h6">{}</p>'.format(dialect['origstr'])
+        pop_up += '<hr style="border: 1px solid green" />'
+        pop_up += '<p style="font-size: medium;"><span style="color: purple;">{}</span> </p>'.format(dialect['findspot'])
+        return pop_up
+
+    def get_group_popup(self, oPoint):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        # Gaat dit wel helemaal goed?
+        params = ""
+        oErr = ErrHandle()
+        try:
+            if self.param_list != None:
+                params = "&{}".format( "&".join(self.param_list))
+            # Hier wordt de reverse gemaakt
+            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+
+            # Create the popup
+            pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
+            pop_up += '<hr style="border: 1px solid black" />' # de lijn natuurlijk
+
+            popup_title_1 = "Number of" 
+            popup_title_2 = "object(s) on this location:" 
+
+            # TH:locatie laten zien, boven in. 
+            # Onderin: ref eruit, trefwoord noemen                              
+            pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+        
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("get_group_popup")
+        return pop_up
+
+    def group_entries(self, lst_this):
+        """Allow changing the list of entries"""
+        oErr = ErrHandle()
+        exclude_fields = ['point', 'point_x', 'point_y', 'pop_up', 'locatie', 'country', 'city']
+        try:
+            # We need to create a new list, based on the 'point' parameter 
+            keyword_set_points = {}
+            # set_point = {}
+            for oEntry in lst_this: 
+                # Get the keyword and use the dictionary for that keyword
+                keyword = oEntry['keyword']
+                # Get the right dictionary
+                set_point = keyword_set_points.get(keyword)
+                if set_point is None:
+                    keyword_set_points[keyword] = {}
+                    set_point = keyword_set_points[keyword]
+
+                point = oEntry['point']
+                if not point in set_point:
+                    # Create a new entry TH: werkt dit?
+                    set_point[point] = dict(count=0, items=[], point=point,                                                                                      
+                                            trefwoord=oEntry['keyword'],                                            
+                                            locid=oEntry['info'],                                            
+                                            findspot=oEntry['locname'] 
+                                            )
+                # Retrieve the item from the set
+                oPoint = set_point[point]
+                # Add this entry
+                oPoint['count'] += 1                
+                oItem = {}
+                for k,v in oEntry.items():
+                    #print(k, v) # hier zitten de kw's er in
+                    if not k in exclude_fields:
+                        oItem[k] = v
+                oPoint['items'].append(oItem) 
+
+            # Review them again 
+            lst_back = []            
+
+            for kw, set_point in keyword_set_points.items():
+                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                    # Create the popup                   
+                    oEntry['pop_up'] = self.get_group_popup(oEntry) 
+                    # Add it to the list we return
+                    lst_back.append(oEntry)         
+
+            total_count = len(lst_back)
+            #print(total_count)
+
+            # Return the new list 
+            lst_this = copy.copy(lst_back)
+
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("group_entries")
+
+        return lst_this
+
+class ManuscriptMapView(MapView):
+    model = Saint 
+    modEntry = City
+    frmSearch = None 
+    order_by = []
+    use_object = False
+    use_own_entries = True
+    label = ""
+    language = ""
+    param_list = ""
+    prefix = "ibn"
+    filterQ = None
+    city_count = 0   
+    lst_saint_manuscript = []
+    
+    def initialize(self):
+        super(ManuscriptMapView, self).initialize()
+        
+        # Entries with a 'form' value
+        self.entry_list = []
+           
+        # Create lists
+        self.lst_saint_church = []     
+
+        # Get all the saints in the database
+        qs_saint = saintsimplesearch(self.request, 'saints', 'saint')
+               
+        # Now find all relations
+        for obj_saint in qs_saint:
+            count = 0            
+
+            # (1) saint manuscript city relation
+            qs_manuscript = LiturgicalManuscript.objects.filter(saintlitmanuscriptrelation__saint=obj_saint)            
+            for obj_manuscript in qs_manuscript:
+                obj_city = obj_manuscript.original_location_city                   
+                self.lst_saint_manuscript.append(dict(saint=obj_saint, city=obj_city, manuscript=obj_manuscript))
+
+    def make_entry_list(self):
+        """Create a list of entries for the map"""
+                
+        def add_one_entry(id, city, keyword, saint_name, info):
+            """Add one entry int [lst_entry]"""
+            
+            # First combine the the x and y coordinates
+            point_lat = str(city.latitude)          
+            point_lon = str(city.longitude)           
+            point = point_lat + ", " + point_lon
+            
+            oErr = ErrHandle()
+            try:
+                oEntry = dict(saint_id=id, locname=city.name, point = point, point_x=point_lat, point_y=point_lon,
+                              keyword=keyword, saint_name=saint_name, info=info)
+                lst_back.append(oEntry)            
+            except:
+                msg = oErr.get_error_message()
+                oErr.DoError("SaintMapview/add_one_entry")
+            return lst_back 
+
+        lst_back = []
+        oErr = ErrHandle()
+        try: 
+            #(1) Check which manuscripts are associated with this city via the saint            
+            count_manuscript = 0
+            for oItem in self.lst_saint_manuscript:
+                manuscript = oItem.get("manuscript")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_manuscript += 1
+                #print(count_manuscript)
+                if city != None: 
+                    # Add this entry 
+                    add_one_entry(saint.id, city, "Manuscript", saint.name, manuscript.shelf_no)
+                else: 
+                    pass      
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("ManuscriptMapView/make_entry_list")
+        return lst_back 
+    
+    def get_popup(self, dialect):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        pop_up = '<p class="h6">{}</p>'.format(dialect['origstr'])
+        pop_up += '<hr style="border: 1px solid green" />'
+        pop_up += '<p style="font-size: medium;"><span style="color: purple;">{}</span> </p>'.format(dialect['findspot'])
+        return pop_up
+
+    def get_group_popup(self, oPoint):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        # Gaat dit wel helemaal goed?
+        params = ""
+        oErr = ErrHandle()
+        try:
+            if self.param_list != None:
+                params = "&{}".format( "&".join(self.param_list))
+            # Hier wordt de reverse gemaakt
+            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+
+            # Create the popup
+            pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
+            pop_up += '<hr style="border: 1px solid black" />' # de lijn natuurlijk
+
+            popup_title_1 = "Number of" 
+            popup_title_2 = "object(s) on this location:" 
+
+            # TH:locatie laten zien, boven in. 
+            # Onderin: ref eruit, trefwoord noemen                              
+            pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+        
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("get_group_popup")
+        return pop_up
+
+    def group_entries(self, lst_this):
+        """Allow changing the list of entries"""
+        oErr = ErrHandle()
+        exclude_fields = ['point', 'point_x', 'point_y', 'pop_up', 'locatie', 'country', 'city']
+        try:
+            # We need to create a new list, based on the 'point' parameter 
+            keyword_set_points = {}
+            # set_point = {}
+            for oEntry in lst_this: 
+                # Get the keyword and use the dictionary for that keyword
+                keyword = oEntry['keyword']
+                # Get the right dictionary
+                set_point = keyword_set_points.get(keyword)
+                if set_point is None:
+                    keyword_set_points[keyword] = {}
+                    set_point = keyword_set_points[keyword]
+
+                point = oEntry['point']
+                if not point in set_point:
+                    # Create a new entry TH: werkt dit?
+                    set_point[point] = dict(count=0, items=[], point=point,                                                                                      
+                                            trefwoord=oEntry['keyword'],                                            
+                                            locid=oEntry['info'],                                            
+                                            findspot=oEntry['locname'] 
+                                            )
+                # Retrieve the item from the set
+                oPoint = set_point[point]
+                # Add this entry
+                oPoint['count'] += 1                
+                oItem = {}
+                for k,v in oEntry.items():
+                    #print(k, v) # hier zitten de kw's er in
+                    if not k in exclude_fields:
+                        oItem[k] = v
+                oPoint['items'].append(oItem) 
+
+            # Review them again 
+            lst_back = []            
+
+            for kw, set_point in keyword_set_points.items():
+                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                    # Create the popup                   
+                    oEntry['pop_up'] = self.get_group_popup(oEntry) 
+                    # Add it to the list we return
+                    lst_back.append(oEntry)         
+
+            total_count = len(lst_back)
+            #print(total_count)
+
+            # Return the new list 
+            lst_this = copy.copy(lst_back)
+
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("group_entries")
+
+        return lst_this
+
+class InscriptionMapView(MapView):
+    model = Saint 
+    modEntry = City
+    frmSearch = None 
+    order_by = []
+    use_object = False
+    use_own_entries = True
+    label = ""
+    language = ""
+    param_list = ""
+    prefix = "ibn"
+    filterQ = None
+    city_count = 0   
+    lst_saint_inscription = []
+    
+    def initialize(self):
+        super(InscriptionMapView, self).initialize()
+        
+        # Entries with a 'form' value
+        self.entry_list = []
+           
+        # Create lists
+        self.lst_saint_church = []     
+
+        # Get all the saints in the database
+        qs_saint = saintsimplesearch(self.request, 'saints', 'saint')
+               
+        # Now find all relations
+        for obj_saint in qs_saint:
+            count = 0            
+
+            # (1) saint inscription city relation
+            qs_inscription = Inscription.objects.filter(saintinscriptionrelation__saint=obj_saint)
+            for obj_inscription in qs_inscription:
+                obj_city = obj_inscription.original_location_city
+                self.lst_saint_inscription.append(dict(saint=obj_saint, city=obj_city, inscription=obj_inscription))
+           
+    def make_entry_list(self):
+        """Create a list of entries for the map"""
+                
+        def add_one_entry(id, city, keyword, saint_name, info):
+            """Add one entry int [lst_entry]"""
+            
+            # First combine the the x and y coordinates
+            point_lat = str(city.latitude)          
+            point_lon = str(city.longitude)           
+            point = point_lat + ", " + point_lon
+            
+            oErr = ErrHandle()
+            try:
+                oEntry = dict(saint_id=id, locname=city.name, point = point, point_x=point_lat, point_y=point_lon,
+                              keyword=keyword, saint_name=saint_name, info=info)
+                lst_back.append(oEntry)            
+            except:
+                msg = oErr.get_error_message()
+                oErr.DoError("SaintMapview/add_one_entry")
+            return lst_back 
+
+        lst_back = []
+        oErr = ErrHandle()
+        try: 
+            # (1) Check for which saints this city has an inscription
+            count_inscription = 0
+            for oItem in self.lst_saint_inscription:
+                inscription = oItem.get("inscription")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_inscription += 1
+                #print(count_inscription)
+                if city != None:                   
+                    # Add entry
+                    add_one_entry(saint.id, city, "Inscription", saint.name, inscription.reference_no)
+                else: 
+                    pass
+  
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("InscriptionMapView/make_entry_list")
+        return lst_back 
+    
+    def get_popup(self, dialect):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        pop_up = '<p class="h6">{}</p>'.format(dialect['origstr'])
+        pop_up += '<hr style="border: 1px solid green" />'
+        pop_up += '<p style="font-size: medium;"><span style="color: purple;">{}</span> </p>'.format(dialect['findspot'])
+        return pop_up
+
+    def get_group_popup(self, oPoint):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        # Gaat dit wel helemaal goed?
+        params = ""
+        oErr = ErrHandle()
+        try:
+            if self.param_list != None:
+                params = "&{}".format( "&".join(self.param_list))
+            # Hier wordt de reverse gemaakt
+            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+
+            # Create the popup
+            pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
+            pop_up += '<hr style="border: 1px solid black" />' # de lijn natuurlijk
+
+            popup_title_1 = "Number of" 
+            popup_title_2 = "object(s) on this location:" 
+
+            # TH:locatie laten zien, boven in. 
+            # Onderin: ref eruit, trefwoord noemen                              
+            pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+        
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("get_group_popup")
+        return pop_up
+
+    def group_entries(self, lst_this):
+        """Allow changing the list of entries"""
+        oErr = ErrHandle()
+        exclude_fields = ['point', 'point_x', 'point_y', 'pop_up', 'locatie', 'country', 'city']
+        try:
+            # We need to create a new list, based on the 'point' parameter 
+            keyword_set_points = {}
+            # set_point = {}
+            for oEntry in lst_this: 
+                # Get the keyword and use the dictionary for that keyword
+                keyword = oEntry['keyword']
+                # Get the right dictionary
+                set_point = keyword_set_points.get(keyword)
+                if set_point is None:
+                    keyword_set_points[keyword] = {}
+                    set_point = keyword_set_points[keyword]
+
+                point = oEntry['point']
+                if not point in set_point:
+                    # Create a new entry TH: werkt dit?
+                    set_point[point] = dict(count=0, items=[], point=point,                                                                                      
+                                            trefwoord=oEntry['keyword'],                                            
+                                            locid=oEntry['info'],                                            
+                                            findspot=oEntry['locname'] 
+                                            )
+                # Retrieve the item from the set
+                oPoint = set_point[point]
+                # Add this entry
+                oPoint['count'] += 1                
+                oItem = {}
+                for k,v in oEntry.items():
+                    #print(k, v) # hier zitten de kw's er in
+                    if not k in exclude_fields:
+                        oItem[k] = v
+                oPoint['items'].append(oItem) 
+
+            # Review them again 
+            lst_back = []            
+
+            for kw, set_point in keyword_set_points.items():
+                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                    # Create the popup                   
+                    oEntry['pop_up'] = self.get_group_popup(oEntry) 
+                    # Add it to the list we return
+                    lst_back.append(oEntry)         
+
+            total_count = len(lst_back)
+            #print(total_count)
+
+            # Return the new list 
+            lst_this = copy.copy(lst_back)
+
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("group_entries")
+
+        return lst_this 
+
+class ChurchMapView(MapView):
+    model = Saint 
+    modEntry = City
+    frmSearch = None 
+    order_by = []
+    use_object = False
+    use_own_entries = True
+    label = ""
+    language = ""
+    param_list = ""
+    prefix = "ibn"
+    filterQ = None
+    city_count = 0   
+    lst_saint_church = []
+    
+    def initialize(self):
+        super(ChurchMapView, self).initialize()
+        
+        # Entries with a 'form' value
+        self.entry_list = []
+           
+        # Create lists
+        self.lst_saint_church = []     
+
+        # Get all the saints in the database
+        qs_saint = saintsimplesearch(self.request, 'saints', 'saint')
+               
+        # Now find all relations
+        for obj_saint in qs_saint:
+            count = 0            
+
+            # (1) saint church city relation
+            qs_church = Church.objects.filter(saintchurchrelation__saint=obj_saint)
+            for obj_church in qs_church:
+                obj_city = obj_church.city
+                self.lst_saint_church.append(dict(saint=obj_saint, city=obj_city, church=obj_church))
+
+    def make_entry_list(self):
+        """Create a list of entries for the map"""
+                
+        def add_one_entry(id, city, keyword, saint_name, info):
+            """Add one entry int [lst_entry]"""
+            
+            # First combine the the x and y coordinates
+            point_lat = str(city.latitude)          
+            point_lon = str(city.longitude)           
+            point = point_lat + ", " + point_lon
+            
+            oErr = ErrHandle()
+            try:
+                oEntry = dict(saint_id=id, locname=city.name, point = point, point_x=point_lat, point_y=point_lon,
+                              keyword=keyword, saint_name=saint_name, info=info)
+                lst_back.append(oEntry)            
+            except:
+                msg = oErr.get_error_message()
+                oErr.DoError("SaintMapview/add_one_entry")
+            return lst_back 
+
+        lst_back = []
+        oErr = ErrHandle()
+        try: 
+             # (1) Check for which saints this city has a church
+            count_church = 0
+            for oItem in self.lst_saint_church:
+                church = oItem.get("church")
+                saint = oItem.get("saint")
+                city = oItem.get("city")
+                count_church += 1
+                #print(count_church)
+                if city != None:                   
+                    # Add entry
+                    add_one_entry(saint.id, city, "Church", saint.name, church.name)
+                else: 
+                    pass
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("ChurchMapView/make_entry_list")
+        return lst_back 
+    
+    def get_popup(self, dialect):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        pop_up = '<p class="h6">{}</p>'.format(dialect['origstr'])
+        pop_up += '<hr style="border: 1px solid green" />'
+        pop_up += '<p style="font-size: medium;"><span style="color: purple;">{}</span> </p>'.format(dialect['findspot'])
+        return pop_up
+
+    def get_group_popup(self, oPoint):
+        """Create a popup from the 'key' values defined in [initialize()]"""
+
+        # Gaat dit wel helemaal goed?
+        params = ""
+        oErr = ErrHandle()
+        try:
+            if self.param_list != None:
+                params = "&{}".format( "&".join(self.param_list))
+            # Hier wordt de reverse gemaakt
+            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+
+            # Create the popup
+            pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
+            pop_up += '<hr style="border: 1px solid black" />' # de lijn natuurlijk
+
+            popup_title_1 = "Number of" 
+            popup_title_2 = "object(s) on this location:" 
+
+            # TH:locatie laten zien, boven in. 
+            # Onderin: ref eruit, trefwoord noemen                              
+            pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+        
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("get_group_popup")
+        return pop_up
+
+    def group_entries(self, lst_this):
+        """Allow changing the list of entries"""
+        oErr = ErrHandle()
+        exclude_fields = ['point', 'point_x', 'point_y', 'pop_up', 'locatie', 'country', 'city']
+        try:
+            # We need to create a new list, based on the 'point' parameter 
+            keyword_set_points = {}
+            # set_point = {}
+            for oEntry in lst_this: 
+                # Get the keyword and use the dictionary for that keyword
+                keyword = oEntry['keyword']
+                # Get the right dictionary
+                set_point = keyword_set_points.get(keyword)
+                if set_point is None:
+                    keyword_set_points[keyword] = {}
+                    set_point = keyword_set_points[keyword]
+
+                point = oEntry['point']
+                if not point in set_point:
+                    # Create a new entry TH: werkt dit?
+                    set_point[point] = dict(count=0, items=[], point=point,                                                                                      
+                                            trefwoord=oEntry['keyword'],                                            
+                                            locid=oEntry['info'],                                            
+                                            findspot=oEntry['locname'] 
+                                            )
+                # Retrieve the item from the set
+                oPoint = set_point[point]
+                # Add this entry
+                oPoint['count'] += 1                
+                oItem = {}
+                for k,v in oEntry.items():
+                    #print(k, v) # hier zitten de kw's er in
+                    if not k in exclude_fields:
+                        oItem[k] = v
+                oPoint['items'].append(oItem) 
+
+            # Review them again 
+            lst_back = []            
+
+            for kw, set_point in keyword_set_points.items():
+                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                    # Create the popup                   
+                    oEntry['pop_up'] = self.get_group_popup(oEntry) 
+                    # Add it to the list we return
+                    lst_back.append(oEntry)         
+
+            total_count = len(lst_back)
+            #print(total_count)
+
+            # Return the new list 
+            lst_this = copy.copy(lst_back)
+
+        except:
+            msg = oErr.get_error_message()
+            oErr.DoError("group_entries")
+
+        return lst_this 
 
 class IberianMapView(MapView):
     model = Saint 
