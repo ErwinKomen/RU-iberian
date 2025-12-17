@@ -400,7 +400,7 @@ class LiteraryMapView(MapView):
     prefix = "ibn"
     filterQ = None
     city_count = 0   
-    lst_saint_church = []
+    lst_saint_literarytext = []
     
     def initialize(self):
         super(LiteraryMapView, self).initialize()
@@ -409,7 +409,7 @@ class LiteraryMapView(MapView):
         self.entry_list = []
            
         # Create lists
-        self.lst_saint_church = []     
+        self.lst_saint_literarytext = []     
 
         # Get all the saints in the database
         qs_saint = saintsimplesearch(self.request, 'saints', 'saint')
@@ -418,7 +418,7 @@ class LiteraryMapView(MapView):
         for obj_saint in qs_saint:
             count = 0            
 
-            # (1) saint literary text city relation
+            # (1) saint literary text city relation 
             qs_literarytext = LiteraryText.objects.filter(saintliterarytextrelation__saint=obj_saint)
             for obj_literarytext in qs_literarytext:
                 obj_city = obj_literarytext.location_city   
@@ -430,7 +430,7 @@ class LiteraryMapView(MapView):
         def add_one_entry(id, city, keyword, saint_name, info):
             """Add one entry int [lst_entry]"""
             
-            # First combine the the x and y coordinates
+            # First combine the the x and y coordinates            
             point_lat = str(city.latitude)          
             point_lon = str(city.longitude)           
             point = point_lat + ", " + point_lon
@@ -454,8 +454,9 @@ class LiteraryMapView(MapView):
                 literarytext = oItem.get("literarytext")
                 saint = oItem.get("saint")
                 city = oItem.get("city")
+                
                 count_literarytext += 1
-                #print(count_literarytext )
+                print(count_literarytext )
                 if city != None: 
                     # Add this entry    
                     add_one_entry(saint.id, city, "Literary Text", saint.name, literarytext.title)
@@ -477,15 +478,13 @@ class LiteraryMapView(MapView):
     def get_group_popup(self, oPoint):
         """Create a popup from the 'key' values defined in [initialize()]"""
 
-        # Gaat dit wel helemaal goed?
         params = ""
         oErr = ErrHandle()
         try:
             if self.param_list != None:
                 params = "&{}".format( "&".join(self.param_list))
-            # Hier wordt de reverse gemaakt
-            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
-            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+   
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) 
 
             # Create the popup
             pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
@@ -493,11 +492,9 @@ class LiteraryMapView(MapView):
 
             popup_title_1 = "Number of" 
             popup_title_2 = "object(s) on this location:" 
-
-            # TH:locatie laten zien, boven in. 
-            # Onderin: ref eruit, trefwoord noemen                              
+                                                     
             pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
-                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) 
         
         except:
             msg = oErr.get_error_message()
@@ -523,7 +520,7 @@ class LiteraryMapView(MapView):
 
                 point = oEntry['point']
                 if not point in set_point:
-                    # Create a new entry TH: werkt dit?
+                    # Create a new entry
                     set_point[point] = dict(count=0, items=[], point=point,                                                                                      
                                             trefwoord=oEntry['keyword'],                                            
                                             locid=oEntry['info'],                                            
@@ -534,8 +531,7 @@ class LiteraryMapView(MapView):
                 # Add this entry
                 oPoint['count'] += 1                
                 oItem = {}
-                for k,v in oEntry.items():
-                    #print(k, v) # hier zitten de kw's er in
+                for k,v in oEntry.items():                   
                     if not k in exclude_fields:
                         oItem[k] = v
                 oPoint['items'].append(oItem) 
@@ -551,8 +547,7 @@ class LiteraryMapView(MapView):
                     lst_back.append(oEntry)         
 
             total_count = len(lst_back)
-            #print(total_count)
-
+           
             # Return the new list 
             lst_this = copy.copy(lst_back)
 
@@ -561,6 +556,7 @@ class LiteraryMapView(MapView):
             oErr.DoError("group_entries")
 
         return lst_this
+
 class ObjectMapView(MapView):
     model = Saint 
     modEntry = City
@@ -650,16 +646,14 @@ class ObjectMapView(MapView):
 
     def get_group_popup(self, oPoint):
         """Create a popup from the 'key' values defined in [initialize()]"""
-
-        # Gaat dit wel helemaal goed?
+               
         params = ""
         oErr = ErrHandle()
         try:
             if self.param_list != None:
                 params = "&{}".format( "&".join(self.param_list))
-            # Hier wordt de reverse gemaakt
-            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
-            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+            
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) 
 
             # Create the popup
             pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
@@ -667,11 +661,9 @@ class ObjectMapView(MapView):
 
             popup_title_1 = "Number of" 
             popup_title_2 = "object(s) on this location:" 
-
-            # TH:locatie laten zien, boven in. 
-            # Onderin: ref eruit, trefwoord noemen                              
+                                                   
             pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
-                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) 
         
         except:
             msg = oErr.get_error_message()
@@ -697,7 +689,7 @@ class ObjectMapView(MapView):
 
                 point = oEntry['point']
                 if not point in set_point:
-                    # Create a new entry TH: werkt dit?
+                    # Create a new entry 
                     set_point[point] = dict(count=0, items=[], point=point,                                                                                      
                                             trefwoord=oEntry['keyword'],                                            
                                             locid=oEntry['info'],                                            
@@ -708,8 +700,7 @@ class ObjectMapView(MapView):
                 # Add this entry
                 oPoint['count'] += 1                
                 oItem = {}
-                for k,v in oEntry.items():
-                    #print(k, v) # hier zitten de kw's er in
+                for k,v in oEntry.items():                    
                     if not k in exclude_fields:
                         oItem[k] = v
                 oPoint['items'].append(oItem) 
@@ -725,8 +716,7 @@ class ObjectMapView(MapView):
                     lst_back.append(oEntry)         
 
             total_count = len(lst_back)
-            #print(total_count)
-
+           
             # Return the new list 
             lst_this = copy.copy(lst_back)
 
@@ -804,7 +794,7 @@ class ManuscriptMapView(MapView):
                 saint = oItem.get("saint")
                 city = oItem.get("city")
                 count_manuscript += 1
-                #print(count_manuscript)
+                
                 if city != None: 
                     # Add this entry 
                     add_one_entry(saint.id, city, "Manuscript", saint.name, manuscript.shelf_no)
@@ -825,15 +815,13 @@ class ManuscriptMapView(MapView):
 
     def get_group_popup(self, oPoint):
         """Create a popup from the 'key' values defined in [initialize()]"""
-
-        # Gaat dit wel helemaal goed?
+               
         params = ""
         oErr = ErrHandle()
         try:
             if self.param_list != None:
                 params = "&{}".format( "&".join(self.param_list))
-            # Hier wordt de reverse gemaakt
-            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
+            
             url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
 
             # Create the popup
@@ -842,11 +830,9 @@ class ManuscriptMapView(MapView):
 
             popup_title_1 = "Number of" 
             popup_title_2 = "object(s) on this location:" 
-
-            # TH:locatie laten zien, boven in. 
-            # Onderin: ref eruit, trefwoord noemen                              
+                                                   
             pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
-                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) 
         
         except:
             msg = oErr.get_error_message()
@@ -872,7 +858,7 @@ class ManuscriptMapView(MapView):
 
                 point = oEntry['point']
                 if not point in set_point:
-                    # Create a new entry TH: werkt dit?
+                    # Create a new entry 
                     set_point[point] = dict(count=0, items=[], point=point,                                                                                      
                                             trefwoord=oEntry['keyword'],                                            
                                             locid=oEntry['info'],                                            
@@ -883,8 +869,7 @@ class ManuscriptMapView(MapView):
                 # Add this entry
                 oPoint['count'] += 1                
                 oItem = {}
-                for k,v in oEntry.items():
-                    #print(k, v) # hier zitten de kw's er in
+                for k,v in oEntry.items():                   
                     if not k in exclude_fields:
                         oItem[k] = v
                 oPoint['items'].append(oItem) 
@@ -893,15 +878,14 @@ class ManuscriptMapView(MapView):
             lst_back = []            
 
             for kw, set_point in keyword_set_points.items():
-                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                for point, oEntry in set_point.items(): 
                     # Create the popup                   
                     oEntry['pop_up'] = self.get_group_popup(oEntry) 
                     # Add it to the list we return
                     lst_back.append(oEntry)         
 
             total_count = len(lst_back)
-            #print(total_count)
-
+           
             # Return the new list 
             lst_this = copy.copy(lst_back)
 
@@ -979,7 +963,7 @@ class InscriptionMapView(MapView):
                 saint = oItem.get("saint")
                 city = oItem.get("city")
                 count_inscription += 1
-                #print(count_inscription)
+                
                 if city != None:                   
                     # Add entry
                     add_one_entry(saint.id, city, "Inscription", saint.name, inscription.reference_no)
@@ -1002,27 +986,23 @@ class InscriptionMapView(MapView):
     def get_group_popup(self, oPoint):
         """Create a popup from the 'key' values defined in [initialize()]"""
 
-        # Gaat dit wel helemaal goed?
         params = ""
         oErr = ErrHandle()
         try:
             if self.param_list != None:
                 params = "&{}".format( "&".join(self.param_list))
-            # Hier wordt de reverse gemaakt
-            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
-            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+           
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) 
 
             # Create the popup
             pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
-            pop_up += '<hr style="border: 1px solid black" />' # de lijn natuurlijk
+            pop_up += '<hr style="border: 1px solid black" />' 
 
             popup_title_1 = "Number of" 
             popup_title_2 = "object(s) on this location:" 
-
-            # TH:locatie laten zien, boven in. 
-            # Onderin: ref eruit, trefwoord noemen                              
+                                                  
             pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
-                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) 
         
         except:
             msg = oErr.get_error_message()
@@ -1048,7 +1028,7 @@ class InscriptionMapView(MapView):
 
                 point = oEntry['point']
                 if not point in set_point:
-                    # Create a new entry TH: werkt dit?
+                    # Create a new entry 
                     set_point[point] = dict(count=0, items=[], point=point,                                                                                      
                                             trefwoord=oEntry['keyword'],                                            
                                             locid=oEntry['info'],                                            
@@ -1059,8 +1039,7 @@ class InscriptionMapView(MapView):
                 # Add this entry
                 oPoint['count'] += 1                
                 oItem = {}
-                for k,v in oEntry.items():
-                    #print(k, v) # hier zitten de kw's er in
+                for k,v in oEntry.items():                    
                     if not k in exclude_fields:
                         oItem[k] = v
                 oPoint['items'].append(oItem) 
@@ -1069,15 +1048,14 @@ class InscriptionMapView(MapView):
             lst_back = []            
 
             for kw, set_point in keyword_set_points.items():
-                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                for point, oEntry in set_point.items(): 
                     # Create the popup                   
                     oEntry['pop_up'] = self.get_group_popup(oEntry) 
                     # Add it to the list we return
                     lst_back.append(oEntry)         
 
             total_count = len(lst_back)
-            #print(total_count)
-
+            
             # Return the new list 
             lst_this = copy.copy(lst_back)
 
@@ -1155,7 +1133,7 @@ class ChurchMapView(MapView):
                 saint = oItem.get("saint")
                 city = oItem.get("city")
                 count_church += 1
-                #print(count_church)
+                
                 if city != None:                   
                     # Add entry
                     add_one_entry(saint.id, city, "Church", saint.name, church.name)
@@ -1177,27 +1155,23 @@ class ChurchMapView(MapView):
     def get_group_popup(self, oPoint):
         """Create a popup from the 'key' values defined in [initialize()]"""
 
-        # Gaat dit wel helemaal goed?
         params = ""
         oErr = ErrHandle()
         try:
             if self.param_list != None:
                 params = "&{}".format( "&".join(self.param_list))
-            # Hier wordt de reverse gemaakt
-            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
-            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+            
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) 
 
             # Create the popup
             pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
-            pop_up += '<hr style="border: 1px solid black" />' # de lijn natuurlijk
+            pop_up += '<hr style="border: 1px solid black" />' 
 
             popup_title_1 = "Number of" 
             popup_title_2 = "object(s) on this location:" 
-
-            # TH:locatie laten zien, boven in. 
-            # Onderin: ref eruit, trefwoord noemen                              
+                            
             pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
-                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) 
         
         except:
             msg = oErr.get_error_message()
@@ -1223,7 +1197,7 @@ class ChurchMapView(MapView):
 
                 point = oEntry['point']
                 if not point in set_point:
-                    # Create a new entry TH: werkt dit?
+                    # Create a new entry 
                     set_point[point] = dict(count=0, items=[], point=point,                                                                                      
                                             trefwoord=oEntry['keyword'],                                            
                                             locid=oEntry['info'],                                            
@@ -1234,8 +1208,7 @@ class ChurchMapView(MapView):
                 # Add this entry
                 oPoint['count'] += 1                
                 oItem = {}
-                for k,v in oEntry.items():
-                    #print(k, v) # hier zitten de kw's er in
+                for k,v in oEntry.items():        
                     if not k in exclude_fields:
                         oItem[k] = v
                 oPoint['items'].append(oItem) 
@@ -1244,15 +1217,14 @@ class ChurchMapView(MapView):
             lst_back = []            
 
             for kw, set_point in keyword_set_points.items():
-                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                for point, oEntry in set_point.items(): 
                     # Create the popup                   
                     oEntry['pop_up'] = self.get_group_popup(oEntry) 
                     # Add it to the list we return
                     lst_back.append(oEntry)         
 
             total_count = len(lst_back)
-            #print(total_count)
-
+           
             # Return the new list 
             lst_this = copy.copy(lst_back)
 
@@ -1344,22 +1316,19 @@ class IberianMapView(MapView):
             """Add one entry int [lst_entry]"""
             
             # First combine the the x and y coordinates
-            point_lat = str(city.latitude)
-            #print(point_lat)            
-            point_lon = str(city.longitude)
-            #print(point_lon)        
+            point_lat = str(city.latitude)                    
+            point_lon = str(city.longitude)             
             point = point_lat + ", " + point_lon
-            #print(point)
             
             oErr = ErrHandle()
             try:
                 oEntry = dict(saint_id=id, locname=city.name, point = point, point_x=point_lat, point_y=point_lon,
                               keyword=keyword, saint_name=saint_name, info=info)
-                lst_back.append(oEntry)  # manuscripten lijken goed toegevoegd te worden              
+                lst_back.append(oEntry)             
             except:
                 msg = oErr.get_error_message()
                 oErr.DoError("SaintMapview/add_one_entry")
-            return lst_back # check manuscript en verder?
+            return lst_back 
 
         lst_back = []
         oErr = ErrHandle()
@@ -1367,7 +1336,7 @@ class IberianMapView(MapView):
             for oItem in self.lst_saint_death_city:
                 saint = oItem.get("saint")
                 city = oItem.get("city")
-                #print(city)
+               
                 if city != None:
                     if saint.death_date:
                         death_year = saint.death_date.date.year
@@ -1384,8 +1353,8 @@ class IberianMapView(MapView):
                 church = oItem.get("church")
                 saint = oItem.get("saint")
                 city = oItem.get("city")
-                count_church += 1
-                #print(count_church)
+                count_church += 1   
+                
                 if city != None:                   
                     # Add entry
                     add_one_entry(saint.id, city, "Church", saint.name, church.name)
@@ -1399,7 +1368,7 @@ class IberianMapView(MapView):
                 saint = oItem.get("saint")
                 city = oItem.get("city")
                 count_inscription += 1
-                #print(count_inscription)
+                
                 if city != None:                   
                     # Add entry
                     add_one_entry(saint.id, city, "Inscription", saint.name, inscription.reference_no)
@@ -1413,7 +1382,7 @@ class IberianMapView(MapView):
                 saint = oItem.get("saint")
                 city = oItem.get("city")
                 count_manuscript += 1
-                #print(count_manuscript)
+                
                 if city != None: 
                     # Add this entry 
                     add_one_entry(saint.id, city, "Manuscript", saint.name, manuscript.shelf_no)
@@ -1441,7 +1410,7 @@ class IberianMapView(MapView):
                 saint = oItem.get("saint")
                 city = oItem.get("city")
                 count_literarytext += 1
-                #print(count_literarytext )
+               
                 if city != None: 
                     # Add this entry    
                     add_one_entry(saint.id, city, "Literary Text", saint.name, literarytext.title)
@@ -1463,34 +1432,24 @@ class IberianMapView(MapView):
     def get_group_popup(self, oPoint):
         """Create a popup from the 'key' values defined in [initialize()]"""
 
-        # Figure out what the link would be to this list of items
-
-        # TH: Ok, die pop-ups moeten anders, link naar item zou ik zeggen?
-        # Icons trouwens ook anders want nu steeds andere volgorde.
-
-
-        # Gaat dit wel helemaal goed?
         params = ""
         oErr = ErrHandle()
         try:
             if self.param_list != None:
                 params = "&{}".format( "&".join(self.param_list))
-            # Hier wordt de reverse gemaakt
-            # Hier aanpassen, reverse zoek resultaat  / aanpassen wat er getoond wordt, ontdubbelen locaties iig.
-            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) # what is the correct reverse?
+           
+            url = "{}?{}-location={}{}".format(reverse('saints:saint-list'), self.prefix, oPoint['locid'], params) 
 
             # Create the popup
             pop_up = '<p class="h4">{}</p>'.format(oPoint['findspot'])
-            pop_up += '<hr style="border: 1px solid black" />' # de lijn natuurlijk
+            pop_up += '<hr style="border: 1px solid black" />' 
 
             popup_title_1 = "Number of" 
             popup_title_2 = "object(s) on this location:" 
-
-            # TH:locatie laten zien, boven in. 
-            # Onderin: ref eruit, trefwoord noemen                              
+                                      
             pop_up += '<p style="font-size: large;"><a title="{} {} {}"><span style="color: #0078A8;">{}</span> total number at this location: {}</a></p>'.format( # href="{}"
-                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) # ipv findspot url,
-        
+                popup_title_1, popup_title_2, oPoint['count'], oPoint['trefwoord'], oPoint['count']) 
+
         except:
             msg = oErr.get_error_message()
             oErr.DoError("get_group_popup")
@@ -1515,7 +1474,7 @@ class IberianMapView(MapView):
 
                 point = oEntry['point']
                 if not point in set_point:
-                    # Create a new entry TH: werkt dit?
+                    # Create a new entry 
                     set_point[point] = dict(count=0, items=[], point=point,                                                                                      
                                             trefwoord=oEntry['keyword'],                                            
                                             locid=oEntry['info'],                                            
@@ -1526,8 +1485,7 @@ class IberianMapView(MapView):
                 # Add this entry
                 oPoint['count'] += 1                
                 oItem = {}
-                for k,v in oEntry.items():
-                    #print(k, v) # hier zitten de kw's er in
+                for k,v in oEntry.items():                    
                     if not k in exclude_fields:
                         oItem[k] = v
                 oPoint['items'].append(oItem) 
@@ -1536,14 +1494,13 @@ class IberianMapView(MapView):
             lst_back = []            
 
             for kw, set_point in keyword_set_points.items():
-                for point, oEntry in set_point.items(): # hier zitten de manuscripts er niet in
+                for point, oEntry in set_point.items(): 
                     # Create the popup                   
                     oEntry['pop_up'] = self.get_group_popup(oEntry) 
                     # Add it to the list we return
                     lst_back.append(oEntry)         
 
-            total_count = len(lst_back)
-            print(total_count)
+            total_count = len(lst_back)           
 
             # Return the new list 
             lst_this = copy.copy(lst_back)

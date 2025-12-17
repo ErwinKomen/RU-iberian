@@ -40,14 +40,10 @@ var ru = (function ($, ru) {
         loc_overlayMarkers = {},
         loc_colorDict = {},
         loc_iconDict = {},
-        loc_trefwoord = ["Saint's place of death", "Church", "Inscription", "Manuscript"], // "Object",  "Literary Text"
-        // Of we skippen de aparte icons? 
-        loc_icons = 'fas fa-city fa-2xs, fas fa-church fa-2xs, fas fa-pen-square fa-2xs, fas fa-book-open fa-2xs'.split(','), // fas fa-object-group fa-2xs, fas fa-book fa-2xs
-        // De kleuren kunnen nog anders, en de markers ook  <i class="fa-solid fa-arrow-right-to-city"></i>
-        loc_colors = '#6f42c1, #dc3545, #28a745, #ffc107'.split(','); // Add the other two! #fd7e14, #dc3545
-
-      // igv de andere 5 entiteiten komt er steeds wel het eerste icon naar voren
-        
+        loc_trefwoord = ["Saint's place of death", "Church", "Inscription", "Manuscript", "Object", "Literary Text"],        
+        loc_icons = 'fas fa-city fa-2xs, fas fa-church fa-2xs, fas fa-pen-square fa-2xs, fas fa-book-open fa-2xs, fas fa-object-group fa-2xs, fas fa-book fa-2xs'.split(','),        
+        loc_colors = '#6f42c1, #dc3545, #28a745, #ffc107, #fd7e14, #17a2b8'.split(','); 
+              
     
     // Private methods specifiction
     var private_methods = {
@@ -95,11 +91,8 @@ var ru = (function ($, ru) {
                 // Set the color table
                 //idx = loc_trefwoord.indexOf(trefwoord);
                 //loc_colorDict[trefwoord] = loc_colors[idx % 10];
-
-              // html: '<i class="fas fa-map-marker-alt" style="color: ' + loc_colorDict[trefwoord] + ';"></i>', //dit niet
-              //html: '<i class="fa fa-map-marker" ></i>', //OUD dit werkt 
-              // Lijst van symbolen: niet alles uit all.css lijkt te werken
-              // Wat moeten we hebben?  werkt, pin, map-marker, columns, afh vd versie
+              // html: '<i class="fas fa-map-marker-alt" style="color: ' + loc_colorDict[trefwoord] + ';"></i>', 
+              //html: '<i class="fa fa-map-marker" ></i>',         
               html: '<i class="'+ loc_iconDict[name] + '" style="color: ' + loc_colorDict[name] + ';"></i>',           
             iconAncor: [3, 15]
             //iconAncor: [6, 30]
@@ -128,20 +121,25 @@ var ru = (function ($, ru) {
         try {
           // Validate
           if (entry.point === null || entry.point === "") { return false; }
-          // Get the trefwoord TH: is het mogelijk om dit te alfabetiseren?
+          // Get the trefwoord
           trefwoord = entry.trefwoord;
           if (loc_trefwoord.indexOf(trefwoord) < 0) {
             // Add it
             loc_trefwoord.push(trefwoord);
             // Set the color table
             idx = loc_trefwoord.indexOf(trefwoord);
-              loc_colorDict[trefwoord] = loc_colors[idx % 10];
-              loc_iconDict[trefwoord] = loc_icons[idx % 10];
+             loc_colorDict[trefwoord] = loc_colors[idx % 10];
+            loc_iconDict[trefwoord] = loc_icons[idx % 10];
+          } else if (!(trefwoord in loc_colorDict))  {
+            // Set the color table
+            idx = loc_trefwoord.indexOf(trefwoord);
+            loc_colorDict[trefwoord] = loc_colors[idx % 10];
+            loc_iconDict[trefwoord] = loc_icons[idx % 10];
           }
           // Get to the point
           point = entry.point.split(",").map(Number);
 
-          // Create marker for this point TH: dit moet dus aangepast worden
+          // Create marker for this point 
           marker = L.marker(point, { icon: private_methods.make_icon(trefwoord) });
 
           // Add a popup to the marker
@@ -619,7 +617,8 @@ var ru = (function ($, ru) {
           // Other initializations
           loc_layerDict = {};
           loc_layerList = [];
-          loc_trefwoord = [];           // This now contains the findspots
+          loc_trefwoord = ["Saint's place of death", "Church", "Inscription", "Manuscript"]; // "Object",  "Literary Text"
+          // loc_trefwoord = [];           // This now contains the findspots
           loc_colorDict = {};
           loc_overlayMarkers = {};
 

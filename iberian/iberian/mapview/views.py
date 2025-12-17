@@ -147,7 +147,7 @@ class MapView(DetailView):
             # First initialize
             self.initialize()
 
-            # Get the object from what we receive TH hier volgens mij niet goed...
+            # Get the object from what we receive 
             obj = self.get_object()
 
             # See if there is a search form
@@ -155,11 +155,11 @@ class MapView(DetailView):
                 # Use our new Iberian Saint method
                 lst_back = self.make_entry_list()
                 len(lst_back)
-                # Possibly perform grouping TH: geen manuscripten hier
+                # Possibly perform grouping 
                 lst_back = self.group_entries(lst_back)
                 print(lst_back)
 
-                # Add the data TH wat gebeurt hier?
+                # Add the data 
                 data['entries'] = lst_back
                 if self.use_object:
                     data['label'] = getattr(obj, self.labelfield)    
