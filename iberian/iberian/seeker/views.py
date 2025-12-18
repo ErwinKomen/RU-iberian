@@ -456,7 +456,7 @@ class LiteraryMapView(MapView):
                 city = oItem.get("city")
                 
                 count_literarytext += 1
-                print(count_literarytext )
+                #print(count_literarytext )
                 if city != None: 
                     # Add this entry    
                     add_one_entry(saint.id, city, "Literary Text", saint.name, literarytext.title)

@@ -157,7 +157,7 @@ class MapView(DetailView):
                 len(lst_back)
                 # Possibly perform grouping 
                 lst_back = self.group_entries(lst_back)
-                print(lst_back)
+                #print(lst_back)
 
                 # Add the data 
                 data['entries'] = lst_back
